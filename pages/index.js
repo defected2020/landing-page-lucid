@@ -48,7 +48,7 @@ export default function Home() {
           name="description"
           content="Professional software development services including AI solutions, web development, mobile apps, and more."
         />
-        <link rel="icon" href="/images/logo1.png" type="image/png" />
+        <link rel="icon" href="/images/lucid-logo.png" type="image/png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 

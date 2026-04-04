@@ -152,7 +152,7 @@ const Footer = () => {
           <FooterInfo>
             <Logo>
               <Image 
-                src="/images/logo1.png" 
+                src="/images/lucid-logo.png" 
                 alt="Lucid Code Labs" 
                 width={150} 
                 height={50} 

@@ -499,10 +499,10 @@ const Navbar = ({ scrolled }) => {
       <NavInner>
         <NextLink href="/">
           <Logo>
-            <Image src="/images/logo1.png" alt="Lucid Code Labs Logo" width={150} height={40} priority />
+            <Image src={scrolled ? "/images/lucid-logo.png" : "/images/lucid-logo-white.png"} alt="Lucid Code Labs Logo" width={150} height={40} priority />
           </Logo>
         </NextLink>
-        
+
         <NavLinks>
           <NavItem ref={dropdownRef}>
             <ServicesDropdownWrapper 
@@ -596,7 +596,7 @@ const Navbar = ({ scrolled }) => {
           >
             <MobileMenuHeader>
               <MobileMenuLogo>
-                <Image src="/images/logo1.png" alt="Lucid Code Labs Logo" width={150} height={40} priority />
+                <Image src="/images/lucid-logo.png" alt="Lucid Code Labs Logo" width={150} height={40} priority />
               </MobileMenuLogo>
               <CloseButton onClick={toggleMobileMenu}>✕</CloseButton>
             </MobileMenuHeader>

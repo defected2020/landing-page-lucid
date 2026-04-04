@@ -36,7 +36,7 @@ export default class MyDocument extends Document {
             name="description"
             content="Professional software development company specializing in AI, web development, and digital transformation"
           />
-          <link rel="icon" href="/images/logo1.png" type="image/png" />
+          <link rel="icon" href="/images/lucid-logo.png" type="image/png" />
           <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
             rel="stylesheet"
