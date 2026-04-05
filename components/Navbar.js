@@ -518,6 +518,7 @@ const Navbar = ({ scrolled }) => {
   const logoSrc = heroLight ? '/images/lucid-logo-white.png' : (isDark ? '/images/lucid-logo-white.png' : '/images/lucid-logo.png');
 
   return (
+    <>
     <NavbarContainer $scrolled={scrolled}>
       <NavInner>
         <NextLink href="/">
@@ -614,6 +615,7 @@ const Navbar = ({ scrolled }) => {
           />
         </MobileMenuButton>
       </NavInner>
+    </NavbarContainer>
 
       {/* ─── Mobile Menu ─── */}
       <AnimatePresence>
@@ -723,7 +725,7 @@ const Navbar = ({ scrolled }) => {
           </MobileMenuOverlay>
         )}
       </AnimatePresence>
-    </NavbarContainer>
+    </>
   );
 };
 
