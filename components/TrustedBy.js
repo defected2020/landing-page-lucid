@@ -54,7 +54,7 @@ const LogoItem = styled.div`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: calc(100vw / 5);
+  width: calc(100vw / 3);
   height: 80px;
   filter: grayscale(100%);
   opacity: 0.5;
@@ -70,7 +70,7 @@ const LogoItem = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: calc(100vw / 3);
+    width: calc(100vw / 2);
   }
 `
 
