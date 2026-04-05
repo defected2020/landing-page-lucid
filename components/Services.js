@@ -3,248 +3,222 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import styled from 'styled-components';
 import Link from 'next/link';
+import Image from 'next/image';
+import services from '../data/services';
+import { getServiceIcon } from './icons/ServiceIcons';
+import { staggerContainer, fadeInUp } from './animations/variants';
 
-const ServicesSection = styled.section`
-  padding: 6rem 0;
-  background-color: white;
+const Section = styled.section`
+  padding: var(--section-padding) 0;
+  background-color: var(--bg);
 `;
 
 const Container = styled.div`
-  max-width: 1280px;
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--container-padding);
 `;
 
 const SectionHeader = styled.div`
-  text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3.5rem;
+  max-width: 600px;
+`;
+
+const Eyebrow = styled.span`
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 1rem;
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+  font-weight: 700;
+  color: var(--text);
   margin-bottom: 1rem;
-  color: var(--dark);
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.25rem;
-  color: var(--gray);
-  max-width: 700px;
-  margin: 0 auto;
+  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
+  color: var(--text-muted);
+  line-height: 1.7;
 `;
 
-const ServicesGrid = styled.div`
+const BentoGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
-  
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
 
 const ServiceCard = styled(motion.div)`
-  background-color: white;
-  border-radius: 0.75rem;
+  position: relative;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+  grid-column: span 1;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 1024px) {
+    grid-column: ${props => props.$featured ? 'span 2' : 'span 1'};
+  }
+
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--border-hover);
+    background-color: var(--bg-subtle);
+    transform: translateY(-2px);
+
+    .card-image img {
+      transform: scale(1.05);
+    }
   }
 `;
 
-const ServiceIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  /* background-color: var(--primary-light); // Removed background for emoji */
-  border-radius: 0.75rem;
-  /* color: var(--primary); // Color not needed for emoji */
-  margin-bottom: 1.5rem;
-  font-size: 2.5rem; /* Adjusted font size for emojis */
+const CardImageWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to top, var(--bg-elevated), transparent);
+    z-index: 1;
+  }
+
+  img {
+    transition: transform 0.4s ease;
+  }
 `;
 
-const ServiceContent = styled.div`
-  padding: 2rem;
+const CardContent = styled.div`
+  padding: 1.25rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const IconWrapper = styled.div`
+  color: var(--accent);
+  margin-bottom: 1.25rem;
 `;
 
 const ServiceTitle = styled.h3`
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  color: var(--dark);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.75rem;
 `;
 
 const ServiceDescription = styled.p`
-  color: var(--gray);
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
 `;
 
-const ServiceLink = styled.a`
+const LearnMore = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: none;
-  transition: gap 0.3s ease;
-  
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);
+  transition: gap var(--transition-fast);
+
   &:hover {
-    gap: 0.75rem;
+    gap: 0.625rem;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
   }
 `;
 
-const services = [
-  {
-    id: "ai-powered-software",
-    title: "AI Powered Software",
-    description: "We integrate cutting-edge artificial intelligence to create smart applications that evolve with your business. Our AI solutions learn from data and improve over time.",
-    icon: "🧠"
-  },
-  {
-    id: "web-development",
-    title: "Websites & Web Platforms",
-    description: "From responsive websites to complex web applications, we build fast, secure, and scalable digital experiences using the latest web technologies.",
-    icon: "🖥️"
-  },
-  {
-    id: "mobile-app-development",
-    title: "Mobile Apps",
-    description: "Create engaging mobile experiences for iOS and Android with native or cross-platform apps that deliver performance and user satisfaction.",
-    icon: "📱"
-  },
-  {
-    id: "data-analytics",
-    title: "Data Analytics",
-    description: "Turn raw data into actionable insights with custom analytics solutions that help you make informed decisions and identify new opportunities.",
-    icon: "📊"
-  },
-  {
-    id: "business-intelligence",
-    title: "Business Intelligence",
-    description: "Comprehensive BI solutions that integrate with your business systems to provide real-time dashboards, reports, and strategic insights.",
-    icon: "📈"
-  },
-  {
-    id: "ai-ml-integration",
-    title: "AI & Machine Learning Integration",
-    description: "Enhance your existing systems with AI capabilities, from natural language processing to computer vision and predictive analytics.",
-    icon: "🤖"
-  },
-  {
-    id: "data-management",
-    title: "Data Management",
-    description: "Robust data management solutions that ensure data quality, security, and accessibility across your organization.",
-    icon: "💾"
-  },
-  {
-    id: "webhosting",
-    title: "Webhosting",
-    description: "Reliable, secure, and scalable hosting solutions tailored to your application's specific requirements for optimal performance.",
-    icon: "🌐"
-  },
-  {
-    id: "process-automation",
-    title: "Process Automation",
-    description: "Streamline business operations by automating repetitive tasks and workflows, saving time and reducing errors.",
-    icon: "⚙️"
-  },
-  {
-    id: "ux-ui-design",
-    title: "UX/UI Design",
-    description: "User-centered design solutions that create intuitive, accessible, and engaging experiences across all digital touchpoints.",
-    icon: "🎨"
-  },
-  {
-    id: "branding",
-    title: "Branding & Visual Identity",
-    description: "Comprehensive branding services that help you build a strong, cohesive visual identity that resonates with your target audience.",
-    icon: "🎭"
-  },
-  {
-    id: "digital-growth",
-    title: "Digital Growth & Performance",
-    description: "Strategies and solutions to optimize your digital presence, improve conversion rates, and maximize ROI across all online channels.",
-    icon: "📈"
-  }
-];
-
 const Services = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.05 });
 
   return (
-    <ServicesSection id="services">
+    <Section id="services">
       <Container>
         <SectionHeader>
-          <Title>Our Services</Title>
+          <Eyebrow>What We Do</Eyebrow>
+          <Title>Services built for ambitious teams</Title>
           <Subtitle>
-            We offer a comprehensive range of services to help your business succeed in the digital world
+            From AI-powered software to stunning design, we offer everything you need to succeed in the digital world.
           </Subtitle>
         </SectionHeader>
-        
-        <motion.div
+
+        <BentoGrid
           ref={ref}
-          variants={containerVariants}
+          variants={staggerContainer(0.06)}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          animate={inView ? 'visible' : 'hidden'}
         >
-          <ServicesGrid>
-            {services.map((service) => (
-              <ServiceCard key={service.id} variants={itemVariants}>
-                <ServiceContent>
-                  <ServiceIcon>{service.icon}</ServiceIcon>
-                  <ServiceTitle>{service.title}</ServiceTitle>
-                  <ServiceDescription>{service.description}</ServiceDescription>
-                  <Link href={`/services/${service.id}`} passHref legacyBehavior>
-                    <ServiceLink>
+          {services.map((service) => {
+            const Icon = getServiceIcon(service.iconName);
+            return (
+              <Link key={service.id} href={service.link} style={{ textDecoration: 'none' }}>
+                <ServiceCard
+                  variants={fadeInUp}
+                  $featured={service.featured}
+                >
+                  {service.image && (
+                    <CardImageWrapper className="card-image">
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </CardImageWrapper>
+                  )}
+                  <CardContent>
+                    <IconWrapper>
+                      <Icon size={28} />
+                    </IconWrapper>
+                    <ServiceTitle>{service.title}</ServiceTitle>
+                    <ServiceDescription>
+                      {service.featured ? service.description : service.shortDescription}
+                    </ServiceDescription>
+                    <LearnMore>
                       Learn more
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                       </svg>
-                    </ServiceLink>
-                  </Link>
-                </ServiceContent>
-              </ServiceCard>
-            ))}
-          </ServicesGrid>
-        </motion.div>
+                    </LearnMore>
+                  </CardContent>
+                </ServiceCard>
+              </Link>
+            );
+          })}
+        </BentoGrid>
       </Container>
-    </ServicesSection>
+    </Section>
   );
 };
 
-export default Services; 
+export default Services;

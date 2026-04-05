@@ -1,186 +1,168 @@
 import React from 'react';
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import styled from 'styled-components';
+import Image from 'next/image';
+import { staggerContainer, fadeInUp } from './animations/variants';
 
-const TeamSection = styled.section`
-  padding: 5rem 0;
-  background-color: var(--light);
+const Section = styled.section`
+  padding: var(--section-padding) 0;
+  background-color: var(--bg-subtle);
 `;
 
 const Container = styled.div`
-  max-width: 1280px;
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--container-padding);
 `;
 
 const SectionHeader = styled.div`
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3.5rem;
+`;
+
+const Eyebrow = styled.span`
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 1rem;
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 1rem;
 `;
 
 const Subtitle = styled.p`
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  max-width: 600px;
+  font-size: clamp(0.9375rem, 1vw, 1.0625rem);
+  color: var(--text-muted);
+  max-width: 550px;
   margin: 0 auto;
+  line-height: 1.7;
 `;
 
-const TeamGrid = styled.div`
+const TeamGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
-  max-width: 1000px;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 800px;
   margin: 0 auto;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
-const TeamMemberCard = styled(motion.div)`
-  background: white;
-  border-radius: 1rem;
+const MemberCard = styled(motion.div)`
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--border-hover);
+    transform: translateY(-4px);
+  }
+
+  @media (max-width: 639px) {
+    order: ${props => props.$mobileOrder ?? 0};
   }
 `;
 
-const MemberImage = styled.div`
-  width: 100%;
-  height: 280px;
+const ImageWrapper = styled.div`
   position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: linear-gradient(45deg, #f3f4f6, #ffffff);
-  
+  background-color: var(--bg);
+
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transition: all 0.4s ease;
-    padding: 1rem;
+    transition: transform var(--transition-slow);
   }
-  
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      45deg,
-      rgba(59, 130, 246, 0.1),
-      rgba(147, 197, 253, 0.1)
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  ${TeamMemberCard}:hover & {
-    img {
-      transform: scale(1.05);
-    }
-    
-    &:after {
-      opacity: 1;
-    }
+
+  ${MemberCard}:hover & img {
+    transform: scale(1.03);
   }
 `;
 
 const MemberInfo = styled.div`
   padding: 1.5rem;
   text-align: center;
-  background: white;
-  transition: background-color 0.3s ease;
-  
-  ${TeamMemberCard}:hover & {
-    background-color: #f8fafc;
-  }
 `;
 
 const MemberName = styled.h3`
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  transition: color 0.3s ease;
-  
-  ${TeamMemberCard}:hover & {
-    color: var(--primary);
-  }
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.25rem;
 `;
 
-const MemberPosition = styled.p`
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin-bottom: 0;
-  transition: color 0.3s ease;
+const MemberRole = styled.p`
+  font-size: 0.875rem;
+  color: var(--text-muted);
 `;
+
+const team = [
+  {
+    name: 'Aline Bornschein',
+    role: 'Founder & Machine Learning Engineer',
+    image: '/images/aline3.png',
+  },
+  {
+    name: 'George Beard',
+    role: 'Founder & Fullstack Developer',
+    image: '/images/geroge.png',
+  },
+];
 
 const Team = () => {
-  const teamMembers = [
-    {
-      id: 1,
-      name: 'George Beard',
-      position: 'Founder & Fullstack Developer',
-      image: '/images/geroge.png'
-    }
-  ];
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <TeamSection id="team">
+    <Section id="team">
       <Container>
         <SectionHeader>
-          <Title>Our Team</Title>
-          <Subtitle>Meet the talented individuals behind our success</Subtitle>
+          <Eyebrow>Our Team</Eyebrow>
+          <Title>The people behind the code</Title>
+          <Subtitle>
+            A lean, senior team that ships fast and cares deeply about the craft.
+          </Subtitle>
         </SectionHeader>
-        
-        <TeamGrid>
-          <TeamMemberCard
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            <MemberImage>
-              <img src="/images/aline3.png" alt="Aline Bornschein" />
-            </MemberImage>
-            <MemberInfo>
-              <MemberName>Aline Bornschein</MemberName>
-              <MemberPosition>Founder & Machine Learning Engineer</MemberPosition>
-            </MemberInfo>
-          </TeamMemberCard>
 
-          {teamMembers.map((member) => (
-            <TeamMemberCard
-              key={member.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: member.id * 0.1 }}
-              viewport={{ once: true }}
-            >
-              <MemberImage>
-                <img src={member.image} alt={member.name} />
-              </MemberImage>
+        <TeamGrid
+          ref={ref}
+          variants={staggerContainer(0.15)}
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+        >
+          {team.map((member, index) => (
+            <MemberCard key={member.name} variants={fadeInUp} $mobileOrder={index === 1 ? -1 : 0}>
+              <ImageWrapper>
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, 400px"
+                  style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                />
+              </ImageWrapper>
               <MemberInfo>
                 <MemberName>{member.name}</MemberName>
-                <MemberPosition>{member.position}</MemberPosition>
+                <MemberRole>{member.role}</MemberRole>
               </MemberInfo>
-            </TeamMemberCard>
+            </MemberCard>
           ))}
         </TeamGrid>
       </Container>
-    </TeamSection>
+    </Section>
   );
 };
 
-export default Team; 
+export default Team;

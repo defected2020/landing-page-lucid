@@ -4,25 +4,15 @@ import styled from 'styled-components';
 
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
+import TrustedBy from '../components/TrustedBy';
 import Services from '../components/Services';
+import FeaturedWork from '../components/FeaturedWork';
+import Process from '../components/Process';
+import Testimonial from '../components/Testimonial';
 import Team from '../components/Team';
-import Vision from '../components/Vision';
-import Clients from '../components/Clients';
-import Journey from '../components/Journey';
+import CTABanner from '../components/CTABanner';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
-
-const GlobalStyle = styled.div`
-  --primary: #3b82f6;
-  --primary-light: #93c5fd;
-  --primary-dark: #1d4ed8;
-  --dark: #1e293b;
-  --gray: #64748b;
-  --light-gray: #e2e8f0;
-  --light: #f8fafc;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-`;
 
 const MainContent = styled.main`
   overflow-x: hidden;
@@ -41,12 +31,12 @@ export default function Home() {
   }, []);
 
   return (
-    <GlobalStyle>
+    <>
       <Head>
-        <title>Lucid Code Labs Software - Software Development Company</title>
+        <title>Lucid Code Labs — Software Development Agency</title>
         <meta
           name="description"
-          content="Professional software development services including AI solutions, web development, mobile apps, and more."
+          content="We build intelligent, scalable software — from AI-powered platforms to stunning web and mobile experiences. Berlin-based, working globally."
         />
         <link rel="icon" href="/images/lucid-logo.png" type="image/png" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,14 +46,16 @@ export default function Home() {
 
       <MainContent>
         <Hero />
+        <TrustedBy />
         <Services />
+        <FeaturedWork />
+        <Process />
+        <Testimonial />
         <Team />
-        <Vision />
-        <Clients />
-        <Journey />
+        <CTABanner />
         <Contact />
         <Footer />
       </MainContent>
-    </GlobalStyle>
+    </>
   );
 }

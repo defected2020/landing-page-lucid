@@ -1,167 +1,176 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import PageHero from '../../components/PageHero';
 import { portfolioProjects } from '../../data/portfolioProjects';
-
-const PageContainer = styled.div`
-  --primary: #2563eb;
-  --primary-dark: #1e40af;
-  --text-dark: #1f2937;
-  --text-light: #6b7280;
-  --background-light: #f9fafb;
-  min-height: 100vh;
-`;
-
-const HeroSection = styled.section`
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  box-sizing: border-box;
-  padding: 10.5rem 2rem 4rem;
-  color: white;
-  text-align: center;
-`;
-
-const SectionContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-`;
-
-const Breadcrumbs = styled.div`
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-  a {
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-  span {
-    margin: 0 0.5rem;
-    color: rgba(255, 255, 255, 0.55);
-  }
-`;
-
-const Title = styled.h1`
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  margin-bottom: 1rem;
-`;
-
-const Subtitle = styled.p`
-  font-size: 1.2rem;
-  max-width: 640px;
-  margin: 0 auto;
-  line-height: 1.6;
-  opacity: 0.9;
-`;
+import { staggerContainer, fadeInUp } from '../../components/animations/variants';
 
 const GridSection = styled.section`
-  padding: 4rem 2rem 6rem;
-  background: var(--background-light);
+  padding: var(--section-padding) 0;
+  background-color: var(--bg);
 `;
 
-const Grid = styled.div`
+const Container = styled.div`
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+`;
+
+const Grid = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
-  max-width: 1100px;
-  margin: 0 auto;
+
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
+
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
   }
 `;
 
 const Card = styled(motion.article)`
-  background: white;
-  border-radius: 0.75rem;
-  padding: 1.75rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
-  height: 100%;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+
+  &:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+  }
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--bg-subtle);
+
+  img {
+    transition: transform var(--transition-slow);
+  }
+
+  ${Card}:hover & img {
+    transform: scale(1.03);
+  }
+`;
+
+const CardContent = styled.div`
+  padding: 1.5rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
 `;
 
 const CardTitle = styled.h2`
   font-size: 1.25rem;
-  color: var(--text-dark);
-  margin: 0 0 0.5rem;
   font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
 `;
 
 const CardTagline = styled.p`
-  font-size: 0.9375rem;
-  color: var(--text-light);
-  line-height: 1.55;
-  margin: 0 0 1.25rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
   flex: 1;
 `;
 
 const CardLink = styled.span`
-  font-weight: 600;
-  color: var(--primary);
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  transition: gap var(--transition-fast);
+
+  &:hover {
+    gap: 0.625rem;
+  }
 `;
 
 export default function WorkIndexPage() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <PageContainer>
+    <>
       <Head>
-        <title>Our Work — Case studies | Lucid Code Labs</title>
-        <meta
-          name="description"
-          content="Selected client projects and case studies from Lucid Code Labs."
-        />
+        <title>Our Work — Case Studies | Lucid Code Labs</title>
+        <meta name="description" content="Selected client projects and case studies from Lucid Code Labs." />
       </Head>
-      <Navbar />
-      <HeroSection>
-        <SectionContainer>
-          <Breadcrumbs>
-            <Link href="/">Home</Link>
-            <span>/</span>
-            <span style={{ color: 'rgba(255,255,255,0.75)' }}>Our Work</span>
-          </Breadcrumbs>
-          <Title>Our Work</Title>
-          <Subtitle>
-            A selection of projects we have delivered—each with its own goals, constraints, and outcomes.
-          </Subtitle>
-        </SectionContainer>
-      </HeroSection>
+
+      <Navbar scrolled={scrolled} />
+
+      <PageHero
+        title="Our Work"
+        subtitle="A selection of projects we have delivered — each with its own goals, constraints, and outcomes."
+        breadcrumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Our Work' },
+        ]}
+      />
 
       <GridSection>
-        <SectionContainer>
-          <Grid>
-            {portfolioProjects.map((project, index) => (
+        <Container>
+          <Grid
+            variants={staggerContainer(0.08)}
+            initial="hidden"
+            animate="visible"
+          >
+            {portfolioProjects.map((project) => (
               <Link
                 key={project.slug}
                 href={`/work/${project.slug}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                <Card
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
-                >
-                  <CardTitle>{project.name}</CardTitle>
-                  <CardTagline>{project.tagline}</CardTagline>
-                  <CardLink>View case study →</CardLink>
+                <Card variants={fadeInUp}>
+                  <ImageWrapper>
+                    <Image
+                      src={project.screenshots[0].src}
+                      alt={project.screenshots[0].alt}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </ImageWrapper>
+                  <CardContent>
+                    <CardTitle>{project.name}</CardTitle>
+                    <CardTagline>{project.tagline}</CardTagline>
+                    <CardLink>
+                      View case study
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </CardLink>
+                  </CardContent>
                 </Card>
               </Link>
             ))}
           </Grid>
-        </SectionContainer>
+        </Container>
       </GridSection>
 
       <Footer />
-    </PageContainer>
+    </>
   );
 }

@@ -1,9 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import services from '../data/services';
+import { getServiceIcon } from './icons/ServiceIcons';
+import { useTheme } from '../contexts/ThemeContext';
+
+/* ─── Layout ─── */
 
 const NavbarContainer = styled.nav`
   position: fixed;
@@ -11,18 +16,19 @@ const NavbarContainer = styled.nav`
   left: 0;
   width: 100%;
   z-index: 1000;
-  transition: all 0.3s ease;
-  background-color: ${props => props.$scrolled ? 'white' : 'rgba(29, 78, 216, 0.15)'};
-  backdrop-filter: ${props => props.$scrolled ? 'none' : 'blur(10px)'};
-  box-shadow: ${props => props.$scrolled ? '0 4px 6px rgba(0, 0, 0, 0.1)' : 'none'};
+  transition: background-color var(--transition-medium), border-color var(--transition-medium);
+  background-color: ${props => props.$scrolled ? 'var(--navbar-bg)' : 'transparent'};
+  backdrop-filter: ${props => props.$scrolled ? 'blur(16px) saturate(180%)' : 'none'};
+  border-bottom: 1px solid ${props => props.$scrolled ? 'var(--navbar-border)' : 'transparent'};
 `;
 
 const NavInner = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  max-width: 1280px;
+  padding: 0 var(--container-padding);
+  height: 72px;
+  max-width: var(--container-max);
   margin: 0 auto;
 `;
 
@@ -35,199 +41,272 @@ const Logo = styled.div`
 
 const NavLinks = styled.div`
   display: none;
-  
+
   @media (min-width: 768px) {
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    gap: 2.5rem;
   }
 `;
+
+/* ─── Nav Items ─── */
 
 const NavItem = styled.div`
   position: relative;
 `;
 
-const ServicesDropdownWrapper = styled.div`
-  position: relative;
-`;
-
-const ServicesButton = styled.div`
-  display: flex;
-  align-items: center;
+const NavLink = styled.span`
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: ${props => props.$heroLight ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)'};
   cursor: pointer;
-  color: ${props => props.$scrolled ? 'var(--dark)' : 'white'};
-  transition: color 0.3s ease;
-  
+  position: relative;
+  transition: color var(--transition-fast);
+  padding: 0.25rem 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
   &:hover {
-    color: var(--primary);
+    color: ${props => props.$heroLight ? '#ffffff' : 'var(--text)'};
   }
-  
+
   &::after {
     content: '';
     position: absolute;
-    bottom: -0.5rem;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary);
-    transition: width 0.3s ease;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: ${props => props.$active ? '4px' : '0'};
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    transition: width var(--transition-fast);
   }
-  
+
   &:hover::after {
-    width: 100%;
+    width: 4px;
   }
 `;
 
-const DropdownIcon = styled.span`
-  margin-left: 0.25rem;
-  font-size: 0.75rem;
-  transition: transform 0.3s ease;
+const ChevronIcon = styled.span`
+  display: inline-flex;
+  transition: transform var(--transition-fast);
   transform: ${props => props.$open ? 'rotate(180deg)' : 'rotate(0)'};
+
+  svg {
+    width: 10px;
+    height: 10px;
+  }
 `;
 
-const ServicesDropdown = styled(motion.div)`
+const ContactButton = styled.span`
+  display: none;
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid ${props => props.$heroLight ? 'rgba(255,255,255,0.3)' : 'var(--border)'};
+  color: ${props => props.$heroLight ? 'rgba(255,255,255,0.9)' : 'var(--text-muted)'};
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+
+  &:hover {
+    background-color: var(--accent);
+    border-color: transparent;
+    color: white;
+    transform: scale(1.02);
+  }
+
+  @media (min-width: 768px) {
+    display: inline-block;
+  }
+`;
+
+/* ─── Theme Toggle ─── */
+
+const ThemeToggleButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid ${props => props.$heroLight ? 'rgba(255,255,255,0.3)' : 'var(--border)'};
+  background: transparent;
+  color: ${props => props.$heroLight ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)'};
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${props => props.$heroLight ? '#ffffff' : 'var(--text)'};
+    border-color: ${props => props.$heroLight ? 'rgba(255,255,255,0.5)' : 'var(--border-hover)'};
+    background-color: ${props => props.$heroLight ? 'rgba(255,255,255,0.1)' : 'var(--hover-overlay)'};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const SunIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5" />
+    <line x1="12" y1="1" x2="12" y2="3" />
+    <line x1="12" y1="21" x2="12" y2="23" />
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+    <line x1="1" y1="12" x2="3" y2="12" />
+    <line x1="21" y1="12" x2="23" y2="12" />
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+  </svg>
+);
+
+/* ─── Mega Dropdown ─── */
+
+const DropdownWrapper = styled.div`
+  position: relative;
+`;
+
+const DropdownPanel = styled(motion.div)`
   position: absolute;
-  top: calc(100% + 1rem);
-  left: -36px;
-  transform: none;
-  width: 760px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  top: calc(100% + 1.25rem);
+  right: -200px;
+  width: 680px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
   z-index: 1000;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  
+  gap: 2px;
+  box-shadow: var(--shadow-dropdown);
+  backdrop-filter: blur(20px);
+
   &::before {
     content: '';
     position: absolute;
-    top: -2px;
-    left: 12%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 16px;
-    height: 16px;
-    background: white;
+    top: -6px;
+    left: 60px;
+    transform: rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
   }
 `;
 
-const DesktopServiceCard = styled.div`
+const DropdownHitArea = styled.div`
+  position: absolute;
+  top: 100%;
+  left: -200px;
+  width: 700px;
+  height: 1.5rem;
+`;
+
+const ServiceDropdownItem = styled.div`
   display: flex;
   align-items: flex-start;
-  padding: 1rem;
-  border-radius: 8px;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-decoration: none;
-  
+  transition: background-color var(--transition-fast);
+
   &:hover {
-    background-color: rgba(37, 99, 235, 0.05);
+    background-color: var(--hover-overlay);
   }
 `;
 
-const DesktopServiceIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background-color: #4A90E2;
+const ServiceIconWrapper = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-muted);
+  color: var(--accent);
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1.125rem;
-  color: white;
-  margin-right: 1rem;
+  justify-content: center;
   flex-shrink: 0;
+  margin-top: 1px;
 `;
 
-const DesktopServiceContent = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
+const ServiceInfo = styled.div``;
 
-const DesktopServiceTitle = styled.h3`
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--dark);
-  margin: 0 0 0.25rem 0;
-`;
-
-const DesktopServiceDescription = styled.p`
+const ServiceName = styled.div`
+  font-family: var(--font-display);
   font-size: 0.8125rem;
-  color: var(--gray);
-  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.2rem;
+  line-height: 1.3;
+`;
+
+const ServiceDesc = styled.div`
+  font-size: 0.6875rem;
+  color: var(--text-subtle);
   line-height: 1.4;
 `;
 
-const NavLink = styled.div`
-  font-weight: 500;
-  cursor: pointer;
-  position: relative;
-  color: ${props => props.$scrolled ? 'var(--dark)' : 'white'};
-  transition: color 0.3s ease;
-  text-decoration: none;
-  
-  &:hover {
-    color: var(--primary);
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -0.5rem;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary);
-    transition: width 0.3s ease;
-  }
-  
-  &:hover::after,
-  &.active::after {
-    width: 100%;
-  }
-`;
-
-const ContactButton = styled.div`
-  display: none;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background-color: var(--primary-dark);
-  }
-  
-  @media (min-width: 768px) {
-    display: block;
-  }
-`;
+/* ─── Mobile ─── */
 
 const MobileMenuButton = styled.button`
   background: none;
   border: none;
-  color: ${props => props.$scrolled ? 'var(--dark)' : 'white'};
-  font-size: 1.5rem;
+  color: ${props => props.$heroLight ? '#ffffff' : 'var(--text)'};
   cursor: pointer;
   z-index: 1001;
-  
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
   @media (min-width: 768px) {
     display: none;
   }
 `;
 
+const HamburgerSVG = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="17" x2="20" y2="17" />
+  </svg>
+);
+
+const CloseSVG = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+    <line x1="6" y1="6" x2="18" y2="18" />
+    <line x1="18" y1="6" x2="6" y2="18" />
+  </svg>
+);
+
 const MobileMenu = styled(motion.div)`
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   width: 100%;
   height: 100vh;
-  background-color: #1A1E26;
+  height: 100dvh;
+  background-color: var(--bg);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -238,453 +317,334 @@ const MobileMenuHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 var(--container-padding);
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 `;
 
-const MobileMenuLogo = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-`;
-
-const MobileNavItems = styled.div`
+const MobileNavItems = styled.nav`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  padding: 2rem var(--container-padding);
+  gap: 0.5rem;
 `;
 
-const MobileNavItem = styled.div`
-  width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const MobileNavLink = styled.div`
-  display: block;
-  width: 100%;
-  padding: 1.25rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
+const MobileNavLink = styled.span`
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  text-align: left;
-  text-decoration: none;
-  
+  transition: color var(--transition-fast);
+  display: block;
+  padding: 0.5rem 0;
+
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: white;
+    color: var(--accent);
   }
 `;
 
-const ExpandableNavItem = styled(MobileNavItem)`
-  display: block;
-  cursor: pointer;
-`;
-
-const ExpandableNavHeader = styled.div`
+const MobileServicesToggle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  padding: 1.25rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  transition: background-color 0.3s ease;
-  
+  cursor: pointer;
+  padding: 0.5rem 0;
+`;
+
+const MobileServicesGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  padding: 0.75rem 0;
+`;
+
+const MobileServiceLink = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--hover-overlay);
   }
 `;
 
-const ExpandIcon = styled.span`
-  transition: transform 0.3s ease;
-  transform: ${props => props.$expanded ? 'rotate(180deg)' : 'rotate(0)'};
-`;
-
-const ServicesGrid = styled(motion.div)`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 0.75rem;
-`;
-
-const ServiceIcon = styled.div`
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  background-color: #4A90E2;
+const MobileServiceIcon = styled.div`
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1rem;
-  color: white;
-  margin-right: 0.75rem;
+  justify-content: center;
+  flex-shrink: 0;
 `;
 
-const ServiceTitle = styled.h3`
+const MobileServiceName = styled.span`
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+`;
+
+const MobileDivider = styled.div`
+  height: 1px;
+  background-color: var(--border);
+  margin: 0.5rem 0;
+`;
+
+const MobileContactButton = styled.span`
+  display: inline-block;
+  margin-top: 1rem;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 999px;
+  background-color: var(--accent);
   color: white;
-  margin: 0;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-medium);
+
+  &:hover {
+    background-color: var(--accent-hover);
+  }
 `;
+
+const MobileThemeRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+`;
+
+const MobileThemeLabel = styled.span`
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+`;
+
+/* ─── Component ─── */
 
 const Navbar = ({ scrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesExpanded, setServicesExpanded] = useState(false);
-  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const dropdownTimeoutRef = useRef(null);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownTimeout = useRef(null);
   const router = useRouter();
-  
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    if (!mobileMenuOpen) {
-      setServicesExpanded(false);
+  const { isDark, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
-  };
-  
-  const toggleServicesExpanded = () => {
-    setServicesExpanded(!servicesExpanded);
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setDropdownOpen(false);
+    setMobileMenuOpen(false);
+  }, [router.asPath]);
+
+  const handleMouseEnter = () => {
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+    setDropdownOpen(true);
   };
 
-  const toggleDesktopDropdown = () => {
-    setDesktopDropdownOpen(!desktopDropdownOpen);
+  const handleMouseLeave = () => {
+    dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 200);
   };
 
-  // Custom click handler for smooth scrolling when on home page
+  useEffect(() => {
+    return () => { if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current); };
+  }, []);
+
   const handleSectionClick = (e, sectionId) => {
     if (router.pathname === '/') {
       e.preventDefault();
       const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
-    // If not on home page, let Next.js Link handle navigation
   };
 
-  // Improved hover handlers with delay
-  const handleMouseEnter = () => {
-    if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current);
-    }
-    setDesktopDropdownOpen(true);
-  };
+  const isActive = (path) => router.pathname === path || router.asPath.startsWith(path + '/');
 
-  const handleMouseLeave = () => {
-    dropdownTimeoutRef.current = setTimeout(() => {
-      setDesktopDropdownOpen(false);
-    }, 150); // 150ms delay
-  };
+  // In light mode on homepage, when not scrolled, nav sits over the dark hero image — use white text
+  const heroLight = router.pathname === '/' && !isDark && !scrolled;
+  const logoSrc = heroLight ? '/images/lucid-logo-white.png' : (isDark ? '/images/lucid-logo-white.png' : '/images/lucid-logo.png');
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDesktopDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      if (dropdownTimeoutRef.current) {
-        clearTimeout(dropdownTimeoutRef.current);
-      }
-    };
-  }, []);
-  
-  const services = [
-    {
-      icon: "🧠",
-      title: "AI Powered Software",
-      description: "Smart applications that evolve with your business using artificial intelligence.",
-      link: "/services/ai-powered-software"
-    },
-    {
-      icon: "🖥️",
-      title: "Websites & Web Platforms",
-      description: "Fast, secure, and scalable digital experiences for your business.",
-      link: "/services/web-development"
-    },
-    {
-      icon: "📱",
-      title: "Mobile Apps",
-      description: "Native and cross-platform apps for iOS and Android with exceptional performance.",
-      link: "/services/mobile-app-development"
-    },
-    {
-      icon: "📊",
-      title: "Data Analytics",
-      description: "Turn raw data into actionable insights with custom analytics solutions.",
-      link: "/services/data-analytics"
-    },
-    {
-      icon: "📈",
-      title: "Business Intelligence",
-      description: "Real-time dashboards and reports integrated with your business systems.",
-      link: "/services/business-intelligence"
-    },
-    {
-      icon: "🤖",
-      title: "AI & Machine Learning",
-      description: "Enhance systems with AI capabilities, from NLP to computer vision.",
-      link: "/services/ai-ml-integration"
-    },
-    {
-      icon: "💾",
-      title: "Data Management",
-      description: "Ensure data quality, security, and accessibility across your organization.",
-      link: "/services/data-management"
-    },
-    {
-      icon: "🌐",
-      title: "Webhosting",
-      description: "Reliable hosting solutions tailored to your application's requirements.",
-      link: "/services/webhosting"
-    },
-    {
-      icon: "⚙️",
-      title: "Process Automation",
-      description: "Streamline operations by automating repetitive tasks and workflows.",
-      link: "/services/process-automation"
-    },
-    {
-      icon: "🎨",
-      title: "UX/UI Design",
-      description: "Create intuitive, accessible experiences across all digital touchpoints.",
-      link: "/services/ux-ui-design"
-    },
-    {
-      icon: "🎭",
-      title: "Branding & Visual Identity",
-      description: "Build a strong, cohesive visual identity that resonates with your audience.",
-      link: "/services/branding"
-    },
-    {
-      icon: "📈",
-      title: "Digital Growth & Performance",
-      description: "Optimize digital presence and maximize ROI across all online channels.",
-      link: "/services/digital-growth"
-    }
-  ];
-  
   return (
     <NavbarContainer $scrolled={scrolled}>
       <NavInner>
         <NextLink href="/">
           <Logo>
-            <Image src={scrolled ? "/images/lucid-logo.png" : "/images/lucid-logo-white.png"} alt="Lucid Code Labs Logo" width={150} height={40} priority />
+            <Image src={logoSrc} alt="Lucid Code Labs" width={140} height={38} priority />
           </Logo>
         </NextLink>
 
         <NavLinks>
-          <NavItem ref={dropdownRef}>
-            <ServicesDropdownWrapper 
+          {/* Services with mega dropdown */}
+          <NavItem>
+            <DropdownWrapper
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <ServicesButton 
-                $scrolled={scrolled} 
-                onClick={toggleDesktopDropdown}
-              >
-                Our Services
-                <DropdownIcon $open={desktopDropdownOpen}>▼</DropdownIcon>
-              </ServicesButton>
-              
+              <NextLink href="/services">
+                <NavLink $active={isActive('/services')} $heroLight={heroLight}>
+                  Services
+                  <ChevronIcon $open={dropdownOpen}>
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 4.5L6 7.5L9 4.5" />
+                    </svg>
+                  </ChevronIcon>
+                </NavLink>
+              </NextLink>
+
               <AnimatePresence>
-                {desktopDropdownOpen && (
-                  <ServicesDropdown
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {services.map((service, index) => (
-                      <NextLink 
-                        href={service.link} 
-                        key={index}
-                      >
-                        <DesktopServiceCard>
-                          <DesktopServiceIcon>{service.icon}</DesktopServiceIcon>
-                          <DesktopServiceContent>
-                            <DesktopServiceTitle>{service.title}</DesktopServiceTitle>
-                            <DesktopServiceDescription>{service.description}</DesktopServiceDescription>
-                          </DesktopServiceContent>
-                        </DesktopServiceCard>
-                      </NextLink>
-                    ))}
-                  </ServicesDropdown>
+                {dropdownOpen && (
+                  <>
+                    <DropdownHitArea />
+                    <DropdownPanel
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      {services.map((service) => {
+                        const Icon = getServiceIcon(service.iconName);
+                        return (
+                          <NextLink key={service.id} href={service.link}>
+                            <ServiceDropdownItem>
+                              <ServiceIconWrapper>
+                                <Icon size={16} />
+                              </ServiceIconWrapper>
+                              <ServiceInfo>
+                                <ServiceName>{service.title}</ServiceName>
+                                <ServiceDesc>{service.shortDescription}</ServiceDesc>
+                              </ServiceInfo>
+                            </ServiceDropdownItem>
+                          </NextLink>
+                        );
+                      })}
+                    </DropdownPanel>
+                  </>
                 )}
               </AnimatePresence>
-            </ServicesDropdownWrapper>
+            </DropdownWrapper>
           </NavItem>
 
           <NavItem>
             <NextLink href="/work">
-              <NavLink $scrolled={scrolled}>Our Work</NavLink>
+              <NavLink $active={isActive('/work')} $heroLight={heroLight}>Work</NavLink>
             </NextLink>
           </NavItem>
 
-          <NavItem>
-            <NextLink href="/#vision">
-              <NavLink 
-                $scrolled={scrolled}
-                onClick={(e) => handleSectionClick(e, 'vision')}
-              >
-                Our Vision
-              </NavLink>
-            </NextLink>
-          </NavItem>
-          <NavItem>
-            <NextLink href="/#journey">
-              <NavLink 
-                $scrolled={scrolled}
-                onClick={(e) => handleSectionClick(e, 'journey')}
-              >
-                Your Journey
-              </NavLink>
-            </NextLink>
-          </NavItem>
+          <ThemeToggleButton $heroLight={heroLight} onClick={toggleTheme} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
+            {isDark ? <SunIcon /> : <MoonIcon />}
+          </ThemeToggleButton>
+
+          <NextLink href="/#contact">
+            <ContactButton $heroLight={heroLight} onClick={(e) => handleSectionClick(e, 'contact')}>
+              Contact Us
+            </ContactButton>
+          </NextLink>
         </NavLinks>
-        
-        <NextLink href="/#contact">
-          <ContactButton 
-            onClick={(e) => handleSectionClick(e, 'contact')}
-          >
-            Contact Us
-          </ContactButton>
-        </NextLink>
-        
-        <MobileMenuButton onClick={toggleMobileMenu} $scrolled={scrolled}>
-          {mobileMenuOpen ? '' : '☰'}
+
+        <MobileMenuButton
+          $heroLight={heroLight}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {mobileMenuOpen ? <CloseSVG /> : <HamburgerSVG />}
         </MobileMenuButton>
       </NavInner>
-      
+
+      {/* ─── Mobile Menu ─── */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <MobileMenu
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <MobileMenuHeader>
-              <MobileMenuLogo>
-                <Image src="/images/lucid-logo.png" alt="Lucid Code Labs Logo" width={150} height={40} priority />
-              </MobileMenuLogo>
-              <CloseButton onClick={toggleMobileMenu}>✕</CloseButton>
+              <NextLink href="/" onClick={() => setMobileMenuOpen(false)}>
+                <Logo>
+                  <Image src={logoSrc} alt="Lucid Code Labs" width={140} height={38} priority />
+                </Logo>
+              </NextLink>
+              <MobileMenuButton onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
+                <CloseSVG />
+              </MobileMenuButton>
             </MobileMenuHeader>
-            
-            <MobileNavItems>
-              <ExpandableNavItem>
-                <ExpandableNavHeader onClick={toggleServicesExpanded}>
-                  Our Services
-                  <ExpandIcon $expanded={servicesExpanded}>▼</ExpandIcon>
-                </ExpandableNavHeader>
-                <AnimatePresence>
-                  {servicesExpanded && (
-                    <ServicesGrid
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {services.map((service, index) => (
-                        <NextLink 
-                          href={service.link} 
-                          key={index}
-                        >
-                          <div style={{ 
-                            display: 'flex',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            padding: '0.5rem 0.75rem',
-                            borderRadius: '6px',
-                            textDecoration: 'none',
-                            cursor: 'pointer'
-                          }}>
-                            <ServiceIcon>{service.icon}</ServiceIcon>
-                            <ServiceTitle>{service.title}</ServiceTitle>
-                          </div>
-                        </NextLink>
-                      ))}
-                    </ServicesGrid>
-                  )}
-                </AnimatePresence>
-              </ExpandableNavItem>
 
-              <MobileNavItem>
-                <NextLink href="/work">
-                  <MobileNavLink onClick={() => setMobileMenuOpen(false)}>
-                    Our Work
-                  </MobileNavLink>
-                </NextLink>
-              </MobileNavItem>
-              
-              <MobileNavItem>
-                <NextLink href="/#vision">
-                  <MobileNavLink 
-                    onClick={(e) => {
-                      handleSectionClick(e, 'vision');
-                      setMobileMenuOpen(false);
-                    }}
+            <MobileNavItems>
+              {/* Services expandable */}
+              <MobileServicesToggle onClick={() => setMobileServicesOpen(!mobileServicesOpen)}>
+                <MobileNavLink as="span">Services</MobileNavLink>
+                <ChevronIcon $open={mobileServicesOpen}>
+                  <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 4.5L6 7.5L9 4.5" />
+                  </svg>
+                </ChevronIcon>
+              </MobileServicesToggle>
+
+              <AnimatePresence>
+                {mobileServicesOpen && (
+                  <MobileServicesGrid
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
                   >
-                    Our Vision
-                  </MobileNavLink>
-                </NextLink>
-              </MobileNavItem>
-              
-              <MobileNavItem>
-                <NextLink href="/#journey">
-                  <MobileNavLink 
-                    onClick={(e) => {
-                      handleSectionClick(e, 'journey');
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Your Journey
-                  </MobileNavLink>
-                </NextLink>
-              </MobileNavItem>
-              
-              <MobileNavItem>
-                <NextLink href="/#contact">
-                  <MobileNavLink 
-                    onClick={(e) => {
-                      handleSectionClick(e, 'contact');
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Contact Us
-                  </MobileNavLink>
-                </NextLink>
-              </MobileNavItem>
+                    {services.map((service) => {
+                      const Icon = getServiceIcon(service.iconName);
+                      return (
+                        <NextLink key={service.id} href={service.link} onClick={() => setMobileMenuOpen(false)}>
+                          <MobileServiceLink>
+                            <MobileServiceIcon><Icon size={14} /></MobileServiceIcon>
+                            <MobileServiceName>{service.title}</MobileServiceName>
+                          </MobileServiceLink>
+                        </NextLink>
+                      );
+                    })}
+                  </MobileServicesGrid>
+                )}
+              </AnimatePresence>
+
+              <MobileDivider />
+
+              <NextLink href="/work" onClick={() => setMobileMenuOpen(false)}>
+                <MobileNavLink>Work</MobileNavLink>
+              </NextLink>
+
+              <MobileDivider />
+
+              <MobileThemeRow>
+                <MobileThemeLabel>{isDark ? 'Dark Mode' : 'Light Mode'}</MobileThemeLabel>
+                <ThemeToggleButton onClick={toggleTheme} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
+                  {isDark ? <SunIcon /> : <MoonIcon />}
+                </ThemeToggleButton>
+              </MobileThemeRow>
+
+              <MobileDivider />
+
+              <NextLink
+                href="/#contact"
+                onClick={(e) => {
+                  handleSectionClick(e, 'contact');
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <MobileContactButton>Contact Us</MobileContactButton>
+              </NextLink>
             </MobileNavItems>
           </MobileMenu>
         )}
@@ -693,4 +653,4 @@ const Navbar = ({ scrolled }) => {
   );
 };
 
-export default Navbar; 
+export default Navbar;
