@@ -39,7 +39,7 @@ const Label = styled.p`
 
   @media (max-width: 768px) {
     font-size: 0.625rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
   }
 `
 
@@ -79,11 +79,11 @@ const LogoItem = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: calc(100vw / 3);
+    width: 50vw;
     height: 36px;
 
     img {
-      transform: scale(0.45);
+      transform: scale(0.8);
     }
   }
 `
