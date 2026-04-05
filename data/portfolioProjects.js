@@ -4,6 +4,7 @@ export const portfolioProjects = [
   {
     slug: 'brahma-sutras',
     name: 'Brahma Sutras',
+    logo: '/images/logos/brahmsutras.png',
     url: 'https://www.brahmsutras.com',
     tagline: 'A refined digital presence for classical wisdom and commentary.',
     summary: [
@@ -23,6 +24,7 @@ export const portfolioProjects = [
   {
     slug: 'atma-shambhala',
     name: 'Atma Shambhala',
+    logo: '/images/logos/atmashambhala.png',
     url: 'https://www.atmashambhala.com',
     tagline: 'Immersive storytelling for a conscious brand.',
     summary: [
@@ -48,6 +50,7 @@ export const portfolioProjects = [
   {
     slug: 'loyalty-club-plc',
     name: 'Loyalty Club PLC',
+    logo: '/images/logos/loyalty.png',
     url: 'https://www.loyaltyclubplc.com',
     tagline: 'Enterprise-grade loyalty software and companion app, built for scale.',
     summary: [
@@ -66,6 +69,7 @@ export const portfolioProjects = [
   {
     slug: 'inner-sphere',
     name: 'Inner Sphere',
+    logo: '/images/logos/Innersphere.png',
     url: 'https://www.inner-sphere.net',
     tagline: 'A one-stop personal transformation app with habit tracking and mindfulness.',
     summary: [
@@ -83,6 +87,7 @@ export const portfolioProjects = [
   {
     slug: 'awakenest',
     name: 'Awakenest (Stayfly Studio)',
+    logo: '/images/logos/awakenist.png',
     url: 'https://www.stayflystudio.com/awakenest',
     tagline: 'A wellness festival in Thailand—community, program, and tickets in one flow.',
     summary: [

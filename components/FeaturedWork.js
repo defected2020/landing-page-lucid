@@ -109,7 +109,7 @@ const ImageWrapper = styled.div`
 
   @media (min-width: 768px) {
     aspect-ratio: auto;
-    min-height: 280px;
+    min-height: 340px;
   }
 `;
 
@@ -209,7 +209,7 @@ const FeaturedWork = () => {
                     alt={project.screenshots[0].alt}
                     fill
                     sizes="(max-width: 768px) 100vw, 60vw"
-                    style={{ objectFit: 'cover' }}
+                    style={{ objectFit: 'cover', objectPosition: 'center top' }}
                   />
                 </ImageWrapper>
                 <ProjectInfo>
