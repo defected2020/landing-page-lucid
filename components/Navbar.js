@@ -271,101 +271,127 @@ const MobileMenuButton = styled.button`
   border: none;
   color: ${props => props.$heroLight ? '#ffffff' : 'var(--text)'};
   cursor: pointer;
-  z-index: 1001;
+  z-index: 1002;
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  position: relative;
 
   @media (min-width: 768px) {
     display: none;
   }
 `;
 
-const HamburgerSVG = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-    <line x1="4" y1="7" x2="20" y2="7" />
-    <line x1="4" y1="12" x2="20" y2="12" />
-    <line x1="4" y1="17" x2="20" y2="17" />
-  </svg>
-);
+const HamburgerLine = styled(motion.span)`
+  display: block;
+  position: absolute;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  left: 8px;
+  right: 8px;
+`;
 
-const CloseSVG = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-    <line x1="6" y1="6" x2="18" y2="18" />
-    <line x1="18" y1="6" x2="6" y2="18" />
-  </svg>
-);
-
-const MobileMenu = styled(motion.div)`
+const MobileMenuOverlay = styled(motion.div)`
   position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   background-color: var(--bg);
-  z-index: 1000;
+  z-index: 1001;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 
-const MobileMenuHeader = styled.div`
+const MobileCloseButton = styled(motion.button)`
+  position: absolute;
+  top: 16px;
+  right: var(--container-padding);
+  width: 48px;
+  height: 48px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 var(--container-padding);
-  height: 72px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  cursor: pointer;
+  z-index: 1002;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+
+  &:hover {
+    border-color: var(--accent);
+    background-color: var(--hover-overlay);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 `;
 
 const MobileNavItems = styled.nav`
   display: flex;
   flex-direction: column;
-  padding: 2rem var(--container-padding);
-  gap: 0.5rem;
+  padding: 6rem var(--container-padding) 2rem;
+  flex: 1;
 `;
 
-const MobileNavLink = styled.span`
+const MobileNavLink = styled(motion.span)`
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--text);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  position: relative;
+  letter-spacing: -0.02em;
   transition: color var(--transition-fast);
-  display: block;
-  padding: 0.5rem 0;
 
   &:hover {
     color: var(--accent);
   }
 `;
 
-const MobileServicesToggle = styled.div`
+const NavNumber = styled.span`
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  min-width: 1.5rem;
+`;
+
+const MobileServicesToggle = styled(motion.div)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: 0;
 `;
 
 const MobileServicesGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.25rem;
-  padding: 0.75rem 0;
+  gap: 0.375rem;
+  padding: 0.5rem 0 0.5rem 2.25rem;
+  overflow: hidden;
 `;
 
-const MobileServiceLink = styled.div`
+const MobileServiceLink = styled(motion.div)`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
   border-radius: var(--radius-sm);
+  cursor: pointer;
   transition: background-color var(--transition-fast);
 
   &:hover {
@@ -374,8 +400,8 @@ const MobileServiceLink = styled.div`
 `;
 
 const MobileServiceIcon = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   color: var(--accent);
   display: flex;
   align-items: center;
@@ -389,19 +415,27 @@ const MobileServiceName = styled.span`
   color: var(--text-muted);
 `;
 
-const MobileDivider = styled.div`
-  height: 1px;
-  background-color: var(--border);
-  margin: 0.5rem 0;
+const MobileMenuFooter = styled.div`
+  padding: 1.5rem var(--container-padding) 2.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  flex-shrink: 0;
 `;
 
-const MobileContactButton = styled.span`
-  display: inline-block;
-  margin-top: 1rem;
+const MobileFooterRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const MobileContactButton = styled(motion.span)`
+  display: block;
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
-  padding: 0.75rem 2rem;
+  padding: 1rem 2rem;
   border-radius: 999px;
   background-color: var(--accent);
   color: white;
@@ -411,20 +445,24 @@ const MobileContactButton = styled.span`
 
   &:hover {
     background-color: var(--accent-hover);
+    transform: scale(1.02);
   }
 `;
 
-const MobileThemeRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 0;
-`;
-
 const MobileThemeLabel = styled.span`
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
+const AccentDot = styled(motion.span)`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  flex-shrink: 0;
 `;
 
 /* ─── Component ─── */
@@ -557,43 +595,52 @@ const Navbar = ({ scrolled }) => {
         </NavLinks>
 
         <MobileMenuButton
-          $heroLight={heroLight}
+          $heroLight={heroLight && !mobileMenuOpen}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          style={mobileMenuOpen ? { color: 'var(--text)' } : undefined}
         >
-          {mobileMenuOpen ? <CloseSVG /> : <HamburgerSVG />}
+          <HamburgerLine
+            animate={mobileMenuOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -6 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          />
+          <HamburgerLine
+            animate={mobileMenuOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+            transition={{ duration: 0.2 }}
+          />
+          <HamburgerLine
+            animate={mobileMenuOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 6 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          />
         </MobileMenuButton>
       </NavInner>
 
       {/* ─── Mobile Menu ─── */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <MobileMenu
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          <MobileMenuOverlay
+            initial={{ clipPath: 'circle(0% at calc(100% - 44px) 40px)' }}
+            animate={{ clipPath: 'circle(150% at calc(100% - 44px) 40px)' }}
+            exit={{ clipPath: 'circle(0% at calc(100% - 44px) 40px)' }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           >
-            <MobileMenuHeader>
-              <NextLink href="/" onClick={() => setMobileMenuOpen(false)}>
-                <Logo>
-                  <Image src={logoSrc} alt="Lucid Code Labs" width={140} height={38} priority />
-                </Logo>
-              </NextLink>
-              <MobileMenuButton onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
-                <CloseSVG />
-              </MobileMenuButton>
-            </MobileMenuHeader>
-
             <MobileNavItems>
               {/* Services expandable */}
               <MobileServicesToggle onClick={() => setMobileServicesOpen(!mobileServicesOpen)}>
-                <MobileNavLink as="span">Services</MobileNavLink>
-                <ChevronIcon $open={mobileServicesOpen}>
-                  <svg width="16" height="16" viewBox="0 0 12 12" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 4.5L6 7.5L9 4.5" />
-                  </svg>
-                </ChevronIcon>
+                <MobileNavLink
+                  as="span"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15, duration: 0.4 }}
+                >
+                  <NavNumber>01</NavNumber>
+                  Services
+                  <ChevronIcon $open={mobileServicesOpen}>
+                    <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 4.5L6 7.5L9 4.5" />
+                    </svg>
+                  </ChevronIcon>
+                </MobileNavLink>
               </MobileServicesToggle>
 
               <AnimatePresence>
@@ -602,13 +649,17 @@ const Navbar = ({ scrolled }) => {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   >
-                    {services.map((service) => {
+                    {services.map((service, i) => {
                       const Icon = getServiceIcon(service.iconName);
                       return (
                         <NextLink key={service.id} href={service.link} onClick={() => setMobileMenuOpen(false)}>
-                          <MobileServiceLink>
+                          <MobileServiceLink
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.04, duration: 0.25 }}
+                          >
                             <MobileServiceIcon><Icon size={14} /></MobileServiceIcon>
                             <MobileServiceName>{service.title}</MobileServiceName>
                           </MobileServiceLink>
@@ -619,22 +670,17 @@ const Navbar = ({ scrolled }) => {
                 )}
               </AnimatePresence>
 
-              <MobileDivider />
-
               <NextLink href="/work" onClick={() => setMobileMenuOpen(false)}>
-                <MobileNavLink>Work</MobileNavLink>
+                <MobileNavLink
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.25, duration: 0.4 }}
+                >
+                  <NavNumber>02</NavNumber>
+                  Work
+                  {isActive('/work') && <AccentDot layoutId="mobileActiveDot" />}
+                </MobileNavLink>
               </NextLink>
-
-              <MobileDivider />
-
-              <MobileThemeRow>
-                <MobileThemeLabel>{isDark ? 'Dark Mode' : 'Light Mode'}</MobileThemeLabel>
-                <ThemeToggleButton onClick={toggleTheme} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
-                  {isDark ? <SunIcon /> : <MoonIcon />}
-                </ThemeToggleButton>
-              </MobileThemeRow>
-
-              <MobileDivider />
 
               <NextLink
                 href="/#contact"
@@ -643,10 +689,38 @@ const Navbar = ({ scrolled }) => {
                   setMobileMenuOpen(false);
                 }}
               >
-                <MobileContactButton>Contact Us</MobileContactButton>
+                <MobileNavLink
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.35, duration: 0.4 }}
+                >
+                  <NavNumber>03</NavNumber>
+                  Contact
+                </MobileNavLink>
               </NextLink>
             </MobileNavItems>
-          </MobileMenu>
+
+            <MobileMenuFooter>
+              <MobileContactButton
+                as={motion.span}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.45, duration: 0.4 }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  router.push('/#contact');
+                }}
+              >
+                Start a Project
+              </MobileContactButton>
+              <MobileFooterRow>
+                <MobileThemeLabel>{isDark ? 'Dark Mode' : 'Light Mode'}</MobileThemeLabel>
+                <ThemeToggleButton onClick={toggleTheme} aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}>
+                  {isDark ? <SunIcon /> : <MoonIcon />}
+                </ThemeToggleButton>
+              </MobileFooterRow>
+            </MobileMenuFooter>
+          </MobileMenuOverlay>
         )}
       </AnimatePresence>
     </NavbarContainer>
