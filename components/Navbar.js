@@ -626,6 +626,19 @@ const Navbar = ({ scrolled }) => {
             exit={{ clipPath: 'circle(0% at calc(100% - 44px) 40px)' }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
           >
+            <MobileCloseButton
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+              initial={{ opacity: 0, rotate: -90 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ delay: 0.3, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <line x1="6" y1="6" x2="18" y2="18" />
+                <line x1="18" y1="6" x2="6" y2="18" />
+              </svg>
+            </MobileCloseButton>
+
             <MobileNavItems>
               {/* Services expandable */}
               <MobileServicesToggle onClick={() => setMobileServicesOpen(!mobileServicesOpen)}>
