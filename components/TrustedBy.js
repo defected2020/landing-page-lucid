@@ -22,6 +22,10 @@ const Section = styled.section`
   border-bottom: 1px solid #e5e7eb;
   overflow: hidden;
   background-color: #ffffff;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 0;
+  }
 `
 
 const Label = styled.p`
@@ -32,6 +36,11 @@ const Label = styled.p`
   letter-spacing: 0.1em;
   color: #9ca3af;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.625rem;
+    margin-bottom: 1rem;
+  }
 `
 
 const marquee = keyframes`
@@ -71,10 +80,10 @@ const LogoItem = styled.div`
 
   @media (max-width: 768px) {
     width: calc(100vw / 3);
-    height: 52px;
+    height: 36px;
 
     img {
-      transform: scale(0.65);
+      transform: scale(0.45);
     }
   }
 `
