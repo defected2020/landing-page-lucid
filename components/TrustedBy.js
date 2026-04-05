@@ -70,7 +70,12 @@ const LogoItem = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 80vw;
+    width: calc(100vw / 3);
+    height: 52px;
+
+    img {
+      transform: scale(0.65);
+    }
   }
 `
 
