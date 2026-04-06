@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import styled from 'styled-components';
 
+import SEO, { organizationSchema, createBreadcrumbSchema } from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import TrustedBy from '../components/TrustedBy';
@@ -32,15 +32,12 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Lucid Code Labs — Software Development Agency</title>
-        <meta
-          name="description"
-          content="We build intelligent, scalable software — from AI-powered platforms to stunning web and mobile experiences. Berlin-based, working globally."
-        />
-        <link rel="icon" href="/images/lucid-logo.png" type="image/png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
+      <SEO
+        title="Lucid Code Labs — Software Development Agency"
+        description="We build intelligent, scalable software — from AI-powered platforms to stunning web and mobile experiences. Berlin-based, working globally."
+        path="/"
+        jsonLd={organizationSchema}
+      />
 
       <Navbar scrolled={scrolled} />
 

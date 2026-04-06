@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import styled from 'styled-components';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -93,10 +93,15 @@ export default function ReactNativeMobileApp() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>React Native Mobile App Development | Lucid Code Labs Software</title>
-        <meta name="description" content="Expert React Native mobile app development services. Build cross-platform iOS and Android apps with a single codebase. Fast, efficient, and cost-effective mobile solutions." />
-      </Head>
+      <SEO
+        title="React Native Mobile App Development | Lucid Code Labs"
+        description="Expert React Native mobile app development services. Build cross-platform iOS and Android apps with a single codebase. Fast, efficient, and cost-effective mobile solutions."
+        path="/services/mobile-app-development"
+        jsonLd={[
+          createServiceSchema({ name: 'Mobile App Development', description: 'Expert React Native mobile app development — cross-platform iOS and Android apps with a single codebase.', path: '/services/mobile-app-development' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Mobile App Development' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

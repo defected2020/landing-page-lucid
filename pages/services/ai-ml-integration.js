@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -26,10 +26,15 @@ export default function AIMLIntegrationPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>AI & Machine Learning Integration | Lucid Code Labs Software</title>
-        <meta name="description" content="Enhance your existing systems with AI & ML capabilities. From natural language processing to computer vision and predictive analytics, we integrate intelligent solutions into your business." />
-      </Head>
+      <SEO
+        title="AI & Machine Learning Integration | Lucid Code Labs"
+        description="Enhance your existing systems with AI & ML capabilities. From natural language processing to computer vision and predictive analytics, we integrate intelligent solutions into your business."
+        path="/services/ai-ml-integration"
+        jsonLd={[
+          createServiceSchema({ name: 'AI & Machine Learning Integration', description: 'Enhance your existing systems with AI & ML capabilities — NLP, computer vision, and predictive analytics.', path: '/services/ai-ml-integration' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'AI & ML Integration' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

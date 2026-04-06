@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -113,10 +113,15 @@ export default function WorkIndexPage() {
 
   return (
     <>
-      <Head>
-        <title>Our Work — Case Studies | Lucid Code Labs</title>
-        <meta name="description" content="Selected client projects and case studies from Lucid Code Labs." />
-      </Head>
+      <SEO
+        title="Our Work — Case Studies | Lucid Code Labs"
+        description="Explore our portfolio of client projects — AI platforms, web applications, mobile apps, and digital experiences delivered by Lucid Code Labs."
+        path="/work"
+        jsonLd={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Our Work' },
+        ])}
+      />
 
       <Navbar scrolled={scrolled} />
 

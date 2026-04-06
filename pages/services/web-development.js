@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -28,10 +28,15 @@ export default function WebDevelopment() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Web Development Services | Lucid Code Labs</title>
-        <meta name="description" content="Strategic web development solutions to transform your business with modern, responsive websites and web applications." />
-      </Head>
+      <SEO
+        title="Web Development Services | Lucid Code Labs"
+        description="Strategic web development solutions to transform your business with modern, responsive websites and web applications."
+        path="/services/web-development"
+        jsonLd={[
+          createServiceSchema({ name: 'Web Development', description: 'Strategic web development solutions to transform your business with modern, responsive websites and web applications.', path: '/services/web-development' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Web Development' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

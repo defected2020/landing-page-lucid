@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -26,10 +26,15 @@ export default function WebhostingPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Webhosting Services | Lucid Code Labs Software</title>
-        <meta name="description" content="Secure, scalable, and high-performance web hosting solutions tailored to your business needs. We provide reliable infrastructure to keep your digital presence online 24/7." />
-      </Head>
+      <SEO
+        title="Web Hosting Services | Lucid Code Labs"
+        description="Secure, scalable, and high-performance web hosting solutions tailored to your business needs. We provide reliable infrastructure to keep your digital presence online 24/7."
+        path="/services/webhosting"
+        jsonLd={[
+          createServiceSchema({ name: 'Web Hosting', description: 'Secure, scalable, and high-performance web hosting solutions tailored to your business needs.', path: '/services/webhosting' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Web Hosting' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

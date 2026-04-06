@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -25,10 +25,15 @@ export default function ProcessAutomationPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Process Automation Services | Lucid Code Labs Software</title>
-        <meta name="description" content="Streamline operations, reduce costs, and eliminate errors with intelligent process automation solutions. Transform manual workflows into efficient digital processes." />
-      </Head>
+      <SEO
+        title="Process Automation Services | Lucid Code Labs"
+        description="Streamline operations, reduce costs, and eliminate errors with intelligent process automation solutions. Transform manual workflows into efficient digital processes."
+        path="/services/process-automation"
+        jsonLd={[
+          createServiceSchema({ name: 'Process Automation', description: 'Intelligent process automation solutions — streamline operations and transform manual workflows.', path: '/services/process-automation' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Process Automation' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

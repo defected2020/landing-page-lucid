@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import styled from 'styled-components';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -62,10 +62,15 @@ export default function UXUIServicePage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>UX/UI Design Solutions | Lucid Code Labs</title>
-        <meta name="description" content="Strategic UX/UI design services that transform user experiences. We create intuitive, engaging digital interfaces that drive business success and user satisfaction." />
-      </Head>
+      <SEO
+        title="UX/UI Design Solutions | Lucid Code Labs"
+        description="Strategic UX/UI design services that transform user experiences. We create intuitive, engaging digital interfaces that drive business success and user satisfaction."
+        path="/services/ux-ui-design"
+        jsonLd={[
+          createServiceSchema({ name: 'UX/UI Design', description: 'Strategic UX/UI design services — intuitive, engaging digital interfaces that drive business success.', path: '/services/ux-ui-design' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'UX/UI Design' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

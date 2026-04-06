@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -27,10 +27,15 @@ export default function CloudComputingPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Cloud Computing Services | Lucid Code Labs</title>
-        <meta name="description" content="Transform your business with our enterprise cloud computing solutions. Secure, scalable infrastructure, platform services, and cloud-native applications." />
-      </Head>
+      <SEO
+        title="Cloud Computing Services | Lucid Code Labs"
+        description="Transform your business with our enterprise cloud computing solutions. Secure, scalable infrastructure, platform services, and cloud-native applications."
+        path="/services/cloud-computing"
+        jsonLd={[
+          createServiceSchema({ name: 'Cloud Computing', description: 'Enterprise cloud computing solutions — secure, scalable infrastructure and cloud-native applications.', path: '/services/cloud-computing' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Cloud Computing' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

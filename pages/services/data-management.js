@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -26,10 +26,15 @@ export default function DataManagementPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Data Management Services | Lucid Code Labs Software</title>
-        <meta name="description" content="Strategic data management solutions to optimize your data ecosystem. We implement secure, scalable, and efficient data infrastructure to turn your data into a valuable asset." />
-      </Head>
+      <SEO
+        title="Data Management Services | Lucid Code Labs"
+        description="Strategic data management solutions to optimize your data ecosystem. We implement secure, scalable, and efficient data infrastructure to turn your data into a valuable asset."
+        path="/services/data-management"
+        jsonLd={[
+          createServiceSchema({ name: 'Data Management', description: 'Strategic data management solutions — secure, scalable, and efficient data infrastructure.', path: '/services/data-management' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Data Management' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

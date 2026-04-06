@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Head from 'next/head';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -201,10 +201,15 @@ export default function ServicesPage() {
 
   return (
     <>
-      <Head>
-        <title>Our Services | Lucid Code Labs</title>
-        <meta name="description" content="Explore our comprehensive range of digital services designed to help your business innovate, grow, and succeed in the digital world." />
-      </Head>
+      <SEO
+        title="Our Services | Lucid Code Labs"
+        description="Explore our comprehensive range of digital services — AI, web development, mobile apps, UX/UI design, data analytics, and more. Berlin-based agency, working globally."
+        path="/services"
+        jsonLd={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Services' },
+        ])}
+      />
 
       <Navbar scrolled={scrolled} />
 

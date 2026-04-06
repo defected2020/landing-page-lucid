@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -25,10 +25,15 @@ export default function BusinessIntelligencePage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Business Intelligence Solutions | Lucid Code Labs Software</title>
-        <meta name="description" content="Transform your business data into powerful insights with our comprehensive business intelligence solutions. Real-time dashboards, automated reporting, and actionable insights." />
-      </Head>
+      <SEO
+        title="Business Intelligence Solutions | Lucid Code Labs"
+        description="Transform your business data into powerful insights with our comprehensive business intelligence solutions. Real-time dashboards, automated reporting, and actionable insights."
+        path="/services/business-intelligence"
+        jsonLd={[
+          createServiceSchema({ name: 'Business Intelligence', description: 'Transform your business data into powerful insights with real-time dashboards and automated reporting.', path: '/services/business-intelligence' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Business Intelligence' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

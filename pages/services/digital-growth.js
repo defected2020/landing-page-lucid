@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -26,10 +26,15 @@ export default function DigitalGrowthPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Digital Growth & Performance Services | Lucid Code Labs Software</title>
-        <meta name="description" content="Accelerate your business growth with data-driven digital marketing strategies. Optimize your online presence, increase conversions, and maximize ROI across channels." />
-      </Head>
+      <SEO
+        title="Digital Growth & Performance Services | Lucid Code Labs"
+        description="Accelerate your business growth with data-driven digital marketing strategies. Optimize your online presence, increase conversions, and maximize ROI across channels."
+        path="/services/digital-growth"
+        jsonLd={[
+          createServiceSchema({ name: 'Digital Growth & Performance', description: 'Data-driven digital marketing strategies to optimize your online presence and maximize ROI.', path: '/services/digital-growth' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Digital Growth' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

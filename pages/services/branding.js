@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -25,10 +25,15 @@ export default function BrandingPage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>Branding & Visual Identity Services | Lucid Code Labs Software</title>
-        <meta name="description" content="Create a powerful brand identity that resonates with your audience and differentiates your business. Our strategic branding solutions build recognition, trust, and loyalty." />
-      </Head>
+      <SEO
+        title="Branding & Visual Identity Services | Lucid Code Labs"
+        description="Create a powerful brand identity that resonates with your audience and differentiates your business. Our strategic branding solutions build recognition, trust, and loyalty."
+        path="/services/branding"
+        jsonLd={[
+          createServiceSchema({ name: 'Branding & Visual Identity', description: 'Create a powerful brand identity that resonates with your audience and differentiates your business.', path: '/services/branding' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Branding' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

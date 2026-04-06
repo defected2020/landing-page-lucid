@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import styled from 'styled-components';
+import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -69,10 +69,15 @@ export default function AIServicePage() {
 
   return (
     <PageContainer>
-      <Head>
-        <title>AI Powered Software Solutions | Lucid Code Labs</title>
-        <meta name="description" content="Unlock your business potential with our custom AI solutions. We transform data into actionable intelligence and automation that evolves with your business." />
-      </Head>
+      <SEO
+        title="AI Powered Software Solutions | Lucid Code Labs"
+        description="Unlock your business potential with our custom AI solutions. We transform data into actionable intelligence and automation that evolves with your business."
+        path="/services/ai-powered-software"
+        jsonLd={[
+          createServiceSchema({ name: 'AI Powered Software', description: 'Unlock your business potential with our custom AI solutions. We transform data into actionable intelligence and automation that evolves with your business.', path: '/services/ai-powered-software' }),
+          createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'AI Powered Software' }]),
+        ]}
+      />
 
       <Navbar scrolled={scrolled} />
 

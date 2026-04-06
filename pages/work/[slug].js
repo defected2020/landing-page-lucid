@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -152,10 +152,18 @@ export default function WorkCaseStudyPage({ project }) {
 
   return (
     <>
-      <Head>
-        <title>{`${project.name} — Case Study | Lucid Code Labs`}</title>
-        <meta name="description" content={project.tagline} />
-      </Head>
+      <SEO
+        title={`${project.name} — Case Study | Lucid Code Labs`}
+        description={project.tagline}
+        path={`/work/${project.slug}`}
+        image={`https://lucidcodelabs.com${project.screenshots[0].src}`}
+        type="article"
+        jsonLd={createBreadcrumbSchema([
+          { name: 'Home', url: '/' },
+          { name: 'Our Work', url: '/work' },
+          { name: project.name },
+        ])}
+      />
 
       <Navbar scrolled={scrolled} />
 
