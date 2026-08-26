@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
-import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
+import SEO, { createServiceSchema, createBreadcrumbSchema, createFAQSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
+import FAQ from '../../components/FAQ';
+import { getServiceFaqs } from '../../data/serviceFaqs';
 import {
   PageContainer, ContentSection, Container,
   SectionTitle, SectionDescription, CardsGrid, Card,
@@ -14,75 +15,9 @@ import {
   SplitSection, SplitGrid, SplitText, SplitImage,
 } from '../../components/ServicePageLayout';
 
-const TwoColumnGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-  }
-`;
-
-const ContentText = styled.div`
-  color: var(--text-muted);
-  line-height: 1.7;
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-  }
-
-  p {
-    margin-bottom: 1.5rem;
-  }
-`;
-
-const ImageContainer = styled.div`
-  border-radius: var(--radius-lg);
-  height: 100%;
-  min-height: 400px;
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-lg);
-  }
-`;
-
-const TechStack = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0;
-`;
-
-const TechItem = styled.div`
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  text-align: center;
-
-  h4 {
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-  }
-`;
-
 export default function ReactNativeMobileApp() {
   const [scrolled, setScrolled] = useState(false);
+  const faqs = getServiceFaqs('mobile-app-development');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -100,6 +35,7 @@ export default function ReactNativeMobileApp() {
         jsonLd={[
           createServiceSchema({ name: 'Mobile App Development', description: 'Expert React Native mobile app development — cross-platform iOS and Android apps with a single codebase.', path: '/services/mobile-app-development' }),
           createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Mobile App Development' }]),
+          createFAQSchema(faqs),
         ]}
       />
 
@@ -117,8 +53,8 @@ export default function ReactNativeMobileApp() {
 
       <ContentSection>
         <Container>
-          <TwoColumnGrid>
-            <ContentText>
+          <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
+            <div className="leading-[1.7] text-text-muted [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-text [&_p]:mb-6">
               <h3>Why React Native for Your Mobile App?</h3>
               <p>
                 React Native is our framework of choice for mobile app development because it offers the perfect balance of performance, development efficiency, and cost-effectiveness. With React Native, we can build truly native mobile applications using a single codebase that runs on both iOS and Android.
@@ -129,11 +65,11 @@ export default function ReactNativeMobileApp() {
               <p>
                 Our team specializes exclusively in React Native development, ensuring we leverage the framework's full potential to create high-quality, scalable mobile applications that meet your business objectives.
               </p>
-            </ContentText>
-            <ImageContainer>
-              <img src="/images/mobile3.png" alt="React Native Mobile Development" />
-            </ImageContainer>
-          </TwoColumnGrid>
+            </div>
+            <div className="h-full min-h-[400px] overflow-hidden rounded-lg">
+              <img src="/images/mobile3.png" alt="React Native Mobile Development" className="h-full w-full rounded-lg object-cover" />
+            </div>
+          </div>
 
           <CardsGrid>
             <Card>
@@ -159,40 +95,23 @@ export default function ReactNativeMobileApp() {
             We use the latest React Native technologies and tools to build robust, scalable mobile applications.
           </SectionDescription>
 
-          <TechStack>
-            <TechItem>
-              <h4>React Native</h4>
-              <p>Core framework for cross-platform mobile development</p>
-            </TechItem>
-            <TechItem>
-              <h4>Expo</h4>
-              <p>Development platform for rapid prototyping and deployment</p>
-            </TechItem>
-            <TechItem>
-              <h4>TypeScript</h4>
-              <p>Type-safe development for better code quality and maintainability</p>
-            </TechItem>
-            <TechItem>
-              <h4>Redux/Zustand</h4>
-              <p>State management for complex application logic</p>
-            </TechItem>
-            <TechItem>
-              <h4>React Navigation</h4>
-              <p>Routing and navigation for seamless user experiences</p>
-            </TechItem>
-            <TechItem>
-              <h4>Firebase</h4>
-              <p>Backend services, authentication, and real-time databases</p>
-            </TechItem>
-            <TechItem>
-              <h4>Native Modules</h4>
-              <p>Custom native functionality when platform-specific features are needed</p>
-            </TechItem>
-            <TechItem>
-              <h4>App Store Deployment</h4>
-              <p>Complete deployment and publishing to both iOS App Store and Google Play</p>
-            </TechItem>
-          </TechStack>
+          <div className="my-8 grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+            {[
+              { title: 'React Native', desc: 'Core framework for cross-platform mobile development' },
+              { title: 'Expo', desc: 'Development platform for rapid prototyping and deployment' },
+              { title: 'TypeScript', desc: 'Type-safe development for better code quality and maintainability' },
+              { title: 'Redux/Zustand', desc: 'State management for complex application logic' },
+              { title: 'React Navigation', desc: 'Routing and navigation for seamless user experiences' },
+              { title: 'Firebase', desc: 'Backend services, authentication, and real-time databases' },
+              { title: 'Native Modules', desc: 'Custom native functionality when platform-specific features are needed' },
+              { title: 'App Store Deployment', desc: 'Complete deployment and publishing to both iOS App Store and Google Play' },
+            ].map((item) => (
+              <div key={item.title} className="rounded-lg border border-border bg-bg-elevated p-6 text-center">
+                <h4 className="mb-2 font-semibold text-text">{item.title}</h4>
+                <p className="text-sm text-text-muted">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </Container>
       </ContentSection>
 
@@ -281,6 +200,11 @@ export default function ReactNativeMobileApp() {
           </SplitText>
         </SplitGrid>
       </SplitSection>
+
+      <FAQ
+        faqs={faqs}
+        description="Common questions about building a cross-platform mobile app."
+      />
 
       <CTASection>
         <Container>

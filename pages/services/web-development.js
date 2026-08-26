@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
+import SEO, { createServiceSchema, createBreadcrumbSchema, createFAQSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
+import FAQ from '../../components/FAQ';
+import { getServiceFaqs } from '../../data/serviceFaqs';
 import Image from 'next/image';
 import {
   PageContainer, ContentSection, Container,
@@ -18,6 +20,7 @@ import {
 export default function WebDevelopment() {
   const [activeTech, setActiveTech] = useState('frontend');
   const [scrolled, setScrolled] = useState(false);
+  const faqs = getServiceFaqs('web-development');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -35,6 +38,7 @@ export default function WebDevelopment() {
         jsonLd={[
           createServiceSchema({ name: 'Web Development', description: 'Strategic web development solutions to transform your business with modern, responsive websites and web applications.', path: '/services/web-development' }),
           createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'Web Development' }]),
+          createFAQSchema(faqs),
         ]}
       />
 
@@ -251,6 +255,11 @@ export default function WebDevelopment() {
           </SplitText>
         </SplitGrid>
       </SplitSection>
+
+      <FAQ
+        faqs={faqs}
+        description="Common questions about building a website or web platform with us."
+      />
 
       <CTASection>
         <Container>

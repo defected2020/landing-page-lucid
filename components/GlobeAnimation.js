@@ -1,20 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import styled from 'styled-components';
-
-const Canvas = styled.canvas`
-  position: absolute;
-  top: 50%;
-  left: 55%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-
-  @media (max-width: 768px) {
-    left: 50%;
-    opacity: 0.35;
-  }
-`;
 
 const toRad = (deg) => (deg * Math.PI) / 180;
 
@@ -403,7 +387,12 @@ const GlobeAnimation = () => {
     };
   }, []);
 
-  return <Canvas ref={canvasRef} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute left-[55%] top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 max-[768px]:left-1/2 max-[768px]:opacity-35"
+    />
+  );
 };
 
 export default GlobeAnimation;

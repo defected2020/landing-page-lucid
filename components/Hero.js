@@ -1,301 +1,193 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import styled from 'styled-components'
-import Image from 'next/image'
-import { useTheme } from '../contexts/ThemeContext'
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { ChevronsLeftRight } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { cn } from '../lib/utils';
 
-const HeroSection = styled.section`
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  background-color: var(--bg);
-`
-
-
-const LightBackgroundImage = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(to bottom, #0b0d1a 0%, #0b0d1a 18%, transparent 40%);
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, rgba(11, 13, 26, 0.5) 0%, transparent 50%);
-    z-index: 1;
-  }
-`
-
-const GrainOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
-  pointer-events: none;
-  z-index: 2;
-`
-
-const Container = styled.div`
-  position: relative;
-  z-index: 3;
-  max-width: var(--container-max);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
-  display: flex;
-  align-items: center;
-  min-height: 100vh;
-`
-
-const Content = styled.div`
-  max-width: 620px;
-  padding: 6rem 0;
-
-  @media (max-width: 768px) {
-    text-align: center;
-    max-width: 100%;
-  }
-`
-
-const Badge = styled(motion.div)`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.375rem 1rem;
-  border-radius: 999px;
-  border: 1px solid ${(props) => (props.$onImage ? 'rgba(255,255,255,0.2)' : 'var(--border)')};
-  font-size: 0.8125rem;
-  color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)')};
-  margin-bottom: 2rem;
-  backdrop-filter: blur(4px);
-  background: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.08)' : 'var(--hover-overlay)')};
-
-  svg {
-    width: 14px;
-    height: 14px;
-    color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.9)' : 'var(--accent)')};
-  }
-`
-
-const Title = styled.h1`
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: ${(props) => (props.$onImage ? '#ffffff' : 'var(--text)')};
-  margin-bottom: 1.5rem;
-  line-height: 1.1;
-`
-
-const Cursor = styled(motion.span)`
-  display: inline-block;
-  width: 3px;
-  height: 0.85em;
-  background-color: var(--accent);
-  margin-left: 4px;
-  vertical-align: baseline;
-  border-radius: 1px;
-`
-
-const SubtitleText = styled(motion.p)`
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)')};
-  max-width: 540px;
-  margin-bottom: 2.5rem;
-  line-height: 1.7;
-
-  @media (max-width: 768px) {
-    margin-left: auto;
-    margin-right: auto;
-  }
-`
-
-const ButtonGroup = styled(motion.div)`
-  display: flex;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    justify-content: center;
-  }
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: center;
-  }
-`
-
-const PrimaryButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 2rem;
-  border-radius: 999px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  background-color: var(--accent);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-medium);
-
-  &:hover {
-    background-color: var(--accent-hover);
-    box-shadow: 0 0 30px var(--accent-glow);
-    transform: translateY(-1px);
-  }
-`
-
-const SecondaryButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 2rem;
-  border-radius: 999px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  background-color: transparent;
-  color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)')};
-  border: 1px solid ${(props) => (props.$onImage ? 'rgba(255,255,255,0.25)' : 'var(--border)')};
-  cursor: pointer;
-  transition: all var(--transition-medium);
-
-  &:hover {
-    border-color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.5)' : 'var(--border-hover)')};
-    color: ${(props) => (props.$onImage ? '#ffffff' : 'var(--text)')};
-    background-color: ${(props) => (props.$onImage ? 'rgba(255,255,255,0.1)' : 'var(--hover-overlay)')};
-  }
-`
-
-const STATIC_LINE = 'We Build Software'
-
-const ROTATING_PHRASES = ['That Matters', 'That Counts', 'That Uplifts', 'That Scales', 'That Lasts', 'That Transforms', 'That Changes the World']
-
-const TYPE_SPEED = 45
-const DELETE_SPEED = 20
-const PAUSE_AFTER_TYPE = 2400
-const PAUSE_AFTER_DELETE = 300
-const INITIAL_DELAY = 600
+const STATIC_LINE = 'We Build Software';
+const ROTATING_PHRASES = [
+  'That Matters',
+  'That Counts',
+  'That Uplifts',
+  'That Scales',
+  'That Lasts',
+  'That Transforms',
+  'That Changes the World',
+];
+const TYPE_SPEED = 45;
+const DELETE_SPEED = 20;
+const PAUSE_AFTER_TYPE = 2400;
+const PAUSE_AFTER_DELETE = 300;
+const INITIAL_DELAY = 600;
 
 const Hero = () => {
-  const { isDark } = useTheme()
-  const [phase, setPhase] = useState('idle')
-  const [staticText, setStaticText] = useState('')
-  const [phraseText, setPhraseText] = useState('')
-  const [phraseIdx, setPhraseIdx] = useState(0)
-  const [showContent, setShowContent] = useState(false)
+  const { isDark } = useTheme();
+  const onImage = !isDark;
+  const [phase, setPhase] = useState('idle');
+  const [staticText, setStaticText] = useState('');
+  const [phraseText, setPhraseText] = useState('');
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [showContent, setShowContent] = useState(false);
 
-  const currentPhrase = ROTATING_PHRASES[phraseIdx]
+  const currentPhrase = ROTATING_PHRASES[phraseIdx];
 
   const tick = useCallback(() => {
     switch (phase) {
       case 'typing-static': {
         if (staticText.length < STATIC_LINE.length) {
-          setStaticText(STATIC_LINE.slice(0, staticText.length + 1))
+          setStaticText(STATIC_LINE.slice(0, staticText.length + 1));
         } else {
-          setPhase('typing-phrase')
+          setPhase('typing-phrase');
         }
-        break
+        break;
       }
       case 'typing-phrase': {
         if (phraseText.length < currentPhrase.length) {
-          setPhraseText(currentPhrase.slice(0, phraseText.length + 1))
+          setPhraseText(currentPhrase.slice(0, phraseText.length + 1));
         } else {
-          setShowContent(true)
-          setPhase('pausing')
+          setShowContent(true);
+          setPhase('pausing');
         }
-        break
+        break;
       }
       case 'deleting': {
         if (phraseText.length > 0) {
-          setPhraseText(phraseText.slice(0, -1))
+          setPhraseText(phraseText.slice(0, -1));
         } else {
-          setPhraseIdx((prev) => (prev + 1) % ROTATING_PHRASES.length)
-          setPhase('pause-deleted')
+          setPhraseIdx((prev) => (prev + 1) % ROTATING_PHRASES.length);
+          setPhase('pause-deleted');
         }
-        break
+        break;
       }
       default:
-        break
+        break;
     }
-  }, [phase, staticText, phraseText, currentPhrase])
+  }, [phase, staticText, phraseText, currentPhrase]);
 
   useEffect(() => {
-    if (phase === 'idle') return
+    if (phase === 'idle') return;
     if (phase === 'pausing') {
-      const t = setTimeout(() => setPhase('deleting'), PAUSE_AFTER_TYPE)
-      return () => clearTimeout(t)
+      const t = setTimeout(() => setPhase('deleting'), PAUSE_AFTER_TYPE);
+      return () => clearTimeout(t);
     }
     if (phase === 'pause-deleted') {
-      const t = setTimeout(() => setPhase('typing-phrase'), PAUSE_AFTER_DELETE)
-      return () => clearTimeout(t)
+      const t = setTimeout(() => setPhase('typing-phrase'), PAUSE_AFTER_DELETE);
+      return () => clearTimeout(t);
     }
     if (phase === 'typing-static' || phase === 'typing-phrase') {
-      const t = setTimeout(tick, TYPE_SPEED)
-      return () => clearTimeout(t)
+      const t = setTimeout(tick, TYPE_SPEED);
+      return () => clearTimeout(t);
     }
     if (phase === 'deleting') {
-      const t = setTimeout(tick, DELETE_SPEED)
-      return () => clearTimeout(t)
+      const t = setTimeout(tick, DELETE_SPEED);
+      return () => clearTimeout(t);
     }
-  }, [phase, tick])
+  }, [phase, tick]);
 
   useEffect(() => {
-    const t = setTimeout(() => setPhase('typing-static'), INITIAL_DELAY)
-    return () => clearTimeout(t)
-  }, [])
+    const t = setTimeout(() => setPhase('typing-static'), INITIAL_DELAY);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
-    <HeroSection id='home'>
-      <LightBackgroundImage>
-        <Image src='/images/stock/earth-day.jpg' alt='' fill priority sizes='100vw' style={{ objectFit: 'cover', objectPosition: 'center 20%' }} />
-      </LightBackgroundImage>
-      <GrainOverlay />
+    <section
+      id="home"
+      className="relative flex min-h-screen items-center overflow-hidden bg-bg"
+    >
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0b0d1a] from-0% via-[#0b0d1a] via-[18%] to-transparent to-[40%] after:absolute after:inset-0 after:z-[1] after:bg-gradient-to-r after:from-[rgba(11,13,26,0.5)] after:from-0% after:to-transparent after:to-[50%] after:content-['']">
+        <Image
+          src="/images/stock/earth-day.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_20%]"
+        />
+      </div>
 
-      <Container>
-        <Content>
-          <Badge $onImage={!isDark} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'>
-              <polyline points='16 18 22 12 16 6' />
-              <polyline points='8 6 2 12 8 18' />
-            </svg>
-            Design &middot; Develop &middot; Deploy
-          </Badge>
+      <div className="pointer-events-none absolute inset-0 z-[2] bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20256%20256%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cfilter%20id%3D%27noise%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.9%27%20numOctaves%3D%274%27%20stitchTiles%3D%27stitch%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noise%29%27%2F%3E%3C%2Fsvg%3E')] bg-[length:256px_256px] bg-repeat opacity-[0.04]" />
 
-          <Title $onImage={!isDark}>
-            {staticText}
-            {staticText.length === STATIC_LINE.length && phraseText && (
-              <>
-                <br />
-                {phraseText}
-              </>
+      <div className="relative z-[3] mx-auto flex min-h-screen w-full max-w-container items-center px-container">
+        <div className="max-w-[620px] py-24 max-md:max-w-full max-md:text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8 inline-block"
+          >
+            <Badge variant={onImage ? 'onImage' : 'default'}>
+              <ChevronsLeftRight />
+              Design · Develop · Deploy
+            </Badge>
+          </motion.div>
+
+          <h1
+            className={cn(
+              'mb-6 min-h-[2.2em] text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[1.1] tracking-[-0.03em]',
+              onImage ? 'text-white' : 'text-text'
             )}
-            <Cursor animate={{ opacity: [1, 1, 0, 0] }} transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }} />
-          </Title>
+          >
+            {/* The typewriter starts from an empty string, so the animated spans
+                render as an empty <h1> on the server. This carries the real
+                headline in the markup for crawlers and screen readers, while the
+                visible text below animates to exactly the same words. */}
+            <span className="sr-only">{`${STATIC_LINE} ${ROTATING_PHRASES[0]}`}</span>
+            <span aria-hidden="true">
+              {staticText}
+              {staticText.length === STATIC_LINE.length && phraseText && (
+                <>
+                  <br />
+                  {phraseText}
+                </>
+              )}
+              <motion.span
+                animate={{ opacity: [1, 1, 0, 0] }}
+                transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+                className="ml-1 inline-block h-[0.85em] w-[3px] rounded-sm bg-accent align-baseline"
+              />
+            </span>
+          </h1>
 
-          <SubtitleText
-            $onImage={!isDark}
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={showContent ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}>
-            We combine cutting-edge technology with creative problem-solving to deliver software that transforms businesses and delights users.
-          </SubtitleText>
+            transition={{ duration: 0.6 }}
+            className={cn(
+              'mb-10 max-w-[540px] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.7] max-md:mx-auto',
+              onImage ? 'text-white/80' : 'text-text-muted'
+            )}
+          >
+            We combine cutting-edge technology with creative problem-solving to deliver
+            software that transforms businesses and delights users.
+          </motion.p>
 
-          <ButtonGroup initial={{ opacity: 0, y: 20 }} animate={showContent ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 }}>
-            <PrimaryButton href='#contact'>Get Started</PrimaryButton>
-            <SecondaryButton $onImage={!isDark} href='/services'>
-              Explore Services
-            </SecondaryButton>
-          </ButtonGroup>
-        </Content>
-      </Container>
-    </HeroSection>
-  )
-}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={showContent ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="flex gap-4 max-md:justify-center max-[480px]:flex-col max-[480px]:items-center"
+          >
+            <Button asChild>
+              <a href="#contact">Get Started</a>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className={cn(
+                onImage &&
+                  'border-white/25 bg-transparent text-white/85 hover:border-white/50 hover:bg-white/10 hover:text-white'
+              )}
+            >
+              <a href="/services">Explore Services</a>
+            </Button>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
-export default Hero
+export default Hero;
