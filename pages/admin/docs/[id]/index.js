@@ -55,6 +55,12 @@ export default function ViewDoc({ adminUser, storageMode, doc }) {
               <> · Updated {formatDate(doc.updatedAt, { withTime: true })} by {doc.updatedBy}</>
             )}
           </p>
+          {doc.source === 'repo' && (
+            <p className="mt-2 text-xs text-text-subtle">
+              Shipped with the site from <code>{doc.sourceFile}</code>. Editing here saves a copy that
+              overrides the repo version.
+            </p>
+          )}
         </header>
         <Markdown source={doc.body} />
       </article>

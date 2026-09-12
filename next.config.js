@@ -6,7 +6,17 @@ const basePath = process.env.BASE_PATH || '';
 const staticExport =
   process.env.STATIC_EXPORT === '1' || process.env.STATIC_EXPORT === 'true';
 
+// Markdown files served as /admin documents must travel with the serverless
+// functions; Next's tracer cannot see reads driven by the manifest.
+const adminDocFiles = require('./content/adminDocs').map((d) => `./${d.file}`);
+
 const nextConfig = {
+  experimental: {
+    outputFileTracingIncludes: {
+      '/admin/**': adminDocFiles,
+      '/api/admin/**': adminDocFiles,
+    },
+  },
   ...(basePath ? { basePath, assetPrefix: basePath } : {}),
   ...(staticExport
     ? {
