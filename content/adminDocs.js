@@ -1,4 +1,5 @@
-// Markdown files in this repository that show up as documents in /admin.
+// Files in this repository that show up as documents in /admin. `format` is
+// 'markdown' (default) or 'html' (a self-contained page, shown in a frame).
 //
 // They deploy with the site, so a doc committed here is on production after
 // the next push with no storage setup. Editing one in the admin UI saves a
@@ -8,7 +9,8 @@
 
 module.exports = [
   {
-    file: 'LEADGEN.md',
+    file: 'content/admin-pages/leadgen-plan.html',
+    format: 'html',
     title: 'Outbound Lead Generation Plan',
     tags: ['outreach', 'leadgen', 'scraper', 'mautic', 'plan'],
     pinned: true,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Pin, Trash2, Eye, PencilLine, Save } from 'lucide-react';
+import { Pin, Trash2, Eye, PencilLine, Save, Code2, FileText } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import Markdown from './Markdown';
@@ -14,6 +14,7 @@ export default function DocEditor({ doc }) {
   const [body, setBody] = useState(doc?.body || '');
   const [tags, setTags] = useState((doc?.tags || []).join(', '));
   const [pinned, setPinned] = useState(Boolean(doc?.pinned));
+  const [format, setFormat] = useState(doc?.format === 'html' ? 'html' : 'markdown');
   const [mode, setMode] = useState('write');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -41,7 +42,7 @@ export default function DocEditor({ doc }) {
     setSaving(true);
     setError('');
     try {
-      const payload = { title, body, tags, pinned };
+      const payload = { title, body, tags, pinned, format };
       const data = isNew
         ? await api('/api/admin/docs', { method: 'POST', body: payload })
         : await api(`/api/admin/docs/${doc.id}`, { method: 'PUT', body: payload });
@@ -110,6 +111,24 @@ export default function DocEditor({ doc }) {
         >
           <Pin className="h-3.5 w-3.5" /> {pinned ? 'Pinned' : 'Pin to overview'}
         </button>
+        <div className="inline-flex h-10 overflow-hidden rounded-md border border-border text-sm font-medium">
+          {[
+            { id: 'markdown', label: 'Markdown', icon: FileText },
+            { id: 'html', label: 'HTML page', icon: Code2 },
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => track(setFormat)(id)}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-3 transition-colors duration-fast',
+                format === id ? 'bg-accent-muted text-accent' : 'text-text-muted hover:text-text'
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" /> {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-border bg-bg-elevated">
@@ -132,21 +151,35 @@ export default function DocEditor({ doc }) {
               </button>
             ))}
           </div>
-          <span className="hidden text-xs text-text-subtle sm:block">Markdown supported · ⌘S to save</span>
+          <span className="hidden text-xs text-text-subtle sm:block">
+            {format === 'html' ? 'Full HTML page, shown in a frame' : 'Markdown supported'} · ⌘S to save
+          </span>
         </div>
 
         {mode === 'write' ? (
           <textarea
             value={body}
             onChange={(e) => track(setBody)(e.target.value)}
-            placeholder={'Start writing…\n\n# Heading\n- [ ] Task\n**bold**, _italic_, `code`, [link](https://…)'}
-            spellCheck
+            placeholder={
+              format === 'html'
+                ? '<!doctype html>\n<html>\n  <head><style>…</style></head>\n  <body>…</body>\n</html>'
+                : 'Start writing…\n\n# Heading\n- [ ] Task\n**bold**, _italic_, `code`, [link](https://…)'
+            }
+            spellCheck={format !== 'html'}
             className="block min-h-[60vh] w-full resize-y bg-transparent px-5 py-4 font-mono text-[0.9rem] leading-relaxed text-text placeholder:text-text-subtle focus:outline-none"
           />
         ) : (
-          <div className="min-h-[60vh] px-6 py-5">
-            <Markdown source={body} />
-          </div>
+          format === 'html' ? (
+            <iframe
+              srcDoc={body}
+              title="Preview"
+              className="block min-h-[60vh] w-full bg-bg"
+            />
+          ) : (
+            <div className="min-h-[60vh] px-6 py-5">
+              <Markdown source={body} />
+            </div>
+          )
         )}
       </div>
 

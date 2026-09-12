@@ -89,6 +89,11 @@ export default function AdminDocs({ adminUser, storageMode, docs }) {
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium text-text">{doc.title}</p>
                     {doc.pinned && <Pin className="h-3 w-3 text-accent" />}
+                    {doc.format === 'html' && (
+                      <span className="rounded-pill bg-accent-muted px-2 py-0.5 text-[0.6875rem] font-medium text-accent">
+                        HTML page
+                      </span>
+                    )}
                     {(doc.tags || []).map((t) => (
                       <span key={t} className="rounded-pill border border-border px-2 py-0.5 text-[0.6875rem] text-text-muted">
                         {t}

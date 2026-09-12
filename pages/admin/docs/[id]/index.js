@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, PencilLine, Pin } from 'lucide-react';
+import { ArrowLeft, ExternalLink, PencilLine, Pin } from 'lucide-react';
 import AdminLayout from '../../../../components/admin/AdminLayout';
 import Markdown from '../../../../components/admin/Markdown';
 import { Button } from '../../../../components/ui/button';
@@ -14,6 +14,8 @@ export const getServerSideProps = withAdminPage(async ({ params }) => {
 });
 
 export default function ViewDoc({ adminUser, storageMode, doc }) {
+  const isHtml = doc.format === 'html';
+  const pageUrl = `/api/admin/docs/${doc.id}/html`;
   return (
     <AdminLayout
       user={adminUser}
@@ -24,13 +26,20 @@ export default function ViewDoc({ adminUser, storageMode, doc }) {
           <Button asChild size="sm" variant="outline">
             <Link href="/admin/docs"><ArrowLeft className="h-4 w-4" /> Documents</Link>
           </Button>
+          {isHtml && (
+            <Button asChild size="sm" variant="outline">
+              <a href={pageUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="h-4 w-4" /> Open full page
+              </a>
+            </Button>
+          )}
           <Button asChild size="sm">
             <Link href={`/admin/docs/${doc.id}/edit`}><PencilLine className="h-4 w-4" /> Edit</Link>
           </Button>
         </>
       }
     >
-      <article className="mx-auto max-w-[800px]">
+      <article className={isHtml ? 'mx-auto max-w-[1200px]' : 'mx-auto max-w-[800px]'}>
         <header className="mb-8 border-b border-border pb-6">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             {doc.pinned && (
@@ -62,7 +71,15 @@ export default function ViewDoc({ adminUser, storageMode, doc }) {
             </p>
           )}
         </header>
-        <Markdown source={doc.body} />
+        {isHtml ? (
+          <iframe
+            src={pageUrl}
+            title={doc.title}
+            className="h-[calc(100vh-14rem)] min-h-[600px] w-full rounded-lg border border-border bg-bg"
+          />
+        ) : (
+          <Markdown source={doc.body} />
+        )}
       </article>
     </AdminLayout>
   );

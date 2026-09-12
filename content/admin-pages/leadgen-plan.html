@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Outbound Lead Generation Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #121216;
+    --panel-2: #17171d;
+    --line: #26262e;
+    --line-strong: #3a3a46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --subtle: #71717a;
+    --indigo: #6366f1;
+    --indigo-bright: #818cf8;
+    --indigo-soft: rgba(99, 102, 241, 0.12);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34, 197, 94, 0.12);
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, 0.12);
+    --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --body: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+    --nav-w: 232px;
+    --measure: 68ch;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--indigo-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--indigo-bright); outline-offset: 3px; border-radius: 4px; }
+  code { font-family: var(--mono); font-size: 0.86em; background: var(--panel-2); border: 1px solid var(--line); padding: 0.08em 0.4em; border-radius: 5px; color: var(--text); }
+  pre { font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; overflow-x: auto; color: var(--muted); margin: 0; white-space: pre-wrap; }
+
+  /* ── progress + layout ─────────────────────────────── */
+  #progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--indigo); z-index: 10; transition: width 120ms linear; }
+  .shell { display: grid; grid-template-columns: var(--nav-w) minmax(0, 1fr); min-height: 100vh; }
+  @media (max-width: 900px) { .shell { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ── rail nav ─────────────────────────────────────── */
+  .rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 2rem 1.1rem 2rem 1.6rem; border-right: 1px solid var(--line); background: var(--bg); }
+  .rail .brand { font-family: var(--display); font-weight: 600; font-size: 0.95rem; color: var(--text); margin: 0 0 0.15rem; }
+  .rail .brand-sub { font-size: 0.78rem; color: var(--subtle); margin: 0 0 1.6rem; }
+  .rail ol { list-style: none; margin: 0; padding: 0; position: relative; }
+  .rail ol::before { content: ""; position: absolute; left: 7px; top: 10px; bottom: 10px; width: 1px; background: var(--line-strong); }
+  .rail li { position: relative; padding: 0.28rem 0 0.28rem 1.45rem; }
+  .rail li::before { content: ""; position: absolute; left: 3px; top: 0.72rem; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--line-strong); transition: background 150ms, border-color 150ms, transform 150ms; }
+  .rail a { display: block; color: var(--muted); font-size: 0.86rem; line-height: 1.35; }
+  .rail a:hover { color: var(--text); text-decoration: none; }
+  .rail li.active::before { background: var(--indigo); border-color: var(--indigo); transform: scale(1.25); }
+  .rail li.active a { color: var(--text); font-weight: 500; }
+  .rail .hint { margin-top: 1.8rem; font-size: 0.74rem; color: var(--subtle); line-height: 1.5; }
+  .rail kbd { font-family: var(--mono); font-size: 0.7rem; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3em; color: var(--muted); }
+  @media (max-width: 900px) {
+    .rail { position: sticky; top: 0; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 0.8rem 1rem; z-index: 5; }
+    .rail .brand, .rail .brand-sub, .rail .hint { display: none; }
+    .rail ol { display: flex; gap: 0.2rem; overflow-x: auto; padding-bottom: 0.2rem; }
+    .rail ol::before { display: none; }
+    .rail li { padding: 0; white-space: nowrap; }
+    .rail li::before { display: none; }
+    .rail a { padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid transparent; font-size: 0.8rem; }
+    .rail li.active a { border-color: var(--indigo); background: var(--indigo-soft); }
+  }
+
+  /* ── content ──────────────────────────────────────── */
+  main { padding: 0 clamp(1.25rem, 4vw, 4rem) 6rem; }
+  .stop { padding: clamp(3.5rem, 7vh, 6rem) 0 1rem; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+  .stop:first-of-type { border-top: 0; }
+  @media (max-width: 900px) { .stop { scroll-margin-top: 4.2rem; } }
+  .stop-head { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 1rem; align-items: baseline; margin-bottom: 1.75rem; }
+  .stop-head .n { font-family: var(--display); font-weight: 500; font-size: 0.95rem; color: var(--indigo-bright); padding-top: 0.35rem; }
+  .stop-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 2.6vw, 2.15rem); letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+  .stop-head p { margin: 0.55rem 0 0; color: var(--muted); max-width: var(--measure); }
+  .stop-body { padding-left: 5.2rem; max-width: 980px; }
+  @media (max-width: 700px) { .stop-head { grid-template-columns: 1fr; gap: 0.2rem; } .stop-body { padding-left: 0; } }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.12rem; letter-spacing: -0.01em; margin: 2.4rem 0 0.8rem; }
+  h3:first-child { margin-top: 0; }
+  p { max-width: var(--measure); margin: 0 0 1rem; }
+  ul, ol { max-width: var(--measure); padding-left: 1.25rem; margin: 0 0 1rem; }
+  li { margin-bottom: 0.35rem; }
+  li::marker { color: var(--subtle); }
+  strong { font-weight: 600; color: var(--text); }
+  .lede { font-size: 1.05rem; color: var(--muted); }
+
+  /* ── hero ─────────────────────────────────────────── */
+  .hero { padding: clamp(3rem, 9vh, 7rem) 0 3rem; }
+  .hero .kicker { color: var(--muted); font-size: 0.9rem; margin: 0 0 1rem; }
+  .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.4rem, 5.2vw, 4.2rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 1.4rem; max-width: 14ch; }
+  .hero .lede { max-width: 60ch; font-size: 1.1rem; }
+  .rail-diagram { margin: 2.6rem 0 2.2rem; overflow-x: auto; }
+  .rail-diagram svg { display: block; width: 100%; min-width: 640px; height: auto; }
+  .rail-diagram text { font-family: var(--body); font-size: 12.5px; fill: var(--muted); }
+  .rail-diagram text.strong { fill: var(--text); font-weight: 500; }
+  .rail-diagram .track { stroke: var(--line-strong); stroke-width: 1.5; fill: none; }
+  .rail-diagram .flow { stroke: var(--indigo); stroke-width: 2; fill: none; stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: draw 2.2s cubic-bezier(0.4, 0, 0.2, 1) 300ms forwards; }
+  .rail-diagram .node { fill: var(--bg); stroke: var(--indigo); stroke-width: 2; }
+  .rail-diagram .node.out { stroke: var(--amber); }
+  .rail-diagram .node.db { stroke: var(--green); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .rail-diagram .flow { animation: none; stroke-dashoffset: 0; } }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 0 1rem; }
+  .facts div { padding: 1rem 1.2rem 1rem 0; border-right: 1px solid var(--line); margin-right: 1.2rem; }
+  .facts div:last-child { border-right: 0; margin-right: 0; }
+  .facts b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.55rem; letter-spacing: -0.02em; line-height: 1.1; }
+  .facts span { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+  @media (max-width: 700px) { .facts div { border-right: 0; border-bottom: 1px solid var(--line); margin-right: 0; } .facts div:last-child { border-bottom: 0; } }
+
+  /* ── tables ───────────────────────────────────────── */
+  .tbl { overflow-x: auto; margin: 0 0 1.4rem; border: 1px solid var(--line); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; vertical-align: top; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--line); }
+  th { font-weight: 500; color: var(--muted); font-size: 0.8rem; background: var(--panel); }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { color: var(--text); font-weight: 500; white-space: nowrap; }
+  td code { white-space: nowrap; }
+  .tbl.wrap td:first-child { white-space: normal; }
+
+  /* ── decisions (definition list) ──────────────────── */
+  .decisions { display: grid; grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr); border-top: 1px solid var(--line); margin-bottom: 1.5rem; }
+  .decisions dt { padding: 0.95rem 1rem 0.95rem 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  .decisions dd { margin: 0; padding: 0.95rem 0; border-bottom: 1px solid var(--line); }
+  .decisions dd b { display: block; margin-bottom: 0.2rem; }
+  .decisions dd span { color: var(--muted); font-size: 0.92rem; }
+  @media (max-width: 600px) { .decisions { grid-template-columns: 1fr; } .decisions dt { border-bottom: 0; padding-bottom: 0; } }
+
+  /* ── segments ─────────────────────────────────────── */
+  .segments { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .seg { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1.2rem 1.3rem 1.1rem; border-left: 3px solid var(--indigo); }
+  .seg.first { border-left-color: var(--indigo); }
+  .seg.later { border-left-color: var(--line-strong); }
+  .seg.local { border-left-color: var(--amber); }
+  .seg h4 { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+  .seg .who { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.8rem; }
+  .seg .row { font-size: 0.9rem; margin: 0 0 0.45rem; }
+  .seg .row b { color: var(--subtle); font-weight: 500; }
+  .seg .order { float: right; font-size: 0.75rem; color: var(--subtle); border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.55rem; }
+
+  /* ── pills ────────────────────────────────────────── */
+  .pill { display: inline-block; font-size: 0.76rem; font-weight: 500; border-radius: 999px; padding: 0.12rem 0.6rem; border: 1px solid transparent; white-space: nowrap; }
+  .pill.go { color: var(--green); background: var(--green-soft); }
+  .pill.care { color: var(--amber); background: var(--amber-soft); }
+  .pill.no { color: var(--red); background: var(--red-soft); }
+
+  /* ── details (data model) ─────────────────────────── */
+  details { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 0.7rem; background: var(--panel); }
+  details[open] { background: transparent; }
+  summary { cursor: pointer; padding: 0.85rem 1rem; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary .meta { color: var(--subtle); font-size: 0.82rem; font-weight: 400; }
+  summary::after { content: "+"; color: var(--subtle); font-family: var(--mono); margin-left: 0.5rem; }
+  details[open] summary::after { content: "–"; }
+  details .tbl { border: 0; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; margin: 0; }
+  details p { padding: 0 1rem; margin: 0.6rem 0 0.9rem; color: var(--muted); font-size: 0.9rem; }
+
+  /* ── flow diagram ─────────────────────────────────── */
+  .flow-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.9rem 1.2rem; align-items: stretch; margin: 0.5rem 0 1.6rem; }
+  .flow-grid .box { border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; background: var(--panel); font-size: 0.9rem; }
+  .flow-grid .box b { display: block; font-family: var(--display); font-weight: 600; font-size: 1rem; margin-bottom: 0.3rem; }
+  .flow-grid .box span { color: var(--muted); }
+  .flow-grid .box.truth { grid-column: 1 / -1; border-color: var(--green); }
+  .flow-grid .box.cold { border-color: var(--amber); }
+  .flow-grid .box.warm { border-color: var(--indigo); }
+  .flow-grid .arrows { grid-column: 1 / -1; color: var(--subtle); font-size: 0.82rem; text-align: center; }
+  @media (max-width: 640px) { .flow-grid { grid-template-columns: 1fr; } }
+
+  /* ── warm-up track ────────────────────────────────── */
+  .track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 0.5rem 0 1.6rem; }
+  .phase { border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem 0.9rem; background: var(--panel); font-size: 0.85rem; position: relative; overflow: hidden; }
+  .phase::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--heat, var(--line-strong)); }
+  .phase b { display: block; font-family: var(--display); font-weight: 600; font-size: 0.95rem; }
+  .phase .days { color: var(--subtle); font-size: 0.78rem; margin-bottom: 0.5rem; display: block; }
+  .phase .num { font-family: var(--display); font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; display: block; line-height: 1.1; }
+  .phase .lbl { color: var(--muted); font-size: 0.78rem; display: block; margin-bottom: 0.45rem; }
+  @media (max-width: 800px) { .track { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .track { grid-template-columns: 1fr; } }
+
+  /* ── steps (sequence) ─────────────────────────────── */
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0 0 1.4rem; max-width: 72ch; }
+  .steps li { counter-increment: step; position: relative; padding: 0.7rem 0 0.7rem 3rem; border-bottom: 1px solid var(--line); }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0.75rem; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid var(--line-strong); display: grid; place-items: center; font-family: var(--display); font-size: 0.8rem; color: var(--muted); }
+  .steps li b { display: block; }
+  .steps li span { color: var(--muted); font-size: 0.92rem; }
+
+  /* ── checklist ────────────────────────────────────── */
+  .check-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .check-head .count { font-family: var(--display); font-size: 0.95rem; color: var(--muted); }
+  .check-head .count b { color: var(--text); font-size: 1.3rem; }
+  .check-head button { font: inherit; font-size: 0.82rem; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.7rem; cursor: pointer; }
+  .check-head button:hover { color: var(--text); border-color: var(--line-strong); }
+  .bar { height: 4px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 1.6rem; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--indigo); transition: width 300ms; }
+  .group { margin-bottom: 1.6rem; }
+  .group h4 { font-family: var(--display); font-weight: 600; font-size: 0.95rem; margin: 0 0 0.4rem; color: var(--text); }
+  .group h4 small { color: var(--subtle); font-weight: 400; margin-left: 0.5rem; }
+  .task { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.7rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .task input { width: 1.05rem; height: 1.05rem; margin: 0.22rem 0 0; accent-color: var(--indigo); cursor: pointer; }
+  .task label { cursor: pointer; }
+  .task label span { display: block; color: var(--muted); font-size: 0.88rem; }
+  .task input:checked + label { color: var(--subtle); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .task input:checked + label span { text-decoration: none; }
+
+  /* ── milestones ───────────────────────────────────── */
+  .milestones { display: grid; grid-template-columns: 5rem 1fr 7rem; font-size: 0.92rem; border-top: 1px solid var(--line); margin-bottom: 1.5rem; }
+  .milestones > div { padding: 0.7rem 0.6rem 0.7rem 0; border-bottom: 1px solid var(--line); }
+  .milestones .m { font-family: var(--display); font-weight: 600; color: var(--indigo-bright); }
+  .milestones .when { color: var(--subtle); text-align: right; }
+  @media (max-width: 560px) { .milestones { grid-template-columns: 4rem 1fr; } .milestones .when { grid-column: 2; text-align: left; padding-top: 0; margin-top: -0.6rem; } }
+
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 10px; background: var(--panel); padding: 0.9rem 1.1rem; margin: 0 0 1.4rem; max-width: 72ch; font-size: 0.93rem; }
+  .callout.blue { border-left-color: var(--indigo); }
+  .callout.red { border-left-color: var(--red); }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem 2rem; }
+  .copy-btn { font: inherit; font-size: 0.8rem; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.7rem; cursor: pointer; margin-bottom: 0.5rem; }
+  .copy-btn:hover { color: var(--text); border-color: var(--line-strong); }
+
+  @media print {
+    .rail, #progress, .copy-btn, .check-head button { display: none; }
+    .shell { display: block; }
+    body { background: #fff; color: #111; font-size: 11pt; }
+    .stop { break-before: page; border-top: 0; padding-top: 0; }
+    .hero { break-before: auto; }
+    .seg, .box, .phase, details, .tbl, pre, .callout { background: #fff !important; border-color: #ccc !important; }
+    th { background: #f2f2f2; color: #333; }
+    a { color: #111; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <p class="brand">Lucid Code Labs</p>
+    <p class="brand-sub">Outbound plan, September 2026</p>
+    <ol id="railnav">
+      <li><a href="#top">Overview</a></li>
+      <li><a href="#decisions">Decisions</a></li>
+      <li><a href="#targets">Who we target</a></li>
+      <li><a href="#rules">Ground rules</a></li>
+      <li><a href="#data">What we collect</a></li>
+      <li><a href="#scraper">The scraper</a></li>
+      <li><a href="#flow">Where leads go</a></li>
+      <li><a href="#email">Email &amp; warm-up</a></li>
+      <li><a href="#rhythm">Rhythm &amp; KPIs</a></li>
+      <li><a href="#budget">Budget</a></li>
+      <li><a href="#actions">Action plan</a></li>
+      <li><a href="#build">Scraper build brief</a></li>
+      <li><a href="#risks">Risks</a></li>
+    </ol>
+    <p class="hint">Move between sections with <kbd>J</kbd> / <kbd>K</kbd> or the arrow keys. Checklist progress is saved in this browser.</p>
+  </nav>
+
+  <main>
+    <!-- ── Overview ──────────────────────────────────── -->
+    <section class="hero stop" id="top">
+      <p class="kicker">Seed plan, 12 September 2026. Owner: George.</p>
+      <h1>Outbound, built as a pipeline.</h1>
+      <p class="lede">A small, trustworthy scraper feeds a database we own. Verified, scored, legally eligible contacts flow into a cold-email sequencer on secondary domains, and anyone who replies is nurtured in Mautic. The slow part is warming up inboxes, so that starts today.</p>
+
+      <div class="rail-diagram" aria-label="Pipeline from discovery to meetings">
+        <svg viewBox="-30 0 960 150" role="img">
+          <path class="track" d="M40 60 H860"/>
+          <path class="flow" d="M40 60 H860"/>
+          <g>
+            <circle class="node" cx="40" cy="60" r="7"/><text x="40" y="95" text-anchor="middle" class="strong">Discover</text><text x="40" y="112" text-anchor="middle">Places API</text>
+            <circle class="node" cx="157" cy="60" r="7"/><text x="157" y="95" text-anchor="middle" class="strong">Crawl</text><text x="157" y="112" text-anchor="middle">8 pages / site</text>
+            <circle class="node" cx="274" cy="60" r="7"/><text x="274" y="95" text-anchor="middle" class="strong">Extract</text><text x="274" y="112" text-anchor="middle">Claude, structured</text>
+            <circle class="node" cx="391" cy="60" r="7"/><text x="391" y="95" text-anchor="middle" class="strong">Verify</text><text x="391" y="112" text-anchor="middle">verifier API</text>
+            <circle class="node" cx="508" cy="60" r="7"/><text x="508" y="95" text-anchor="middle" class="strong">Audit</text><text x="508" y="112" text-anchor="middle">PageSpeed, stack</text>
+            <circle class="node db" cx="625" cy="60" r="7"/><text x="625" y="95" text-anchor="middle" class="strong">Score</text><text x="625" y="112" text-anchor="middle">Postgres, truth</text>
+            <circle class="node out" cx="742" cy="60" r="7"/><text x="742" y="95" text-anchor="middle" class="strong">Send</text><text x="742" y="112" text-anchor="middle">sequencer, 3 domains</text>
+            <circle class="node out" cx="860" cy="60" r="7"/><text x="860" y="95" text-anchor="middle" class="strong">Reply</text><text x="860" y="112" text-anchor="middle">Mautic nurture</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="facts">
+        <div><b>200 to 400</b><span>verified, eligible leads per day. Not 30,000.</span></div>
+        <div><b>150 / day</b><span>cold emails at steady state from 6 warmed inboxes</span></div>
+        <div><b>Day 21</b><span>first cold sends, around 3 October</span></div>
+        <div><b>€300 to 600</b><span>monthly running cost, all tools included</span></div>
+      </div>
+    </section>
+
+    <!-- ── Decisions ─────────────────────────────────── -->
+    <section class="stop" id="decisions">
+      <div class="stop-head"><div class="n">Stop 1</div><div><h2>Guiding decisions</h2><p>Everything else in the plan follows from these. Change them here and the rest moves with them.</p></div></div>
+      <div class="stop-body">
+        <dl class="decisions">
+          <dt>Volume</dt><dd><b>200 to 400 verified leads a day</b><span>Sending capacity caps at about 25 cold emails per inbox per day. Thirty thousand unverified leads a day burns domains; it does not produce clients.</span></dd>
+          <dt>Cold-email markets</dt><dd><b>US, UK, Australia, Canada</b><span>English-speaking and legally workable with opt-out or inferred-consent rules.</span></dd>
+          <dt>Germany and DACH</dt><dd><b>LinkedIn, phone, Google Business, referrals, warm email only</b><span>Unsolicited B2B email is unfair competition under §7 UWG. Berlin is the credibility base, reached personally.</span></dd>
+          <dt>System of record</dt><dd><b>Our own Postgres</b><span>History, scoring, dedupe, suppression, and provenance live here. Nothing else is trusted.</span></dd>
+          <dt>Marketing automation</dt><dd><b>Mautic, self-hosted</b><span>Segments, nurture, forms, tracking, unsubscribes. Receives only verified, scored, compliant contacts.</span></dd>
+          <dt>Cold sending</dt><dd><b>A dedicated sequencer on secondary domains</b><span>Smartlead or Instantly. Mautic and Zoho have no inbox rotation, warm-up, or reply detection, and one bad batch would hurt the domain that carries info@lucidcodelabs.com.</span></dd>
+          <dt>Scraper stack</dt><dd><b>Node and TypeScript, Crawlee, Playwright, Postgres, Claude API, one Hetzner VPS</b><span>Matches existing skills, cheap, EU-hosted.</span></dd>
+          <dt>Personalisation</dt><dd><b>A measured finding about the prospect's own website</b><span>We sell web and software work. The scraper can score their site. That hook is one no bought list has.</span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ── Targets ───────────────────────────────────── -->
+    <section class="stop" id="targets">
+      <div class="stop-head"><div class="n">Stop 2</div><div><h2>Who we target</h2><p>One segment maps to one concrete offer. Start with the first two; add the rest once the machine runs.</p></div></div>
+      <div class="stop-body">
+        <div class="segments">
+          <article class="seg first"><span class="order">start here</span><h4>A. Agencies without developers</h4><p class="who">Marketing, branding, SEO, and design agencies in the US, UK, AU, CA with 3 to 30 staff.</p><p class="row"><b>Signals</b> Webflow or WordPress-only portfolio, job posts for freelance developers, "we partner with" language.</p><p class="row"><b>Offer</b> Berlin senior dev team on white-label terms, fixed-price builds, EU hours overlapping US mornings and the full UK and AU day.</p><p class="row"><b>Why first</b> Agencies buy repeatedly and pay on time. One good one equals dozens of SMB one-offs.</p></article>
+          <article class="seg first"><span class="order">start here</span><h4>B. Local businesses with an outdated site</h4><p class="who">Dentists, clinics, law and accounting firms, real estate, hotels, gyms, multi-location restaurants, trade contractors.</p><p class="row"><b>Signals</b> Mobile performance under 50, no HTTPS, copyright year two or more years old, not responsive, no booking while competitors have it, 4.3+ rating with 50+ reviews.</p><p class="row"><b>Offer</b> "Your site scores X on mobile; here is the one thing costing you calls." Fixed-timeline redesign with lead capture.</p></article>
+          <article class="seg later"><h4>C. E-commerce stores that are slow</h4><p class="who">Shopify, WooCommerce, Magento stores at roughly $500k to $10M a year.</p><p class="row"><b>Signals</b> Slow product pages, heavy theme, app bloat, active ads in the Meta Ad Library.</p><p class="row"><b>Offer</b> Performance and conversion engineering, headless Shopify, AI product search.</p></article>
+          <article class="seg later"><h4>D. Funded early-stage startups</h4><p class="who">Pre-seed to Series A on Wellfound, Crunchbase, YC, Product Hunt; EU and US.</p><p class="row"><b>Signals</b> Recent funding, hiring first engineers, landing page but no product.</p><p class="row"><b>Offer</b> MVP and AI feature build-outs with a senior team, faster than hiring.</p></article>
+          <article class="seg local"><h4>E. Berlin and DACH</h4><p class="who">Same profiles as A to D, at home.</p><p class="row"><b>Channel</b> LinkedIn connection plus short message, phone, Google Business Profile, meetups, client referrals, footer backlinks.</p><p class="row"><b>Email</b> Only after a reply, a meeting, a form fill, or a clearly published B2B address with an unmistakably relevant message. Log the lawful basis.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Rules ─────────────────────────────────────── -->
+    <section class="stop" id="rules">
+      <div class="stop-head"><div class="n">Stop 3</div><div><h2>Legal and deliverability ground rules</h2><p>A German company processing personal data. GDPR applies to every record, wherever the person sits. These rules shape the data model.</p></div></div>
+      <div class="stop-body">
+        <h3>Unsolicited B2B email, by market</h3>
+        <div class="tbl wrap"><table>
+          <thead><tr><th>Market</th><th>Status</th><th>What it takes</th></tr></thead>
+          <tbody>
+            <tr><td>USA <br><small style="color:var(--subtle)">CAN-SPAM</small></td><td><span class="pill go">allowed, opt-out</span></td><td>Accurate sender, honest subject, postal address in every email, opt-out honoured within 10 days.</td></tr>
+            <tr><td>UK <br><small style="color:var(--subtle)">PECR, UK GDPR</small></td><td><span class="pill go">allowed to corporate addresses</span></td><td>Sole traders and partnerships need consent. Identify yourself, offer opt-out, keep a legitimate-interest assessment on file.</td></tr>
+            <tr><td>Australia <br><small style="color:var(--subtle)">Spam Act</small></td><td><span class="pill care">inferred consent</span></td><td>Only addresses published on the business's own site, message relevant to their role, unsubscribe required.</td></tr>
+            <tr><td>Canada <br><small style="color:var(--subtle)">CASL</small></td><td><span class="pill care">conspicuous publication</span></td><td>Same as Australia. Keep the source URL of every address as proof.</td></tr>
+            <tr><td>Germany, Austria <br><small style="color:var(--subtle)">UWG, DSGVO</small></td><td><span class="pill no">no cold email</span></td><td>Prior express consent even for B2B. Use LinkedIn, phone, post, Google Business.</td></tr>
+            <tr><td>Rest of EU</td><td><span class="pill no">skip in v1</span></td><td>NL, IT, FR are restrictive. Revisit later.</td></tr>
+          </tbody>
+        </table></div>
+        <p>Two consequences for the scraper: <strong>provenance is a required field</strong> (source URL, source type, captured time on every email) and <strong>jurisdiction is a required field</strong>, because country decides eligibility before anything else.</p>
+
+        <div class="two">
+          <div>
+            <h3>GDPR housekeeping</h3>
+            <ul>
+              <li>Lawful basis: legitimate interest, Art. 6(1)(f). Write a one-page assessment and keep it with this plan.</li>
+              <li>Privacy notice link in every cold email; answer access and erasure requests within 30 days. Add a prospect-data paragraph to the site's privacy page.</li>
+              <li>Retention: delete or anonymise after 12 months without engagement. Every record carries its retention date.</li>
+              <li>One global do-not-contact list in Postgres, pushed to Mautic and the sequencer nightly. Unsubscribes, bounces, complaints, and "remove me" replies land there within 24 hours.</li>
+              <li>Never store special-category data, personal phone numbers, or anything from behind a login.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Platform terms</h3>
+            <ul>
+              <li><strong>LinkedIn:</strong> never scraped. Sales Navigator by hand for DACH and enrichment, or a licensed provider.</li>
+              <li><strong>Google Maps:</strong> the official Places API (New). Legal, free tier, no proxies. Scraping maps.google.com is fragile and against terms.</li>
+              <li><strong>Company websites:</strong> crawl politely. Respect robots.txt, identify the bot with a contact URL, one request every few seconds per host, cache everything.</li>
+              <li><strong>Directories:</strong> most forbid bulk scraping. Manual seed lists and APIs where they exist.</li>
+            </ul>
+            <h3>Mailbox providers</h3>
+            <p>Google, Yahoo, and Microsoft all require aligned SPF and DKIM with DMARC, complaint rates under 0.3% (aim under 0.1%), valid reverse DNS, and one-click unsubscribe headers. The sequencer handles headers; we handle DNS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Data model ────────────────────────────────── -->
+    <section class="stop" id="data">
+      <div class="stop-head"><div class="n">Stop 4</div><div><h2>What the scraper collects</h2><p>Collect once, enrich in stages, score last. Every table carries created and updated times, a source, and a source URL. Observations are appended, never overwritten.</p></div></div>
+      <div class="stop-body">
+        <details open>
+          <summary>Companies <span class="meta">the anchor record, deduped on domain</span></summary>
+          <div class="tbl wrap"><table>
+            <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>domain (unique), name, legal name, website URL</td><td>Domain normalised without www; the dedupe key. Legal name from Impressum, Companies House, or footer.</td></tr>
+              <tr><td>country, region, city, postal address, phone</td><td>Country drives jurisdiction rules. Address is CASL and AU evidence. Business line only.</td></tr>
+              <tr><td>industry, segment, size estimate, founded year</td><td>Google primary type or our taxonomy; segment A to E from the classifier; size from site, LinkedIn count, or job posts.</td></tr>
+              <tr><td>description, languages</td><td>One LLM-summarised paragraph from the homepage.</td></tr>
+              <tr><td>google place id, rating, review count</td><td>For refreshes and as a business-health signal.</td></tr>
+              <tr><td>social URLs</td><td>LinkedIn company page, Instagram, Facebook, X, when linked from the site.</td></tr>
+              <tr><td>discovery source, discovery query, status</td><td>Which search found it, for attribution and re-runs. Status runs new, crawled, enriched, scored, exported, suppressed.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+        <details>
+          <summary>Contacts <span class="meta">people, the unit of outreach</span></summary>
+          <div class="tbl wrap"><table>
+            <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>first name, last name, raw full name, title, seniority</td><td>Owner, c-level, director, manager, other. Names may be empty for role addresses.</td></tr>
+              <tr><td>email (unique), email type</td><td>Lowercased. Type is personal-work, role (info@, hello@), or generic provider (gmail).</td></tr>
+              <tr><td>email status, verified at</td><td>Unverified, valid, catch-all, invalid, disposable, unknown. Re-verify anything older than 30 days before sending.</td></tr>
+              <tr><td>email source type, email source URL</td><td>Impressum, contact page, mailto, team page, pattern guess, enrichment API, manual. The exact page is our legal evidence.</td></tr>
+              <tr><td>linkedin URL, language, timezone</td><td>LinkedIn only when publicly linked from the company site. Timezone drives send windows.</td></tr>
+              <tr><td>jurisdiction, cold-email eligible</td><td>Eligible is computed: jurisdiction allows it, not a generic provider, not suppressed, status valid or catch-all.</td></tr>
+              <tr><td>lawful basis, do not contact, retention until</td><td>Legitimate interest, consent, or existing relationship. Retention defaults to creation plus 12 months.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+        <details>
+          <summary>Site audits <span class="meta">the personalisation engine, one row per crawl</span></summary>
+          <div class="tbl wrap"><table>
+            <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>cms, cms version hint, framework, hosting provider</td><td>WordPress, Wix, Squarespace, Shopify, Webflow, custom. Fingerprinted from HTML, headers, asset paths, DNS.</td></tr>
+              <tr><td>https ok, cert expiry, mobile friendly</td><td>Viewport meta and responsive check.</td></tr>
+              <tr><td>lighthouse mobile and desktop, LCP, CLS, page weight</td><td>PageSpeed Insights API, free at 25k calls a day.</td></tr>
+              <tr><td>copyright year, last modified</td><td>Footer regex; headers or sitemap.</td></tr>
+              <tr><td>has booking, e-commerce, chat, contact form, analytics, cookie banner, impressum, schema.org</td><td>Feature flags that feed the pain score and the hook.</td></tr>
+              <tr><td>broken links count, screenshot URL, raw findings</td><td>Sampled internal links; screenshot for tier 1 only; everything else as JSON.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+        <details>
+          <summary>Signals <span class="meta">time-stamped events that raise priority</span></summary>
+          <p>One row per event with type, observed time, source URL, and detail. Types: hiring developer, hiring marketer, funding round, new location, running ads, site under construction, review spike, domain recently registered, agency partner language, app in store.</p>
+        </details>
+        <details>
+          <summary>Scores <span class="meta">computed nightly, explainable, cheap</span></summary>
+          <div class="tbl wrap"><table>
+            <thead><tr><th>Score</th><th>How</th></tr></thead>
+            <tbody>
+              <tr><td>fit, 0 to 100</td><td>Segment match, size, industry, market.</td></tr>
+              <tr><td>pain, 0 to 100</td><td>Weighted audit findings: performance under 50 adds 30, no HTTPS 25, not mobile-friendly 20, copyright two years old 15, no booking where expected 10.</td></tr>
+              <tr><td>intent, 0 to 100</td><td>Signals decayed over time: hiring a developer adds 40 and halves every 30 days, funding 30, running ads 15.</td></tr>
+              <tr><td>priority</td><td>Tier 1 is a named contact with fit at least 70 and pain or intent at least 50. Then tier 2, tier 3, hold.</td></tr>
+              <tr><td>hook, hook reviewed</td><td>One LLM-written sentence from the audit, stored so a human can read it. Tier 1 hooks are eyeballed before first send during month one.</td></tr>
+            </tbody>
+          </table></div>
+        </details>
+        <details>
+          <summary>Outreach events and suppression list <span class="meta">what happened, and who never hears from us</span></summary>
+          <p>Events: contact, channel, campaign, step, event (sent, bounced, replied, positive, negative, meeting booked, unsubscribed, complained), time, raw payload. Written by sequencer and Mautic webhooks; the source of every KPI. The suppression list holds email or whole domain, reason, added time, and source. Seed it with existing and past clients, competitors, and anyone who has ever said no.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ── Scraper ───────────────────────────────────── -->
+    <section class="stop" id="scraper">
+      <div class="stop-head"><div class="n">Stop 5</div><div><h2>The scraper</h2><p>Simple, boring, and ours. Small stages that each read from and write to Postgres, so any one can be re-run without redoing the others.</p></div></div>
+      <div class="stop-body">
+        <div class="tbl wrap"><table>
+          <thead><tr><th>Stage</th><th>Does</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Discover</td><td>A query like "dentist in Austin, TX" becomes company rows.</td><td>Places API text search, paginated. Clutch, Wellfound, Crunchbase seed lists exported by hand.</td></tr>
+            <tr><td>Crawl</td><td>Cache home, contact, about, team, impressum, and a sitemap sample.</td><td>Static fetch first. Playwright only when the page is a JS shell. Max about 8 pages per site.</td></tr>
+            <tr><td>Extract</td><td>Structured company and people fields from the cached pages.</td><td>One Claude call per site with structured outputs enforcing the schema.</td></tr>
+            <tr><td>Find emails</td><td>Candidates with source type and URL.</td><td>Explicit addresses, then mailto, then deobfuscated forms, then pattern guess from a known address, then an enrichment API for tier 1 only.</td></tr>
+            <tr><td>Verify</td><td>Email status.</td><td>Syntax, MX, disposable and role detection, then a verifier API for SMTP-level checks. Never probe SMTP from our own VPS; the IP is blacklisted within days.</td></tr>
+            <tr><td>Audit</td><td>Site audit row.</td><td>PageSpeed API for scores, own fingerprinting for CMS and features, headless screenshot for tier 1.</td></tr>
+            <tr><td>Classify and score</td><td>Segment, scores, hook.</td><td>Claude classifies and writes the hook; scoring is plain SQL and TypeScript so it stays explainable.</td></tr>
+            <tr><td>Export</td><td>CSV or API push.</td><td>Only eligible, tier 1 or 2, not exported in the last 90 days.</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="two">
+          <div>
+            <h3>Runtime and hosting</h3>
+            <ul>
+              <li>Node 22 and TypeScript. Claude Code can build and maintain it.</li>
+              <li>Crawlee for queues, retries, proxy rotation, and a Cheerio plus Playwright crawler pair.</li>
+              <li>Postgres 16 in Docker on the same box, Drizzle for the schema. Neon or Supabase if zero ops is preferred.</li>
+              <li>Cloudflare R2 or Hetzner Object Storage for raw HTML and screenshots.</li>
+              <li>Hetzner CX22 or CX32 in Germany, €4 to 8 a month. EU hosting keeps the GDPR story simple.</li>
+              <li>Cron per stage. No Kubernetes, no serverless. Nightly runs are enough.</li>
+              <li>A runs table and a daily summary by email or Telegram is all the observability v1 needs.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Claude in the pipeline</h3>
+            <ul>
+              <li>Used only where regex fails: extracting people and addresses, classifying the business, writing the hook.</li>
+              <li>Model <code>claude-opus-5</code> with low effort for extraction and classification, default effort for tier 1 hooks.</li>
+              <li>Structured outputs enforce the schema; the pipeline never parses free text.</li>
+              <li>Frozen, cached system prompt; page text after it. Trim HTML to visible text first, which cuts cost five to ten times.</li>
+              <li>Nightly runs through the Batch API at half price. Roughly €10 a day for 500 extractions, €3 for classification, about €1 for 100 hooks.</li>
+              <li>Check the stop reason before reading content; log refusals and retry with cleaner text.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Proxies</h3>
+        <div class="tbl wrap"><table>
+          <thead><tr><th>Target</th><th>Need</th><th>Recommendation</th></tr></thead>
+          <tbody>
+            <tr><td>Places, PageSpeed, verifier APIs</td><td><span class="pill go">none</span></td><td>Official, key-based APIs.</td></tr>
+            <tr><td>Company websites</td><td><span class="pill go">usually none</span></td><td>Each site sees a handful of requests from a clean VPS IP. Add Playwright stealth before proxies; a datacenter pool only if Cloudflare challenges pile up.</td></tr>
+            <tr><td>Directories, search engines, Maps HTML</td><td><span class="pill care">rotating residential</span></td><td>Avoid entirely in v1 through APIs and manual seeds. If ever needed, budget €30 to 50 a month.</td></tr>
+            <tr><td>LinkedIn</td><td><span class="pill no">never</span></td><td>Not scraped.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout">The meetup contact doing 30,000 a day is almost certainly hammering Maps or directories through residential proxies. That volume is not needed here, and its risk profile is worse than its return.</div>
+
+        <h3>What makes it effective</h3>
+        <ol>
+          <li><strong>Quality gates before quantity.</strong> A lead counts only with a verified email, an eligible jurisdiction, and a segment.</li>
+          <li><strong>The audit is the product.</strong> Personalisation comes from measured facts about their site, not guesses.</li>
+          <li><strong>Provenance on every field.</strong> "Where did you get my email" is answered instantly.</li>
+          <li><strong>A feedback loop.</strong> Replies, bounces, and meetings flow back and tune the scoring weights monthly.</li>
+          <li><strong>Boring infrastructure.</strong> One VPS, one database, cron. It can be left alone for a week.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ── Flow ──────────────────────────────────────── -->
+    <section class="stop" id="flow">
+      <div class="stop-head"><div class="n">Stop 6</div><div><h2>Where leads go</h2><p>Postgres is the truth. Two systems read from it, and both report back into it.</p></div></div>
+      <div class="stop-body">
+        <div class="flow-grid">
+          <div class="box truth"><b>Postgres, system of record</b><span>Everything from Stop 4. The scraper writes here and only here. An export-ready view lists eligible, scored, not-suppressed contacts. The suppression list is authoritative and copied out nightly.</span></div>
+          <div class="arrows">nightly export, capped at 1.5× tomorrow's sending capacity, plus the suppression list</div>
+          <div class="box cold"><b>Cold sequencer</b><span>Smartlead or Instantly, €35 to 90 a month. Inbox rotation across secondary domains, warm-up, sequences with reply detection, bounce and complaint handling, custom tracking domain, a REST API for leads and events.</span></div>
+          <div style="align-self:center;color:var(--subtle);font-size:0.82rem;text-align:center">positive reply<br>promotes to</div>
+          <div class="box warm"><b>Mautic 6, self-hosted</b><span>Segments by market and engagement, nurture campaigns for anyone who replied or booked, DACH warm contacts with a logged lawful basis, site forms and a free-audit page, tracking pixel on lucidcodelabs.com.</span></div>
+          <div class="arrows">webhooks for sent, bounced, replied, unsubscribed, form submitted, all written to the outreach events table</div>
+        </div>
+        <div class="callout red">Mautic never sends cold first-touch email. Its sending goes through one SMTP or API provider with no inbox rotation or warm-up; one bad campaign damages that provider and, if pointed at Zoho, the primary domain.</div>
+        <div class="tbl wrap"><table>
+          <thead><tr><th>Direction</th><th>When</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>Postgres to sequencer</td><td>Nightly</td><td>API upsert of export-ready rows.</td></tr>
+            <tr><td>Postgres to sequencer and Mautic</td><td>Nightly</td><td>Suppression list push.</td></tr>
+            <tr><td>Sequencer to Postgres</td><td>Realtime</td><td>Webhooks into outreach events.</td></tr>
+            <tr><td>Sequencer to Mautic</td><td>On positive reply or meeting</td><td>A Postgres job creates or updates the Mautic contact with tags for engaged, segment, market.</td></tr>
+            <tr><td>Mautic to Postgres</td><td>Realtime</td><td>Webhooks for form submits, unsubscribes, email events.</td></tr>
+            <tr><td>Postgres to George</td><td>Daily at 08:00</td><td>Leads added, verified, exported, sent, replies, meetings, bounce and complaint rates.</td></tr>
+          </tbody>
+        </table></div>
+        <p>The idempotency key everywhere is the lowercased email. Mautic contacts store the Postgres contact id in a custom field so updates never create duplicates.</p>
+      </div>
+    </section>
+
+    <!-- ── Email ─────────────────────────────────────── -->
+    <section class="stop" id="email">
+      <div class="stop-head"><div class="n">Stop 7</div><div><h2>Email infrastructure and warm-up</h2><p>The long pole. Domains need age and inboxes need history before they can carry cold volume. All of this starts before a line of scraper code exists.</p></div></div>
+      <div class="stop-body">
+        <div class="callout red">Never send cold email from lucidcodelabs.com. It carries client mail, invoices, and the inbound SEO work.</div>
+        <div class="two">
+          <div>
+            <h3>Domains and inboxes</h3>
+            <ul>
+              <li>Three secondary domains now, for example lucidcodelabs.io, lucidcode.dev, lucidlabs.agency, getlucidcode.com. Prefer .com, .io, .co; avoid .xyz and .top.</li>
+              <li>Namecheap or Porkbun, WHOIS privacy on, a 301 redirect to www.lucidcodelabs.com so each domain resolves to a real site.</li>
+              <li>Two mailboxes per domain in month one, three at most. Human names: george@, g.beard@, plus one hello@ for replies.</li>
+              <li>Domain 1 on Google Workspace, domain 2 on Microsoft 365, domain 3 on Zoho. Mixed providers spread risk and cover both Gmail and Outlook placement.</li>
+              <li>Real display name, photo, and a signature with name, title, company, Berlin postal address, and website.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>DNS per secondary domain</h3>
+            <div class="tbl"><table>
+              <tbody>
+                <tr><td>MX</td><td>Provider records, to receive replies and bounces.</td></tr>
+                <tr><td>SPF</td><td>One record only, never more than 10 lookups.</td></tr>
+                <tr><td>DKIM</td><td>Provider selector, aligned with the From domain.</td></tr>
+                <tr><td>DMARC</td><td>Start at p=none with reports to dmarc@lucidcodelabs.com; move to quarantine after 30 clean days.</td></tr>
+                <tr><td>Tracking</td><td>A CNAME like link.lucidcode.dev to the sequencer.</td></tr>
+                <tr><td>Redirect</td><td>To www.lucidcodelabs.com.</td></tr>
+              </tbody>
+            </table></div>
+            <p style="font-size:0.9rem;color:var(--muted)">Verify with MXToolbox and mail-tester.com (aim for 10 of 10). Register every domain in Google Postmaster Tools and Microsoft SNDS.</p>
+          </div>
+        </div>
+
+        <h3>Warm-up schedule, per inbox</h3>
+        <div class="track">
+          <div class="phase" style="--heat:var(--line-strong)"><b>Setup</b><span class="days">Days 0 to 2</span><span class="num">0</span><span class="lbl">automated warm-up</span><span class="lbl">DNS, signatures, photos, 5 real emails to friends and clients with replies.</span></div>
+          <div class="phase" style="--heat:#7c6a2a"><b>Ramp 1</b><span class="days">Days 3 to 9</span><span class="num">5 to 20</span><span class="lbl">warm-up emails a day</span><span class="lbl">Reply to real threads, subscribe to newsletters, use the inbox from a phone.</span></div>
+          <div class="phase" style="--heat:#b8862b"><b>Ramp 2</b><span class="days">Days 10 to 16</span><span class="num">20 to 30</span><span class="lbl">warm-up, 40%+ replies</span><span class="lbl">No cold sends yet.</span></div>
+          <div class="phase" style="--heat:var(--amber)"><b>Ramp 3</b><span class="days">Days 17 to 23</span><span class="num">5 to 10</span><span class="lbl">cold sends a day</span><span class="lbl">Tier 1 leads only, hooks reviewed by hand. Warm-up stays at 25 to 35.</span></div>
+          <div class="phase" style="--heat:var(--green)"><b>Steady</b><span class="days">Day 24 on</span><span class="num">20 to 25</span><span class="lbl">cold sends a day, hard cap 30</span><span class="lbl">Warm-up never fully off, 15 to 20 a day. Weekly manual use.</span></div>
+        </div>
+        <p>Steady state: 3 domains, 2 inboxes each, 25 a day, so <strong>150 cold emails a day</strong> and about 3,000 a month. Add a domain each month if metrics hold. Automated warm-up networks work, but Google has said they violate Workspace terms, so keep volumes conservative and pair them with real human activity. <strong>The first cold email goes out around day 21.</strong> That is the scraper's v1 deadline: 150 tier 1 and tier 2 leads ready by then.</p>
+
+        <h3>Deliverability guardrails</h3>
+        <ul>
+          <li>Plain text, no images, no attachments, at most one link in the first email, preferably none.</li>
+          <li>Open tracking off. Pixels hurt placement and Apple Mail inflates opens anyway. Measure replies.</li>
+          <li>Tuesday to Thursday first, 08:00 to 11:00 in the prospect's time zone, 3 to 8 minutes between sends.</li>
+          <li>Bounce rate above 3% on an inbox: pause it three days and re-verify. Complaints above 0.1%: pause the whole domain a week.</li>
+          <li>Three to four subject lines and three bodies per step so no two inboxes send identical text.</li>
+          <li>Re-verify every email within 30 days of sending. Keep each inbox under 50 emails a day including warm-up.</li>
+        </ul>
+
+        <h3>The v1 sequence, segment B</h3>
+        <ol class="steps">
+          <li><b>Day 0, 60 to 80 words</b><span>Name, one measured finding ("your site scores 31 of 100 on mobile and takes 6.4 seconds on a phone"), what it likely costs them in plain words, one question. Signature with postal address and a one-line opt-out.</span></li>
+          <li><b>Day 3, same thread</b><span>One more finding or a screenshot link on the tracking domain. Two sentences.</span></li>
+          <li><b>Day 7, different angle</b><span>A relevant case study in one sentence. Ask whether someone else handles the website.</span></li>
+          <li><b>Day 14, polite close</b><span>"I will stop here; if it becomes relevant, reply any time."</span></li>
+        </ol>
+        <p>Segment A uses the same rhythm with a capacity and white-label angle and no audit finding up front. Replies get an answer within four business hours; positives are promoted to Mautic with a booking link.</p>
+      </div>
+    </section>
+
+    <!-- ── Rhythm & KPIs ─────────────────────────────── -->
+    <section class="stop" id="rhythm">
+      <div class="stop-head"><div class="n">Stop 8</div><div><h2>Operating rhythm and KPIs</h2><p>Numbers come from the outreach events table, not from tool dashboards.</p></div></div>
+      <div class="stop-body">
+        <div class="two">
+          <div>
+            <h3>Rhythm</h3>
+            <div class="tbl wrap"><table>
+              <tbody>
+                <tr><td>Daily, 08:00</td><td>Read the pipeline summary; check bounce and complaint rates per inbox. Five minutes.</td></tr>
+                <tr><td>Daily, 09:00</td><td>Reply to everything; promote positives to Mautic; add negatives to suppression. 20 to 40 minutes.</td></tr>
+                <tr><td>Daily, month one</td><td>Review tomorrow's tier 1 hooks. 15 minutes.</td></tr>
+                <tr><td>Monday</td><td>Pick the week's discovery queries and launch the discover stage. 30 minutes.</td></tr>
+                <tr><td>Friday</td><td>KPI review, rotate copy, adjust scoring weights. 30 minutes.</td></tr>
+                <tr><td>Monthly</td><td>Add a domain and two inboxes if bounce is under 2% and complaints under 0.1%; re-verify stale emails; purge records past retention; revisit the legitimate-interest assessment. One hour.</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+          <div>
+            <h3>Targets</h3>
+            <div class="tbl wrap"><table>
+              <thead><tr><th>Metric</th><th>Target</th><th>Alarm</th></tr></thead>
+              <tbody>
+                <tr><td>Eligible leads added a day</td><td>200 to 400</td><td>Under 100 for 3 days</td></tr>
+                <tr><td>Verification pass rate</td><td>Over 60%</td><td>Under 40%: email finding is guessing</td></tr>
+                <tr><td>Bounce rate</td><td>Under 2%</td><td>Over 3% on any inbox</td></tr>
+                <tr><td>Complaint rate</td><td>Under 0.1%</td><td>Over 0.1% on any domain</td></tr>
+                <tr><td>Reply rate</td><td>5 to 10% for B, 3 to 6% for A</td><td>Under 2% after 300 sends</td></tr>
+                <tr><td>Positive reply rate</td><td>1 to 3%</td><td></td></tr>
+                <tr><td>Meetings per 1,000 sends</td><td>8 to 15</td><td></td></tr>
+                <tr><td>Cost per meeting</td><td>Under €40</td><td></td></tr>
+                <tr><td>Proposals a month</td><td>8+ by month three</td><td></td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Budget ────────────────────────────────────── -->
+    <section class="stop" id="budget">
+      <div class="stop-head"><div class="n">Stop 9</div><div><h2>Budget</h2><p>Monthly, steady state, v1. One retained agency client pays for all of it.</p></div></div>
+      <div class="stop-body">
+        <div class="tbl"><table>
+          <tbody>
+            <tr><td>Three domains</td><td>about €3 amortised</td></tr>
+            <tr><td>Six inboxes across Google Workspace, Microsoft 365, Zoho</td><td>about €35</td></tr>
+            <tr><td>Sequencer</td><td>€35 to 90</td></tr>
+            <tr><td>Hetzner VPS</td><td>about €8</td></tr>
+            <tr><td>Email verification, about 10k a month</td><td>€20 to 40</td></tr>
+            <tr><td>Claude API, batched</td><td>€200 to 400</td></tr>
+            <tr><td>Google Places API</td><td>free tier likely enough; cap the key at €50</td></tr>
+            <tr><td>PageSpeed Insights, proxies</td><td>free, none</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>€300 to 600 a month</strong></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ── Actions ───────────────────────────────────── -->
+    <section class="stop" id="actions">
+      <div class="stop-head"><div class="n">Stop 10</div><div><h2>Action plan</h2><p>In order. The first six take one afternoon and start the 21-day warm-up clock. Ticks are saved in this browser.</p></div></div>
+      <div class="stop-body">
+        <div class="check-head"><div class="count"><b id="done">0</b> of <span id="total">18</span> done</div><button type="button" id="reset">Clear ticks</button></div>
+        <div class="bar"><i id="barfill"></i></div>
+        <div id="checklist">
+          <div class="group"><h4>Today</h4>
+            <div class="task"><input type="checkbox" id="t1"><label for="t1">Buy three secondary domains<span>.com, .io, or .co, WHOIS privacy on, at Namecheap or Porkbun.</span></label></div>
+            <div class="task"><input type="checkbox" id="t2"><label for="t2">Set up 301 redirects<span>Each domain to https://www.lucidcodelabs.com.</span></label></div>
+            <div class="task"><input type="checkbox" id="t3"><label for="t3">Create six mailboxes<span>Domain 1 on Google Workspace, domain 2 on Microsoft 365, domain 3 on Zoho. Two human-looking users each.</span></label></div>
+            <div class="task"><input type="checkbox" id="t4"><label for="t4">DNS on every domain<span>MX, SPF, DKIM, DMARC at p=none reporting to dmarc@lucidcodelabs.com. Validate with MXToolbox and mail-tester.com.</span></label></div>
+            <div class="task"><input type="checkbox" id="t5"><label for="t5">Profile hygiene<span>Display name, photo, signature with Berlin address and website on all six inboxes.</span></label></div>
+            <div class="task"><input type="checkbox" id="t6"><label for="t6">Send five real emails from each inbox<span>To people who will reply. Reply back, star the threads.</span></label></div>
+          </div>
+          <div class="group"><h4>Days 1 to 3</h4>
+            <div class="task"><input type="checkbox" id="t7"><label for="t7">Sign up for a sequencer and start warm-up<span>Smartlead or Instantly, all six inboxes, 5 a day ramping as in Stop 7, a custom tracking domain per sending domain.</span></label></div>
+            <div class="task"><input type="checkbox" id="t8"><label for="t8">Register domains in Google Postmaster Tools and Microsoft SNDS</label></div>
+            <div class="task"><input type="checkbox" id="t9"><label for="t9">Write the legitimate-interest assessment<span>One page. Plus a /bot page and a prospect-data paragraph for /privacy in this repo.</span></label></div>
+            <div class="task"><input type="checkbox" id="t10"><label for="t10">Build the seed suppression list<span>Existing and past clients, competitors, personal contacts, anyone who said no. A CSV until the database exists.</span></label></div>
+            <div class="task"><input type="checkbox" id="t11"><label for="t11">Provision the Hetzner VPS<span>Docker, Postgres, Mautic 6. Mautic's own sending through Amazon SES or Postmark, nurture only.</span></label></div>
+          </div>
+          <div class="group"><h4>Days 4 to 10</h4>
+            <div class="task"><input type="checkbox" id="t12"><label for="t12">Draft copy<span>Three subject lines and three bodies per step for segments B and A, under 80 words, tested in mail-tester and a Gmail and Outlook seed inbox.</span></label></div>
+            <div class="task"><input type="checkbox" id="t13"><label for="t13">Hand-build a 50-lead pilot list<span>Segment B in one US city, from Google Maps by hand. Verify with free MillionVerifier credits, score by hand. This is the scraper's acceptance test.</span></label></div>
+            <div class="task"><input type="checkbox" id="t14"><label for="t14">Open the scraper build planning session<span>Stop 11 has the brief and the prompt.</span></label></div>
+            <div class="task"><input type="checkbox" id="t15"><label for="t15">Start the DACH channel<span>Create the LinkedIn company page and flip its flag in siteConfig. Ten Berlin founders a week with a two-line message, no pitch. Log replies in Mautic with consent as the lawful basis.</span></label></div>
+          </div>
+          <div class="group"><h4>Days 17 to 21</h4>
+            <div class="task"><input type="checkbox" id="t16"><label for="t16">Warm-up check<span>Inbox placement 90%+ on the sequencer's placement test, zero warm-up bounces.</span></label></div>
+            <div class="task"><input type="checkbox" id="t17"><label for="t17">First five to ten cold sends per inbox<span>From the pilot list, tier 1 only, hooks reviewed by hand.</span></label></div>
+            <div class="task"><input type="checkbox" id="t18"><label for="t18">Run the operating rhythm from Stop 8</label></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Build brief ───────────────────────────────── -->
+    <section class="stop" id="build">
+      <div class="stop-head"><div class="n">Stop 11</div><div><h2>Scraper build brief</h2><p>The seed for a separate, detailed planning session. A spec, not a plan; the plan produces milestones, migrations, and tickets.</p></div></div>
+      <div class="stop-body">
+        <p class="lede">Objective: turn "segment, market, city list" into 200 to 400 verified, scored, eligible contacts a day, with provenance on every field, running unattended on one VPS, with the first 150 tier 1 and 2 leads ready within 21 days.</p>
+        <div class="two">
+          <div>
+            <h3>In v1</h3>
+            <ul>
+              <li>Discover via Places API text search, one query template per segment B category.</li>
+              <li>Crawl up to 8 pages per site with Crawlee, Cheerio first, Playwright fallback.</li>
+              <li>Extract with Claude structured outputs; the deterministic email-finding chain.</li>
+              <li>Verify via one external verifier API.</li>
+              <li>Audit via PageSpeed plus CMS fingerprinting; no screenshots.</li>
+              <li>Score with SQL and TypeScript rules; Claude writes tier 1 hooks.</li>
+              <li>CSV export to the sequencer; suppression list export.</li>
+              <li>A runs table and a daily summary email.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Not in v1</h3>
+            <ul>
+              <li>Directory scraping, anything LinkedIn, residential proxies.</li>
+              <li>Screenshots, a UI, multi-worker queues.</li>
+              <li>Mautic API sync. CSV import is fine for the first month.</li>
+            </ul>
+            <h3>Done means</h3>
+            <ul>
+              <li>Fresh VPS to running pipeline in under an hour from the README.</li>
+              <li>A nightly run on 10 queries completes unattended and writes a summary.</li>
+              <li>80% or more email recall on the pilot list; 95% precision on valid status, measured by bounces in the first 300 sends.</li>
+              <li>Every exported contact has source URL, jurisdiction, and lawful basis.</li>
+              <li>Adding an email to the suppression list removes it from the next export.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Decisions the session must make</h3>
+        <ol>
+          <li>Postgres hosting: Docker on the VPS or Neon. Lean: Docker, nightly backups to R2.</li>
+          <li>ORM: Drizzle or Prisma. Lean: Drizzle.</li>
+          <li>HTML storage: Postgres or object storage. Lean: object storage keyed by URL hash, trimmed text in Postgres.</li>
+          <li>Which verifier API, by price per credit and catch-all handling.</li>
+          <li>Which sequencer, by API quality for pushing leads and receiving webhooks.</li>
+          <li>How the pilot list becomes the acceptance test.</li>
+          <li>Discovery query templates and the first ten cities.</li>
+          <li>The exact extraction schema and classification prompt, with ten hand-labelled examples.</li>
+          <li>Hook prompt and a review flow; a CLI printing tomorrow's hooks is enough.</li>
+          <li>Secrets management and backups on the VPS.</li>
+        </ol>
+
+        <h3>Milestones</h3>
+        <div class="milestones">
+          <div class="m">M0</div><div>Repo, schema, Docker Compose, runs table, README</div><div class="when">build day 2</div>
+          <div class="m">M1</div><div>Discover and crawl on one query, HTML cached</div><div class="when">day 4</div>
+          <div class="m">M2</div><div>Extract and email-finding chain, evaluated on the pilot list</div><div class="when">day 7</div>
+          <div class="m">M3</div><div>Verify, audit, scoring, export-ready view</div><div class="when">day 10</div>
+          <div class="m">M4</div><div>Hooks, review CLI, CSV export, suppression round-trip</div><div class="when">day 12</div>
+          <div class="m">M5</div><div>Nightly cron, summary email, first 150 leads delivered</div><div class="when">day 14</div>
+        </div>
+
+        <h3>Prompt to open the session</h3>
+        <button type="button" class="copy-btn" id="copyprompt">Copy prompt</button>
+        <pre id="prompt">Read LEADGEN.md in the landing-page-lucid repo, especially Sections 3, 4, and 11. Produce a detailed implementation plan for the v1 scraper as a new repository named lucid-leadgen: directory layout, Postgres schema with migrations, the stage-by-stage module design, the Claude extraction schema and prompts, the email-finding chain, verifier and PageSpeed integrations, the scoring SQL, the export view, Docker Compose for the Hetzner VPS, cron, and a test plan against the 50-lead pilot CSV. Resolve the ten open decisions in Section 11.4 with a recommendation each. Output the plan as PLAN.md in the new repo with milestones M0 to M5 broken into tickets.</pre>
+      </div>
+    </section>
+
+    <!-- ── Risks ─────────────────────────────────────── -->
+    <section class="stop" id="risks">
+      <div class="stop-head"><div class="n">Stop 12</div><div><h2>Risks</h2><p>What can go wrong, and what already prevents it.</p></div></div>
+      <div class="stop-body">
+        <div class="tbl wrap"><table>
+          <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+          <tbody>
+            <tr><td>Domain burned by early aggressive sending</td><td><span class="pill no">high if rushed</span></td><td>Follow the ramp; hard cap 30 per inbox; a bad inbox never shares a domain with more than two others.</td></tr>
+            <tr><td>Google acts against automated warm-up</td><td><span class="pill care">medium</span></td><td>Conservative volumes, real manual activity, a provider mix, never warm the primary domain.</td></tr>
+            <tr><td>Abmahnung from a German recipient</td><td><span class="pill care">medium if DACH is emailed</span></td><td>Do not cold-email DE or AT; the jurisdiction gate in the export view enforces it.</td></tr>
+            <tr><td>VPS IP blacklisted from SMTP probing</td><td><span class="pill no">high if done in-house</span></td><td>Use a verifier API, never probe from the VPS.</td></tr>
+            <tr><td>Extraction quality drifts</td><td><span class="pill care">medium</span></td><td>Ten-example eval set, re-run after every prompt change, bounce rate as ground truth.</td></tr>
+            <tr><td>More leads than replies can be handled</td><td><span class="pill care">medium</span></td><td>Reply SLA in Stop 8; exports capped at 1.5× capacity.</td></tr>
+            <tr><td>A data-subject request we cannot answer</td><td><span class="pill go">low</span></td><td>Provenance fields, the /bot page, the privacy paragraph, a 30-day response process.</td></tr>
+            <tr><td>Scope creep into a lead-gen SaaS</td><td><span class="pill no">high, it is tempting</span></td><td>v1 scope is frozen until the first three meetings are booked.</td></tr>
+          </tbody>
+        </table></div>
+        <p style="color:var(--subtle);font-size:0.88rem">The full text, including discovery query templates and tool shortlists, lives in LEADGEN.md in the repository.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var stops = Array.prototype.slice.call(document.querySelectorAll('.stop'));
+  var navItems = Array.prototype.slice.call(document.querySelectorAll('#railnav li'));
+  var progress = document.getElementById('progress');
+
+  // Scroll progress + active stop.
+  function update() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+    var line = window.scrollY + window.innerHeight * 0.3;
+    var idx = 0;
+    for (var i = 0; i < stops.length; i++) if (stops[i].offsetTop <= line) idx = i;
+    navItems.forEach(function (li, i) { li.classList.toggle('active', i === idx); });
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+
+  // J / K and arrow keys move between stops.
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    var dir = 0;
+    if (e.key === 'j' || e.key === 'J' || e.key === 'ArrowDown' || e.key === 'ArrowRight') dir = 1;
+    if (e.key === 'k' || e.key === 'K' || e.key === 'ArrowUp' || e.key === 'ArrowLeft') dir = -1;
+    if (!dir) return;
+    var current = navItems.findIndex(function (li) { return li.classList.contains('active'); });
+    var next = Math.min(stops.length - 1, Math.max(0, current + dir));
+    if (next !== current) { e.preventDefault(); stops[next].scrollIntoView({ block: 'start' }); }
+  });
+
+  // Checklist persistence.
+  var KEY = 'lcl-leadgen-plan-checks';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#checklist input[type=checkbox]'));
+  var done = document.getElementById('done');
+  var fill = document.getElementById('barfill');
+  document.getElementById('total').textContent = boxes.length;
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function render() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    done.textContent = n;
+    fill.style.width = (boxes.length ? (n / boxes.length) * 100 : 0) + '%';
+  }
+  var state = load();
+  boxes.forEach(function (b) {
+    b.checked = Boolean(state[b.id]);
+    b.addEventListener('change', function () {
+      state[b.id] = b.checked;
+      save(state);
+      render();
+    });
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    state = {};
+    save(state);
+    boxes.forEach(function (b) { b.checked = false; });
+    render();
+  });
+  render();
+
+  // Copy the planning prompt.
+  var copy = document.getElementById('copyprompt');
+  copy.addEventListener('click', function () {
+    var text = document.getElementById('prompt').textContent;
+    var ok = function () { copy.textContent = 'Copied'; setTimeout(function () { copy.textContent = 'Copy prompt'; }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, function () {});
+  });
+})();
+</script>
+</body>
+</html>
