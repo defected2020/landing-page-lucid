@@ -1,20 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
-
-const WordWrapper = styled.span`
-  display: inline-block;
-  overflow: hidden;
-  margin-right: 0.3em;
-
-  &:last-child {
-    margin-right: 0;
-  }
-`;
-
-const Word = styled(motion.span)`
-  display: inline-block;
-`;
 
 const AnimatedText = ({ text, as: Tag = 'h1', delay = 0, className, style }) => {
   const words = text.split(' ');
@@ -50,9 +35,14 @@ const AnimatedText = ({ text, as: Tag = 'h1', delay = 0, className, style }) => 
     >
       <Tag className={className} style={style}>
         {words.map((word, i) => (
-          <WordWrapper key={i}>
-            <Word variants={wordVariants}>{word}</Word>
-          </WordWrapper>
+          <span
+            key={i}
+            className="inline-block overflow-hidden mr-[0.3em] last:mr-0"
+          >
+            <motion.span variants={wordVariants} className="inline-block">
+              {word}
+            </motion.span>
+          </span>
         ))}
       </Tag>
     </motion.div>

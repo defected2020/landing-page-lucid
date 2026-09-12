@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
-import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
+import SEO, { createServiceSchema, createBreadcrumbSchema, createFAQSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
+import FAQ from '../../components/FAQ';
+import { getServiceFaqs } from '../../data/serviceFaqs';
 import {
   PageContainer, ContentSection, Container,
   SectionTitle, SectionDescription, CardsGrid, Card,
@@ -13,52 +14,9 @@ import {
   HighlightBox,
 } from '../../components/ServicePageLayout';
 
-const TwoColumnGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-  }
-`;
-
-const ContentText = styled.div`
-  color: var(--text-muted);
-  line-height: 1.7;
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-  }
-
-  p {
-    margin-bottom: 1.5rem;
-  }
-
-  ul {
-    margin-bottom: 1.5rem;
-    margin-left: 1.5rem;
-  }
-
-  li {
-    margin-bottom: 0.5rem;
-  }
-`;
-
-const ImageContainer = styled.div`
-  border-radius: var(--radius-lg);
-  height: 100%;
-  min-height: 400px;
-  overflow: hidden;
-  position: relative;
-`;
-
 export default function AIServicePage() {
   const [scrolled, setScrolled] = useState(false);
+  const faqs = getServiceFaqs('ai-powered-software');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -76,6 +34,7 @@ export default function AIServicePage() {
         jsonLd={[
           createServiceSchema({ name: 'AI Powered Software', description: 'Unlock your business potential with our custom AI solutions. We transform data into actionable intelligence and automation that evolves with your business.', path: '/services/ai-powered-software' }),
           createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'AI Powered Software' }]),
+          createFAQSchema(faqs),
         ]}
       />
 
@@ -93,8 +52,8 @@ export default function AIServicePage() {
 
       <ContentSection>
         <Container>
-          <TwoColumnGrid>
-            <ContentText>
+          <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
+            <div className="leading-[1.7] text-text-muted [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-text [&_p]:mb-6">
               <h3>Beyond AI Implementation: Strategic Transformation</h3>
               <p>
                 In today's rapidly evolving business landscape, artificial intelligence isn't just a technology upgrade -- it's a strategic imperative. However, many organizations struggle to move beyond basic AI implementation to achieve meaningful transformation.
@@ -108,8 +67,8 @@ export default function AIServicePage() {
               <p>
                 Rather than offering one-size-fits-all AI tools, we craft bespoke solutions that align perfectly with your specific objectives and integrate seamlessly with your existing systems and workflows.
               </p>
-            </ContentText>
-            <ImageContainer>
+            </div>
+            <div className="relative h-full min-h-[400px] overflow-hidden rounded-lg">
               <Image
                 src="/images/Neural Network Design.jpg"
                 alt="AI Strategy Consultation - Neural Network Design"
@@ -118,8 +77,8 @@ export default function AIServicePage() {
                 style={{ objectFit: 'cover' }}
                 priority
               />
-            </ImageContainer>
-          </TwoColumnGrid>
+            </div>
+          </div>
 
           <CardsGrid>
             <Card>
@@ -140,8 +99,8 @@ export default function AIServicePage() {
 
       <ContentSection $alt>
         <Container>
-          <TwoColumnGrid>
-            <ImageContainer>
+          <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
+            <div className="relative h-full min-h-[400px] overflow-hidden rounded-lg">
               <Image
                 src="/images/ai_garden.png"
                 alt="AI Implementation"
@@ -150,8 +109,8 @@ export default function AIServicePage() {
                 style={{ objectFit: 'cover' }}
                 priority
               />
-            </ImageContainer>
-            <ContentText>
+            </div>
+            <div className="leading-[1.7] text-text-muted [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-text [&_p]:mb-6 [&_ul]:mb-6 [&_ul]:ml-6 [&_li]:mb-2">
               <h3>From Vision to Value: How We Deliver</h3>
               <p>
                 Our approach to AI implementation is structured yet adaptive, ensuring we deliver solutions that create immediate value while laying the foundation for continuous improvement.
@@ -164,8 +123,8 @@ export default function AIServicePage() {
                 <li><strong>Integration & Deployment:</strong> We seamlessly integrate the AI solution with your existing systems and workflows, ensuring minimal disruption and maximum adoption.</li>
                 <li><strong>Continuous Optimization:</strong> Post-launch, we monitor performance and continuously refine the solution to improve accuracy and adapt to changing business needs.</li>
               </ul>
-            </ContentText>
-          </TwoColumnGrid>
+            </div>
+          </div>
         </Container>
       </ContentSection>
 
@@ -224,6 +183,11 @@ export default function AIServicePage() {
           </HighlightBox>
         </Container>
       </ContentSection>
+
+      <FAQ
+        faqs={faqs}
+        description="Common questions about adding AI to a product, and how we approach the work."
+      />
 
       <CTASection>
         <Container>

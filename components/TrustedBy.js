@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import styled, { keyframes } from 'styled-components'
 import { portfolioProjects } from '../data/portfolioProjects'
 
 const additionalClients = [{ name: 'Shoptimized', logo: '/images/logos/shoptimized.png' }]
@@ -17,92 +16,57 @@ const allLogos = [
   ...portfolioLogos.slice(midpoint),
 ]
 
-const Section = styled.section`
-  padding: 3rem 0;
-  border-bottom: 1px solid #e5e7eb;
-  overflow: hidden;
-  background-color: #ffffff;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 0;
-  }
-`
-
-const Label = styled.p`
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #9ca3af;
-  margin-bottom: 2rem;
-
-  @media (max-width: 768px) {
-    font-size: 0.625rem;
-    margin-bottom: 2rem;
-  }
-`
-
-const marquee = keyframes`
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-`
-
-const Track = styled.div`
-  display: flex;
-  width: fit-content;
-  animation: ${marquee} 25s linear infinite;
-
-  &:hover {
-    animation-play-state: paused;
-  }
-`
-
-const LogoItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: calc(100vw / 3);
-  height: 80px;
-  filter: grayscale(100%);
-  opacity: 0.5;
-  transition:
-    filter var(--transition-fast),
-    opacity var(--transition-fast),
-    transform var(--transition-fast);
-
-  &:hover {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  @media (max-width: 768px) {
-    width: 50vw;
-    height: 36px;
-
-    img {
-      transform: scale(0.8);
-    }
-  }
-`
-
 const TrustedBy = () => {
   const logos = [...allLogos, ...allLogos]
 
   return (
-    <Section>
-      <Label>Trusted by teams building remarkable products</Label>
-      <Track>
+    <section className="overflow-hidden border-b border-[#e5e7eb] bg-white py-12 max-md:py-6">
+      <p className="mb-8 text-center text-xs font-semibold uppercase tracking-[0.1em] text-[#9ca3af] max-md:mb-8 max-md:text-[0.625rem]">
+        Trusted by teams building remarkable products
+      </p>
+      <div className="trustedby-track flex w-fit">
         {logos.map((item, i) => {
           const img = (
-            <Image src={item.logo} alt={item.name} width={200} height={120} style={{ objectFit: 'contain', height: item.height, width: 'auto' }} />
+            <Image
+              src={item.logo}
+              alt={item.name}
+              width={200}
+              height={120}
+              style={{ objectFit: 'contain', height: item.height, width: 'auto' }}
+            />
           )
-          return <LogoItem key={`${item.name}-${i}`}>{item.slug ? <Link href={`/work/${item.slug}`}>{img}</Link> : img}</LogoItem>
+          return (
+            <div
+              key={`${item.name}-${i}`}
+              className="trustedby-item flex h-20 w-[calc(100vw/3)] flex-shrink-0 items-center justify-center opacity-50 grayscale transition-[filter,opacity,transform] duration-fast ease-smooth hover:scale-105 hover:opacity-100 hover:grayscale-0 max-md:h-9 max-md:w-[50vw]"
+            >
+              {item.slug ? <Link href={`/work/${item.slug}`}>{img}</Link> : img}
+            </div>
+          )
         })}
-      </Track>
-    </Section>
+      </div>
+      <style jsx>{`
+        @keyframes trustedby-marquee {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+        .trustedby-track {
+          animation: trustedby-marquee 25s linear infinite;
+        }
+        .trustedby-track:hover {
+          animation-play-state: paused;
+        }
+        @media (max-width: 768px) {
+          .trustedby-item :global(img) {
+            transform: scale(0.8);
+          }
+        }
+      `}</style>
+    </section>
   )
 }
 

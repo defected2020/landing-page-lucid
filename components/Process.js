@@ -1,107 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import styled from 'styled-components';
 import { staggerContainer, fadeInUp } from './animations/variants';
-
-const Section = styled.section`
-  padding: var(--section-padding) 0;
-  background-color: var(--bg-subtle);
-`;
-
-const Container = styled.div`
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
-`;
-
-const SectionHeader = styled.div`
-  text-align: center;
-  margin-bottom: 4rem;
-`;
-
-const Eyebrow = styled.span`
-  display: inline-block;
-  font-family: var(--font-display);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-bottom: 1rem;
-`;
-
-const Title = styled.h2`
-  font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
-  font-weight: 700;
-  color: var(--text);
-`;
-
-const StepsGrid = styled(motion.div)`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(5, 1fr);
-  }
-`;
-
-const StepCard = styled(motion.div)`
-  position: relative;
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 2rem 1.5rem;
-  text-align: center;
-
-  @media (min-width: 1024px) {
-    text-align: left;
-  }
-`;
-
-const StepNumber = styled.span`
-  font-family: var(--font-display);
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--accent);
-  opacity: 0.15;
-  line-height: 1;
-  display: block;
-  margin-bottom: 1rem;
-`;
-
-const StepTitle = styled.h3`
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-`;
-
-const StepDescription = styled.p`
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-`;
-
-const Connector = styled.div`
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: -0.5rem;
-    width: 1rem;
-    height: 1px;
-    border-top: 1px dashed var(--border-hover);
-    z-index: 1;
-  }
-`;
 
 const steps = [
   {
@@ -135,30 +35,43 @@ const Process = () => {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <Section id="journey">
-      <Container>
-        <SectionHeader>
-          <Eyebrow>How We Work</Eyebrow>
-          <Title>From vision to launch</Title>
-        </SectionHeader>
+    <section id="journey" className="bg-bg-subtle py-section">
+      <div className="mx-auto max-w-container px-container">
+        <div className="mb-16 text-center">
+          <span className="mb-4 inline-block font-display text-[0.8125rem] font-semibold uppercase tracking-[0.1em] text-accent">
+            How We Work
+          </span>
+          <h2 className="text-[clamp(2rem,3.5vw+0.5rem,3.25rem)] font-bold text-text">
+            From vision to launch
+          </h2>
+        </div>
 
-        <StepsGrid
+        <motion.div
           ref={ref}
           variants={staggerContainer(0.1)}
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
+          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5"
         >
           {steps.map((step, index) => (
-            <StepCard key={step.number} variants={fadeInUp}>
-              <StepNumber>{step.number}</StepNumber>
-              <StepTitle>{step.title}</StepTitle>
-              <StepDescription>{step.description}</StepDescription>
-              {index < steps.length - 1 && <Connector />}
-            </StepCard>
+            <motion.div
+              key={step.number}
+              variants={fadeInUp}
+              className="relative rounded-lg border border-border bg-bg-elevated px-6 py-8 text-center lg:text-left"
+            >
+              <span className="mb-4 block font-display text-5xl font-extrabold leading-none text-accent opacity-15">
+                {step.number}
+              </span>
+              <h3 className="mb-2 text-base font-semibold text-text">{step.title}</h3>
+              <p className="text-[0.8125rem] leading-[1.6] text-text-muted">{step.description}</p>
+              {index < steps.length - 1 && (
+                <div className="absolute right-[-0.5rem] top-1/2 z-[1] hidden h-px w-4 border-t border-dashed border-border-hover lg:block" />
+              )}
+            </motion.div>
           ))}
-        </StepsGrid>
-      </Container>
-    </Section>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 

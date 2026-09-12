@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
@@ -10,184 +9,6 @@ import PageHero from '../../components/PageHero';
 import services from '../../data/services';
 import { getServiceIcon } from '../../components/icons/ServiceIcons';
 import { staggerContainer, fadeInUp } from '../../components/animations/variants';
-
-const GridSection = styled.section`
-  padding: var(--section-padding) 0;
-  background-color: var(--bg);
-`;
-
-const Container = styled.div`
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
-`;
-
-const ServicesGrid = styled(motion.div)`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-`;
-
-const ServiceCard = styled(motion.div)`
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-
-  &:hover {
-    border-color: var(--border-hover);
-    transform: translateY(-2px);
-
-    .card-image img {
-      transform: scale(1.05);
-    }
-  }
-`;
-
-const CardImageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to top, var(--bg-elevated), transparent);
-    z-index: 1;
-  }
-
-  img {
-    transition: transform 0.4s ease;
-  }
-`;
-
-const CardContent = styled.div`
-  padding: 1.25rem 2rem 2rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
-
-const IconWrapper = styled.div`
-  color: var(--accent);
-  margin-bottom: 1.25rem;
-`;
-
-const ServiceTitle = styled.h3`
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.75rem;
-`;
-
-const ServiceDescription = styled.p`
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  flex: 1;
-`;
-
-const LearnMore = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--accent);
-  margin-top: auto;
-  transition: gap var(--transition-fast);
-
-  &:hover {
-    gap: 0.625rem;
-  }
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-`;
-
-const ApproachSection = styled.section`
-  padding: var(--section-padding) 0;
-  background-color: var(--bg-subtle);
-`;
-
-const ApproachGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-  }
-`;
-
-const ApproachTitle = styled.h2`
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 1.5rem;
-`;
-
-const ApproachText = styled.p`
-  font-size: 0.9375rem;
-  color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-`;
-
-const ApproachList = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
-
-const ApproachItem = styled.li`
-  color: var(--text-muted);
-  font-size: 0.9375rem;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-  padding-left: 1.5rem;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.5rem;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--accent);
-  }
-`;
-
-const ApproachVisual = styled.div`
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  min-height: 400px;
-  border: 1px solid var(--border);
-`;
 
 export default function ServicesPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -222,9 +43,10 @@ export default function ServicesPage() {
         ]}
       />
 
-      <GridSection>
-        <Container>
-          <ServicesGrid
+      <section className="py-section bg-bg">
+        <div className="mx-auto max-w-container px-container">
+          <motion.div
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
             variants={staggerContainer(0.06)}
             initial="hidden"
             animate="visible"
@@ -232,58 +54,71 @@ export default function ServicesPage() {
             {services.map((service) => {
               const Icon = getServiceIcon(service.iconName);
               return (
-                <Link key={service.id} href={service.link} style={{ textDecoration: 'none' }}>
-                  <ServiceCard variants={fadeInUp}>
+                <Link key={service.id} href={service.link} className="no-underline">
+                  <motion.div
+                    variants={fadeInUp}
+                    className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-bg-elevated transition-[border-color,transform] duration-fast hover:-translate-y-0.5 hover:border-border-hover"
+                  >
                     {service.image && (
-                      <CardImageWrapper className="card-image">
+                      <div className="card-image relative h-[180px] w-full overflow-hidden after:absolute after:inset-x-0 after:bottom-0 after:z-[1] after:h-10 after:bg-gradient-to-t after:from-bg-elevated after:to-transparent after:content-['']">
                         <Image
                           src={service.image}
                           alt={service.title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           style={{ objectFit: 'cover' }}
+                          className="transition-transform [transition-duration:400ms] ease-out group-hover:scale-105"
                         />
-                      </CardImageWrapper>
+                      </div>
                     )}
-                    <CardContent>
-                      <IconWrapper>
+                    <div className="flex flex-1 flex-col px-8 pt-5 pb-8">
+                      <div className="mb-5 text-accent">
                         <Icon size={28} />
-                      </IconWrapper>
-                      <ServiceTitle>{service.title}</ServiceTitle>
-                      <ServiceDescription>{service.description}</ServiceDescription>
-                      <LearnMore>
+                      </div>
+                      <h3 className="mb-3 text-[1.125rem] font-semibold text-text">{service.title}</h3>
+                      <p className="mb-6 flex-1 text-sm leading-[1.6] text-text-muted">{service.description}</p>
+                      <span className="mt-auto inline-flex items-center gap-[0.375rem] text-[0.8125rem] font-medium text-accent transition-[gap] duration-fast group-hover:gap-[0.625rem]">
                         Learn more
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-[14px] w-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <line x1="5" y1="12" x2="19" y2="12" />
                           <polyline points="12 5 19 12 12 19" />
                         </svg>
-                      </LearnMore>
-                    </CardContent>
-                  </ServiceCard>
+                      </span>
+                    </div>
+                  </motion.div>
                 </Link>
               );
             })}
-          </ServicesGrid>
-        </Container>
-      </GridSection>
+          </motion.div>
+        </div>
+      </section>
 
-      <ApproachSection>
-        <Container>
-          <ApproachGrid>
+      <section className="py-section bg-bg-subtle">
+        <div className="mx-auto max-w-container px-container">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
             <div>
-              <ApproachTitle>Our Consultative Approach</ApproachTitle>
-              <ApproachText>
+              <h2 className="mb-6 text-[clamp(1.75rem,3vw,2.5rem)] font-bold text-text">Our Consultative Approach</h2>
+              <p className="mb-6 text-[0.9375rem] leading-[1.7] text-text-muted">
                 We believe that successful digital solutions begin with a deep understanding of your business. Our approach centers on becoming your trusted advisor.
-              </ApproachText>
-              <ApproachList>
-                <ApproachItem>We begin by thoroughly understanding your business goals, challenges, and unique market position.</ApproachItem>
-                <ApproachItem>Our experts analyze your current state and identify opportunities for innovation and transformation.</ApproachItem>
-                <ApproachItem>We create tailored strategies designed to achieve your specific objectives and deliver measurable outcomes.</ApproachItem>
-                <ApproachItem>Throughout implementation, we maintain clear communication and keep you involved in key decisions.</ApproachItem>
-                <ApproachItem>Post-launch, we provide ongoing support and strategic guidance to ensure long-term success.</ApproachItem>
-              </ApproachList>
+              </p>
+              <ul className="list-none p-0">
+                {[
+                  'We begin by thoroughly understanding your business goals, challenges, and unique market position.',
+                  'Our experts analyze your current state and identify opportunities for innovation and transformation.',
+                  'We create tailored strategies designed to achieve your specific objectives and deliver measurable outcomes.',
+                  'Throughout implementation, we maintain clear communication and keep you involved in key decisions.',
+                  'Post-launch, we provide ongoing support and strategic guidance to ensure long-term success.',
+                ].map((item, i) => (
+                  <li
+                    key={i}
+                    className="relative mb-4 pl-6 text-[0.9375rem] leading-[1.6] text-text-muted before:absolute before:left-0 before:top-2 before:h-[6px] before:w-[6px] before:rounded-full before:bg-accent before:content-['']"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ApproachVisual>
+            <div className="relative min-h-[400px] overflow-hidden rounded-lg border border-border">
               <Image
                 src="/images/stock/strategy-meeting.jpg"
                 alt="Team collaborating on digital strategy"
@@ -291,10 +126,10 @@ export default function ServicesPage() {
                 sizes="(max-width: 768px) 100vw, 50vw"
                 style={{ objectFit: 'cover' }}
               />
-            </ApproachVisual>
-          </ApproachGrid>
-        </Container>
-      </ApproachSection>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </>

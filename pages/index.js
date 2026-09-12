@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 
-import SEO, { organizationSchema, createBreadcrumbSchema } from '../components/SEO';
+import SEO, { organizationSchema, websiteSchema } from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import TrustedBy from '../components/TrustedBy';
@@ -13,10 +12,6 @@ import Team from '../components/Team';
 import CTABanner from '../components/CTABanner';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
-
-const MainContent = styled.main`
-  overflow-x: hidden;
-`;
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -33,15 +28,15 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Lucid Code Labs — Software Development Agency"
-        description="We build intelligent, scalable software — from AI-powered platforms to stunning web and mobile experiences. Berlin-based, working globally."
+        title="Software Development Agency in Berlin | Lucid Code Labs"
+        description="Lucid Code Labs builds intelligent, scalable software — AI-powered platforms, web applications, and mobile apps. A founder-led studio in Berlin, working globally."
         path="/"
-        jsonLd={organizationSchema}
+        jsonLd={[organizationSchema, websiteSchema]}
       />
 
       <Navbar scrolled={scrolled} />
 
-      <MainContent>
+      <main className="overflow-x-hidden">
         <Hero />
         <TrustedBy />
         <Services />
@@ -52,7 +47,7 @@ export default function Home() {
         <CTABanner />
         <Contact />
         <Footer />
-      </MainContent>
+      </main>
     </>
   );
 }

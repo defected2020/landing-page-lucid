@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import styled from 'styled-components';
-import SEO, { createServiceSchema, createBreadcrumbSchema } from '../../components/SEO';
+import SEO, { createServiceSchema, createBreadcrumbSchema, createFAQSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
+import FAQ from '../../components/FAQ';
+import { getServiceFaqs } from '../../data/serviceFaqs';
 import {
   PageContainer, ContentSection, Container,
   SectionTitle, SectionDescription, CardsGrid, Card,
@@ -14,44 +15,9 @@ import {
   SplitSection, SplitGrid, SplitText, SplitImage,
 } from '../../components/ServicePageLayout';
 
-const TwoColumnGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-  }
-`;
-
-const ContentText = styled.div`
-  color: var(--text-muted);
-  line-height: 1.7;
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-  }
-
-  p {
-    margin-bottom: 1.5rem;
-  }
-
-  ul {
-    margin-bottom: 1.5rem;
-    margin-left: 1.5rem;
-  }
-
-  li {
-    margin-bottom: 0.5rem;
-  }
-`;
-
 export default function UXUIServicePage() {
   const [scrolled, setScrolled] = useState(false);
+  const faqs = getServiceFaqs('ux-ui-design');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -69,6 +35,7 @@ export default function UXUIServicePage() {
         jsonLd={[
           createServiceSchema({ name: 'UX/UI Design', description: 'Strategic UX/UI design services — intuitive, engaging digital interfaces that drive business success.', path: '/services/ux-ui-design' }),
           createBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Services', url: '/services' }, { name: 'UX/UI Design' }]),
+          createFAQSchema(faqs),
         ]}
       />
 
@@ -86,8 +53,8 @@ export default function UXUIServicePage() {
 
       <ContentSection>
         <Container>
-          <TwoColumnGrid>
-            <ContentText>
+          <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
+            <div className="leading-[1.7] text-text-muted [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-text [&_p]:mb-6 [&_ul]:mb-6 [&_ul]:ml-6 [&_li]:mb-2">
               <h3>Where User Needs Meet Business Objectives</h3>
               <p>
                 Exceptional design isn't just about aesthetics -- it's about creating experiences that solve real problems for both users and businesses. At Lucid Code Labs, we take a strategic approach to UX/UI design that begins with a deep understanding of your business objectives.
@@ -98,20 +65,15 @@ export default function UXUIServicePage() {
               <p>
                 Rather than treating design as a subjective creative exercise, we approach it as a problem-solving discipline guided by research, user insights, and measurable outcomes.
               </p>
-            </ContentText>
+            </div>
             <div>
               <img
                 src="/images/design thinking.png"
                 alt="Strategic Design Thinking"
-                style={{
-                  borderRadius: 'var(--radius-lg, 1rem)',
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'cover',
-                }}
+                className="h-auto w-full rounded-lg object-cover"
               />
             </div>
-          </TwoColumnGrid>
+          </div>
 
           <CardsGrid>
             <Card>
@@ -236,20 +198,15 @@ export default function UXUIServicePage() {
 
       <ContentSection $alt>
         <Container>
-          <TwoColumnGrid>
+          <div className="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
             <div>
               <img
                 src="/images/design.png"
                 alt="Design Impact on Business Metrics"
-                style={{
-                  borderRadius: 'var(--radius-lg, 1rem)',
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'cover',
-                }}
+                className="h-auto w-full rounded-lg object-cover"
               />
             </div>
-            <ContentText>
+            <div className="leading-[1.7] text-text-muted [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-text [&_p]:mb-6 [&_ul]:mb-6 [&_ul]:ml-6 [&_li]:mb-2">
               <h3>The Strategic Value of Exceptional Design</h3>
               <p>
                 Investing in strategic UX/UI design delivers substantial business value that extends far beyond aesthetics. Our clients consistently report significant improvements in key performance indicators:
@@ -262,8 +219,8 @@ export default function UXUIServicePage() {
                 <li><strong>Competitive Differentiation:</strong> Exceptional experiences create meaningful differentiation in crowded markets, strengthening brand perception and customer loyalty.</li>
                 <li><strong>Higher User Adoption:</strong> Products that address real user needs and provide intuitive interfaces see significantly higher adoption rates and reduced abandonment.</li>
               </ul>
-            </ContentText>
-          </TwoColumnGrid>
+            </div>
+          </div>
         </Container>
       </ContentSection>
 
@@ -284,6 +241,11 @@ export default function UXUIServicePage() {
           </SplitText>
         </SplitGrid>
       </SplitSection>
+
+      <FAQ
+        faqs={faqs}
+        description="Common questions about how we run design work and what you receive."
+      />
 
       <CTASection>
         <Container>
