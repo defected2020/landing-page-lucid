@@ -18,4 +18,10 @@ out/
 Thumbs.db
 
 # Optional: VSCode settings
-.vscode/ 
+.vscode/
+
+# Keep the env template, ignore real env files
+!.env.example
+
+# Internal admin: local-dev document/file storage
+.admin-data/

@@ -1,0 +1,63 @@
+import Link from 'next/link';
+import { ArrowLeft, PencilLine, Pin } from 'lucide-react';
+import AdminLayout from '../../../../components/admin/AdminLayout';
+import Markdown from '../../../../components/admin/Markdown';
+import { Button } from '../../../../components/ui/button';
+import { withAdminPage } from '../../../../lib/admin/api';
+import { getDoc } from '../../../../lib/admin/store';
+import { formatDate } from '../../../../lib/admin/format';
+
+export const getServerSideProps = withAdminPage(async ({ params }) => {
+  const doc = await getDoc(params.id);
+  if (!doc) return { notFound: true };
+  return { props: { doc } };
+});
+
+export default function ViewDoc({ adminUser, storageMode, doc }) {
+  return (
+    <AdminLayout
+      user={adminUser}
+      storageMode={storageMode}
+      pageTitle={doc.title}
+      actions={
+        <>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/admin/docs"><ArrowLeft className="h-4 w-4" /> Documents</Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link href={`/admin/docs/${doc.id}/edit`}><PencilLine className="h-4 w-4" /> Edit</Link>
+          </Button>
+        </>
+      }
+    >
+      <article className="mx-auto max-w-[800px]">
+        <header className="mb-8 border-b border-border pb-6">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            {doc.pinned && (
+              <span className="inline-flex items-center gap-1 rounded-pill border border-accent/30 bg-accent-muted px-2.5 py-0.5 text-xs font-medium text-accent">
+                <Pin className="h-3 w-3" /> Pinned
+              </span>
+            )}
+            {(doc.tags || []).map((t) => (
+              <Link
+                key={t}
+                href="/admin/docs"
+                className="rounded-pill border border-border px-2.5 py-0.5 text-xs text-text-muted hover:text-text"
+              >
+                {t}
+              </Link>
+            ))}
+          </div>
+          <h1 className="font-display text-3xl font-bold leading-tight tracking-tight">{doc.title}</h1>
+          <p className="mt-3 text-sm text-text-subtle">
+            Created {formatDate(doc.createdAt)} by {doc.author}
+            {doc.updatedAt !== doc.createdAt && (
+              <> · Updated {formatDate(doc.updatedAt, { withTime: true })} by {doc.updatedBy}</>
+            )}
+          </p>
+        </header>
+        <Markdown source={doc.body} />
+      </article>
+    </AdminLayout>
+  );
+}

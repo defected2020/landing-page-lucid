@@ -79,6 +79,34 @@ npm run build
 npm start
 ```
 
+## Internal admin (`/admin`)
+
+A private area for team documents (markdown, with tags and pinning) and file
+sharing. It is `noindex`, blocked in `robots.txt`, and every page and API route
+requires a signed-in session.
+
+**Sign-in.** Users are defined in env vars, no database:
+
+```bash
+ADMIN_USERS=george:secret,anna:another-secret   # name:password pairs
+ADMIN_SESSION_SECRET=$(openssl rand -hex 32)     # signs the session cookie
+```
+
+Copy `.env.example` to `.env.local` for development. On Vercel add the same
+variables under Project → Settings → Environment Variables.
+
+**Storage.**
+
+- Locally, documents and uploads are written to `.admin-data/` (git-ignored).
+- In production, attach a Vercel Blob store to the project (Storage → Create →
+  Blob). Vercel injects `BLOB_READ_WRITE_TOKEN` and the app switches to Blob
+  automatically. Blobs are private; downloads are streamed through
+  `/api/admin/files/download/:id` after an auth check, so no storage URL is
+  ever exposed. Uploads go browser → Blob directly, so the 4.5 MB Vercel
+  request limit does not apply.
+
+Code lives in `pages/admin`, `pages/api/admin`, `components/admin`, `lib/admin`.
+
 ## License
 
 MIT
