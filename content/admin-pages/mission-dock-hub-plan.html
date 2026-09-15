@@ -291,7 +291,7 @@
       <li class="you"><a href="#decisions">Your decisions</a></li>
       <li><a href="#cost">Cost and sizing</a></li>
       <li><a href="#risks">Risks</a></li>
-      <li class="you"><a href="#checklist">Kick-off checklist</a></li>
+      <li class="you"><a href="#checklist">Go-live checklist</a></li>
       <li><a href="#sources">Sources</a></li>
     </ol>
     <p class="hint">Sections in amber need you. Checklist ticks are remembered in this browser. Press <kbd>⌘P</kbd> for a printable copy.</p>
@@ -411,7 +411,10 @@
       </div>
 
       <div class="callout blue">
-        <p><strong>How to read this.</strong> Sections 01 to 10 describe what exists, what gets built and in what order. Section 11 lists the eight decisions only you can make, with a recommendation for each. Section 14 is the kick-off checklist for the first four days. Everything in 01 was checked on the live server, the Mission Dock tree and the Lucid repo on 15 September 2026.</p>
+        <p><strong>How to read this.</strong> Sections 01 to 10 describe what exists, what gets built and in what order. Section 11 lists the eight decisions only you can make, with a recommendation for each. Section 14 is the kick-off checklist. Everything in 01 was checked on the live server, the Mission Dock tree and the Lucid repo on 15 September 2026.</p>
+      </div>
+      <div class="callout green">
+        <p><strong>Update, 15 September, evening.</strong> George reviewed the plan and re-ordered it: Phase 1 is now the smallest thing that lets him assign a Trello card to an agent on the box and watch it work. That slice, <strong>Mission Hub v0</strong>, was built and verified on the Mac the same day (repository <code>defected2020/mission-hub</code>). The decisions in section 11 carry his answers, and section 14 is now the go-live checklist for the box.</p>
       </div>
     </section>
 
@@ -811,8 +814,8 @@
       </div>
       <div class="stop-body">
         <div class="track">
-          <div class="phase" style="--heat: var(--amber)"><b>Phase 0</b><span class="days">3–4 days</span><span class="num">Spikes</span><span class="lbl">Resize, users, claude on the box, Remote Control, cross-machine resume, DNS and Caddy, decisions.</span><span class="exit"><b>Exit:</b> you steer a server session from the iPhone.</span></div>
-          <div class="phase" style="--heat: var(--indigo)"><b>Phase 1</b><span class="days">~1.5 weeks</span><span class="num">Hermes core</span><span class="lbl">Hook receiver, tmux runtime, state and SSE, decisions, briefs, spawn, pane view, ntfy, passkey, the PWA served.</span><span class="exit"><b>Exit:</b> from Safari on the phone, start, watch, allow and end an agent.</span></div>
+          <div class="phase" style="--heat: var(--green)"><b>Phase 0</b><span class="days">done 15 Sep</span><span class="num">Decisions</span><span class="lbl">Eight decisions answered (section 11). Box stays as it is plus swap; subscriptions, no API keys; Tailscale deferred.</span><span class="exit"><b>Exit:</b> go-live steps in section 14.</span></div>
+          <div class="phase" style="--heat: var(--green)"><b>Phase 1</b><span class="days">built 15 Sep</span><span class="num">Mission Hub v0</span><span class="lbl">Trello card → Claude or Codex in tmux on the box: Tasks page per project, assign with notes, live terminal, held approvals, keys, messages, branch + PR back on the card.</span><span class="exit"><b>Exit:</b> verified on the Mac end to end; deploy to the box is the checklist.</span></div>
           <div class="phase" style="--heat: var(--indigo)"><b>Phase 2</b><span class="days">~1.5 weeks</span><span class="num">The link</span><span class="lbl">HubClient, sync engine, hub agents in the notch, remote panes, Assign to Hermes, Django's remote tool.</span><span class="exit"><b>Exit:</b> a server agent's prompt answered from the notch in one click.</span></div>
           <div class="phase" style="--heat: var(--indigo)"><b>Phase 3</b><span class="days">~2 weeks</span><span class="num">The website</span><span class="lbl">Trello, Habitica, missions, announcements, Django chat, relay to the Mac, presence.</span><span class="exit"><b>Exit:</b> the hotel test, section 10 below.</span></div>
           <div class="phase" style="--heat: var(--green)"><b>Phase 4</b><span class="days">~1.5 weeks</span><span class="num">Handoff + ops</span><span class="lbl">Handoff both ways, Codex in the runtime, backups, monitoring, hub Django.</span><span class="exit"><b>Exit:</b> a run moves server → Mac → server with its conversation.</span></div>
@@ -820,8 +823,8 @@
 
         <h3>Milestones</h3>
         <div class="milestones">
-          <div class="m">M0</div><div>Box resized, <code>hermes</code> user, <code>claude</code> signed in, one session driven from the phone by Remote Control. Eight decisions recorded.</div><div class="when">week 1</div>
-          <div class="m">M1</div><div>Hermes serving the PWA at <code>dock.lucidcodelabs.com</code>; a permission prompt from a server agent answered from the phone; ntfy ping on wait.</div><div class="when">week 2–3</div>
+          <div class="m">M0</div><div>Eight decisions recorded (done 15 Sep). Box kept, 2 GB swap; Claude Code and Codex on the subscriptions; <code>gh</code> login on the box for repos.</div><div class="when">done</div>
+          <div class="m">M1</div><div>Mission Hub v0 at <code>dock.lucidcodelabs.com</code>: assign a card from a project's list, watch the terminal, answer a held permission prompt from the phone, get the branch and PR as a card comment. Built and verified locally 15 Sep; live once the go-live steps run.</div><div class="when">this week</div>
           <div class="m">M2</div><div>Mission Dock paired; server agents in LIVE AGENTS; a remote pane tile; a card assigned to a server agent from the Tasks panel; missions in sync.</div><div class="when">week 4–5</div>
           <div class="m">M3</div><div>The hotel test: on a phone with the Mac closed, move a Trello card, promote it, assign it to a server agent, get pinged, approve, see the PR link. Then open the Mac and find everything already there.</div><div class="when">week 6–7</div>
           <div class="m">M4</div><div>Handoff round trip under a minute; Codex sessions listed and steerable; nightly backups restored once on purpose; uptime ping wired.</div><div class="when">week 8</div>
@@ -847,21 +850,21 @@
       <div class="stop-body">
         <dl class="decisions">
           <dt>1 · Names<small>service and site</small></dt>
-          <dd><b>Hermes for the service, dock.lucidcodelabs.com for the site.</b><span>The code already reserves Hermes (the client seam, the config fields, the SSH key). The subdomain keeps it on the Lucid domain as you asked without touching the marketing site.</span></dd>
+          <dd><b>Mission Hub at dock.lucidcodelabs.com. <span class="pill go">decided</span></b><span>George: "dock.lucidcodelabs.com is great." The service is called Mission Hub (repository <code>mission-hub</code>, unit <code>mission-hub.service</code>); "Hermes" stays the name of the Swift seam that will talk to it.</span></dd>
           <dt>2 · The box<small>resize or add one</small></dt>
-          <dd><b>Resize this one to CX33 (4 vCPU, 8 GB), add 2 GB swap.</b><span>One box, one bill, the scraper's Chromium and three agents fit. Go CX43 (8 vCPU, 16 GB) if you want five or more agents at once. A second box only makes sense if the scraper's sweeps turn out to starve the agents; that is measurable in Phase 1.</span></dd>
+          <dd><b>Keep the CX23 for now, add 2 GB swap. <span class="pill go">decided</span></b><span>Memory is the limit, not CPU: a working Claude session measured 530 MB on the Mac, an idle one 150 to 210 MB, and the box has 3.1 GB free. Two or three agents fit; resize to CX33 only when more run at once or the scraper's crawls start.</span></dd>
           <dt>3 · Model auth<small>on the server</small></dt>
-          <dd><b>Subscription token, API key ready in the same env file.</b><span>Remote Control and the subscription's flat cost are worth the grey area for a single-user box. If it ever becomes a problem, one line switches to the key with a monthly cap.</span></dd>
+          <dd><b>Subscriptions only, no API keys. <span class="pill go">decided</span></b><span>Claude Code via <code>claude setup-token</code> on the Max plan (a link opened on the phone, a code pasted back, a one-year token in the env file); Codex already signed in with ChatGPT. Agents on the box share the same usage allowance as the Mac.</span></dd>
           <dt>4 · Website home<small>hub or Vercel</small></dt>
-          <dd><b>Served by Hermes.</b><span>Real-time streams, one origin, one login. The Lucid admin links to it and keeps the documents.</span></dd>
+          <dd><b>Served by the hub on the box. <span class="pill go">decided</span></b><span>The live terminal feed needs a connection that stays open for hours, which Vercel's short-lived functions cannot hold; the agents, their output and the database are on the box anyway; one origin means one login. The Lucid admin links to it.</span></dd>
           <dt>5 · Tailscale<small>on Mac and box</small></dt>
-          <dd><b>Yes, in Phase 0, for SSH and later the link.</b><span>Free personal plan. The Mac's Tailscale is installed but stopped; the box has none. Public 443 stays for the website; 22 can close once both are on the tailnet.</span></dd>
-          <dt>6 · Repos on the server<small>deploy keys</small></dt>
-          <dd><b>maps-scraper, landing-page-lucid, then the web projects you name.</b><span>Each needs a deploy key and a bare clone. Mission Dock's repo is excluded on purpose (no Swift toolchain on Linux).</span></dd>
+          <dd><b>Not needed for Phase 1. <span class="pill info">deferred</span></b><span>A private network between your devices, useful later to take SSH off the public internet and carry the Mac link privately. The website must be public regardless.</span></dd>
+          <dt>6 · Repos on the server<small>GitHub access</small></dt>
+          <dd><b><code>gh auth login</code> on the box; projects seeded from Mission Dock's own mapping. <span class="pill go">decided</span></b><span>The box's existing deploy key is read-only, so agents could not push. One GitHub login covers every repo and lets agents open PRs. Fifteen projects are pre-configured from the workspace → board → list mapping Mission Dock already keeps, editable in Settings.</span></dd>
           <dt>7 · Codex's place<small>keep the daemon?</small></dt>
-          <dd><b>Keep it, fold the checkout into <code>/srv/hermes</code>.</b><span>The app-server daemon keeps serving the Codex app as today; Hermes lists and spawns Codex sessions alongside Claude ones. Commit the uncommitted GUI work in <code>/srv/codex/repos/maps-scraper</code> first.</span></dd>
+          <dd><b>Yes, first class. <span class="pill go">decided</span></b><span>Every card offers "Assign to Claude" and "Assign to Codex". The hub runs as the existing <code>codex</code> user so Codex's sign-in and app-server daemon are reused.</span></dd>
           <dt>8 · Journal and vault<small>scope</small></dt>
-          <dd><b>Out of scope until Phase 5, read-only first.</b><span>The vault is Mac-owned. A git-backed vault is the simplest route to a server copy; Syncthing if you would rather not commit notes.</span></dd>
+          <dd><b>Out of scope until Phase 5. <span class="pill info">deferred</span></b><span>The daily notes are markdown in the Obsidian vault on the Mac; the box cannot see them until the vault is synced there (git, Syncthing or Obsidian Sync). Nothing to decide yet.</span></dd>
         </dl>
       </div>
     </section>
@@ -929,8 +932,8 @@
       <div class="stop-head">
         <div class="n">14</div>
         <div>
-          <h2>Kick-off checklist</h2>
-          <p>Phase 0 in tick boxes. Spikes first, decisions alongside. Ticks are saved in this browser only.</p>
+          <h2>Go-live checklist</h2>
+          <p>What puts Mission Hub v0 on the box, in order. The server steps are commands you run from the Mac; each is idempotent. Ticks are saved in this browser only.</p>
         </div>
       </div>
       <div class="stop-body">
@@ -941,34 +944,28 @@
         <div class="bar"><i id="check-bar"></i></div>
 
         <div class="group">
-          <h4>Spikes <small>each is a day or less</small></h4>
-          <div class="task"><input type="checkbox" id="s1"><label for="s1">S1 · Resize to CX33 and add 2 GB swap<span>Hetzner console → rescale (or order CPX if refused). <code>fallocate -l 2G /swapfile</code>, <code>mkswap</code>, <code>swapon</code>, fstab. Reboot once.</span></label></div>
-          <div class="task"><input type="checkbox" id="s2"><label for="s2">S2 · Claude Code on the box, driven from the iPhone<span>Create the <code>hermes</code> user. Install with the native installer, <code>DISABLE_AUTOUPDATER=1</code>, <code>claude setup-token</code>. In tmux: <code>claude --rc</code> inside a clone of maps-scraper; open it in the Claude app; approve one tool. Note the RSS.</span></label></div>
-          <div class="task"><input type="checkbox" id="s3"><label for="s3">S3 · Cross-machine resume<span>Copy a finished Mac transcript to the box under the encoded project path and run <code>claude --resume &lt;id&gt;</code>, then by absolute path; repeat box → Mac. Record what breaks and whether <code>CLAUDE_CODE_PROJECT_DIR_NAME</code> helps.</span></label></div>
-          <div class="task"><input type="checkbox" id="s4"><label for="s4">S4 · Hook shim against a stub listener<span>Install Mission Dock's shim on the box pointed at a 20-line Node listener; confirm every event arrives and that a held <code>PermissionRequest</code> resolves when the listener writes the decision JSON.</span></label></div>
-          <div class="task"><input type="checkbox" id="s5"><label for="s5">S5 · DNS and TLS<span>A record <code>dock.lucidcodelabs.com</code> → 46.225.63.221. Install Caddy, serve a hello page, ufw allow 80 and 443. Confirm the certificate from the phone.</span></label></div>
-          <div class="task"><input type="checkbox" id="s6"><label for="s6">S6 · Tailscale on both<span>Start the Mac's Tailscale, install on the box, <code>tailscale up --ssh</code>. Test <code>ssh</code> over the tailnet.</span></label></div>
-          <div class="task"><input type="checkbox" id="s7"><label for="s7">S7 · Codex coexistence<span>Commit the GUI work in <code>/srv/codex/repos/maps-scraper</code>. Confirm the app-server daemon survives the resize and that <code>codex exec</code> runs from a script as <code>hermes</code>.</span></label></div>
+          <h4>Done on 15 September</h4>
+          <div class="task"><input type="checkbox" id="g1" checked><label for="g1">Decisions 1 to 8 answered<span>Section 11.</span></label></div>
+          <div class="task"><input type="checkbox" id="g2" checked><label for="g2">Mission Hub v0 built and verified on the Mac<span>Repository <code>defected2020/mission-hub</code>: three live runs against a real card and a real Claude session, in Trello dry-run mode: brief delivery, live tool activity, a held permission prompt allowed from the hub, a follow-up message, summaries, worktree reuse per card.</span></label></div>
+          <div class="task"><input type="checkbox" id="g3" checked><label for="g3">Projects seeded from Mission Dock's own mapping<span>Fifteen repos with their boards and lists, plus "In progress" and "Review" lists matched by name; adjustable in Settings.</span></label></div>
         </div>
 
         <div class="group">
-          <h4>Decisions <small>section 11</small></h4>
-          <div class="task"><input type="checkbox" id="d1"><label for="d1">D1 · Names: Hermes and dock.lucidcodelabs.com</label></div>
-          <div class="task"><input type="checkbox" id="d2"><label for="d2">D2 · Box: resize to CX33, or CX43, or a second box</label></div>
-          <div class="task"><input type="checkbox" id="d3"><label for="d3">D3 · Model auth: subscription token with the API key fallback</label></div>
-          <div class="task"><input type="checkbox" id="d4"><label for="d4">D4 · Website served by Hermes</label></div>
-          <div class="task"><input type="checkbox" id="d5"><label for="d5">D5 · Tailscale yes or no</label></div>
-          <div class="task"><input type="checkbox" id="d6"><label for="d6">D6 · Which repos get deploy keys</label></div>
-          <div class="task"><input type="checkbox" id="d7"><label for="d7">D7 · Codex daemon kept, checkout moved</label></div>
-          <div class="task"><input type="checkbox" id="d8"><label for="d8">D8 · Journal out of scope until Phase 5</label></div>
+          <h4>Go-live on the box <small>run from the Mac, in this order</small></h4>
+          <div class="task"><input type="checkbox" id="l1"><label for="l1">1 · DNS at Namecheap<span>Domain List → Manage → Advanced DNS → Add New Record: type <code>A Record</code>, host <code>dock</code>, value <code>46.225.63.221</code>, TTL Automatic. Leave the existing www record alone.</span></label></div>
+          <div class="task"><input type="checkbox" id="l2"><label for="l2">2 · Server setup (once)<span><code>ssh -i ~/.ssh/hetzner_hermes root@46.225.63.221 'HUB_PASSWORD=choose-a-long-password bash -s' &lt; deploy/setup-box.sh</code> from the mission-hub folder: swap, gh, Caddy, Claude Code, the env file, and it prints the Claude sign-in link and the GitHub device code.</span></label></div>
+          <div class="task"><input type="checkbox" id="l3"><label for="l3">3 · Sign in on the phone<span>Open the Claude link, approve, paste the code back with <code>deploy/finish-claude-login.sh &lt;code&gt;</code>. Go to github.com/login/device and enter the GitHub code.</span></label></div>
+          <div class="task"><input type="checkbox" id="l4"><label for="l4">4 · Trello secrets<span><code>deploy/push-secrets.sh</code> copies the key and token from the Mac's Keychain; add an ntfy topic as its argument for phone pings.</span></label></div>
+          <div class="task"><input type="checkbox" id="l5"><label for="l5">5 · Copy the app and start it<span><code>deploy/sync-app.sh</code>, then <code>ssh … root@46.225.63.221 'install -m 644 /srv/hub/app/deploy/mission-hub.service /etc/systemd/system/ &amp;&amp; systemctl daemon-reload &amp;&amp; systemctl enable --now mission-hub'</code>.</span></label></div>
+          <div class="task"><input type="checkbox" id="l6"><label for="l6">6 · First real card<span>Sign in at dock.lucidcodelabs.com, pick a project, assign a small card to Claude, trust the folder when asked, approve its first command, read the comment it leaves on the card.</span></label></div>
+          <div class="task"><input type="checkbox" id="l7"><label for="l7">7 · Link from the admin<span>Add "Mission Hub → dock.lucidcodelabs.com" to the Lucid admin sidebar.</span></label></div>
         </div>
 
         <div class="group">
-          <h4>Before Phase 1 starts</h4>
-          <div class="task"><input type="checkbox" id="p1"><label for="p1">Create the <code>hermes</code> repo (private) with the maps-scraper conventions: Node 22 type stripping, <code>pg</code>, <code>ws</code>, a <code>deploy/</code> folder<span>Copy <code>setup-server.sh</code> and the unit files as the starting point.</span></label></div>
-          <div class="task"><input type="checkbox" id="p2"><label for="p2">Copy the Trello, Habitica and ntfy secrets into <code>/etc/hermes.env</code> once, by hand</label></div>
-          <div class="task"><input type="checkbox" id="p3"><label for="p3">Register deploy keys for the Phase 1 repos with the maps-scraper bootstrap script</label></div>
-          <div class="task"><input type="checkbox" id="p4"><label for="p4">Add a link to <code>dock.lucidcodelabs.com</code> in the Lucid admin sidebar</label></div>
+          <h4>Next <small>after go-live</small></h4>
+          <div class="task"><input type="checkbox" id="n1"><label for="n1">Codex run tested on the box<span>Codex has no hooks: status comes from the screen; approvals through the keys row.</span></label></div>
+          <div class="task"><input type="checkbox" id="n2"><label for="n2">Passkey login, replacing the password</label></div>
+          <div class="task"><input type="checkbox" id="n3"><label for="n3">Phase 2: Mission Dock link (hub agents in the notch, remote panes, Assign to hub)</label></div>
         </div>
       </div>
     </section>
@@ -1029,7 +1026,7 @@
   var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
   var state = {};
   try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
-  boxes.forEach(function (b) { b.checked = !!state[b.id]; });
+  boxes.forEach(function (b) { if (b.id in state) b.checked = !!state[b.id]; });
   var doneEl = document.getElementById('done-count');
   var totalEl = document.getElementById('total-count');
   var fill = document.getElementById('check-bar');
