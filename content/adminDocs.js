@@ -9,6 +9,13 @@
 
 module.exports = [
   {
+    file: 'content/admin-pages/mission-dock-hub-plan.html',
+    format: 'html',
+    title: 'Mission Dock Hub Plan',
+    tags: ['mission-dock', 'hermes', 'agents', 'infrastructure', 'plan'],
+    pinned: true,
+  },
+  {
     file: 'content/admin-pages/leadgen-plan.html',
     format: 'html',
     title: 'Outbound Lead Generation Plan',

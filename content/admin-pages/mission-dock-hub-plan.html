@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mission Dock Hub Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #121216;
+    --panel-2: #17171d;
+    --line: #26262e;
+    --line-strong: #3a3a46;
+    --text: #f4f4f5;
+    --muted: #a1a1aa;
+    --subtle: #71717a;
+    --indigo: #6366f1;
+    --indigo-bright: #818cf8;
+    --indigo-soft: rgba(99, 102, 241, 0.12);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.12);
+    --green: #22c55e;
+    --green-soft: rgba(34, 197, 94, 0.12);
+    --red: #ef4444;
+    --red-soft: rgba(239, 68, 68, 0.12);
+    --cyan: #22d3ee;
+    --cyan-soft: rgba(34, 211, 238, 0.12);
+    --display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --body: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, 'JetBrains Mono', SFMono-Regular, Menlo, monospace;
+    --nav-w: 236px;
+    --measure: 68ch;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--indigo-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--indigo-bright); outline-offset: 3px; border-radius: 4px; }
+  code { font-family: var(--mono); font-size: 0.86em; background: var(--panel-2); border: 1px solid var(--line); padding: 0.08em 0.4em; border-radius: 5px; color: var(--text); }
+  pre { font-family: var(--mono); font-size: 0.82rem; line-height: 1.55; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.1rem; overflow-x: auto; color: var(--muted); margin: 0 0 1.2rem; white-space: pre; }
+  pre code { background: transparent; border: 0; padding: 0; color: inherit; font-size: inherit; }
+
+  /* ── progress + layout ─────────────────────────────── */
+  #progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--indigo); z-index: 10; transition: width 120ms linear; }
+  .shell { display: grid; grid-template-columns: var(--nav-w) minmax(0, 1fr); min-height: 100vh; }
+  @media (max-width: 900px) { .shell { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ── rail nav ─────────────────────────────────────── */
+  .rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 2rem 1.1rem 2rem 1.6rem; border-right: 1px solid var(--line); background: var(--bg); }
+  .rail .brand { font-family: var(--display); font-weight: 600; font-size: 0.95rem; color: var(--text); margin: 0 0 0.15rem; }
+  .rail .brand-sub { font-size: 0.78rem; color: var(--subtle); margin: 0 0 1.6rem; }
+  .rail ol { list-style: none; margin: 0; padding: 0; position: relative; }
+  .rail ol::before { content: ""; position: absolute; left: 7px; top: 10px; bottom: 10px; width: 1px; background: var(--line-strong); }
+  .rail li { position: relative; padding: 0.26rem 0 0.26rem 1.45rem; }
+  .rail li::before { content: ""; position: absolute; left: 3px; top: 0.7rem; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--line-strong); transition: background 150ms, border-color 150ms, transform 150ms; }
+  .rail a { display: block; color: var(--muted); font-size: 0.84rem; line-height: 1.35; }
+  .rail a:hover { color: var(--text); text-decoration: none; }
+  .rail li.active::before { background: var(--indigo); border-color: var(--indigo); transform: scale(1.25); }
+  .rail li.active a { color: var(--text); font-weight: 500; }
+  .rail li.you a { color: var(--amber); }
+  .rail .hint { margin-top: 1.8rem; font-size: 0.74rem; color: var(--subtle); line-height: 1.5; }
+  .rail kbd { font-family: var(--mono); font-size: 0.7rem; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3em; color: var(--muted); }
+  @media (max-width: 900px) {
+    .rail { position: sticky; top: 0; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 0.8rem 1rem; z-index: 5; }
+    .rail .brand, .rail .brand-sub, .rail .hint { display: none; }
+    .rail ol { display: flex; gap: 0.2rem; overflow-x: auto; padding-bottom: 0.2rem; }
+    .rail ol::before { display: none; }
+    .rail li { padding: 0; white-space: nowrap; }
+    .rail li::before { display: none; }
+    .rail a { padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid transparent; font-size: 0.8rem; }
+    .rail li.active a { border-color: var(--indigo); background: var(--indigo-soft); }
+  }
+
+  /* ── content ──────────────────────────────────────── */
+  main { padding: 0 clamp(1.25rem, 4vw, 4rem) 6rem; }
+  .stop { padding: clamp(3.5rem, 7vh, 6rem) 0 1rem; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+  .stop:first-of-type { border-top: 0; }
+  @media (max-width: 900px) { .stop { scroll-margin-top: 4.2rem; } }
+  .stop-head { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 1rem; align-items: baseline; margin-bottom: 1.75rem; }
+  .stop-head .n { font-family: var(--display); font-weight: 500; font-size: 0.95rem; color: var(--indigo-bright); padding-top: 0.35rem; }
+  .stop-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.6rem, 2.6vw, 2.15rem); letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+  .stop-head p { margin: 0.55rem 0 0; color: var(--muted); max-width: var(--measure); }
+  .stop-body { padding-left: 5.2rem; max-width: 1000px; }
+  @media (max-width: 700px) { .stop-head { grid-template-columns: 1fr; gap: 0.2rem; } .stop-body { padding-left: 0; } }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.12rem; letter-spacing: -0.01em; margin: 2.4rem 0 0.8rem; }
+  h3:first-child { margin-top: 0; }
+  p { max-width: var(--measure); margin: 0 0 1rem; }
+  ul, ol { max-width: var(--measure); padding-left: 1.25rem; margin: 0 0 1rem; }
+  li { margin-bottom: 0.35rem; }
+  li::marker { color: var(--subtle); }
+  strong { font-weight: 600; color: var(--text); }
+  .lede { font-size: 1.05rem; color: var(--muted); }
+  .wide { max-width: none; }
+
+  /* ── hero ─────────────────────────────────────────── */
+  .hero { padding: clamp(3rem, 9vh, 7rem) 0 3rem; }
+  .hero .kicker { color: var(--muted); font-size: 0.9rem; margin: 0 0 1rem; }
+  .hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.4rem, 5.2vw, 4.2rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 1.4rem; max-width: 14ch; }
+  .hero .lede { max-width: 62ch; font-size: 1.1rem; }
+  .arch { margin: 2.6rem 0 2.2rem; overflow-x: auto; }
+  .arch svg { display: block; width: 100%; min-width: 720px; height: auto; }
+  .arch text { font-family: var(--body); font-size: 12.5px; fill: var(--muted); }
+  .arch text.strong { fill: var(--text); font-weight: 500; }
+  .arch text.tiny { font-size: 11px; fill: var(--subtle); }
+  .arch text.label { font-size: 11px; fill: var(--subtle); }
+  .arch .box { fill: var(--panel); stroke: var(--line-strong); stroke-width: 1.2; }
+  .arch .box.hub { stroke: var(--indigo); stroke-width: 1.8; }
+  .arch .box.mac { stroke: var(--amber); stroke-width: 1.8; }
+  .arch .box.svc { stroke: var(--green); }
+  .arch .box.faint { stroke: var(--line); stroke-dasharray: 4 4; fill: transparent; }
+  .arch .host { fill: rgba(99, 102, 241, 0.05); stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 6 5; }
+  .arch .flow { stroke: var(--indigo); stroke-width: 2; fill: none; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 2.4s cubic-bezier(0.4, 0, 0.2, 1) 300ms forwards; }
+  .arch .flow.amber { stroke: var(--amber); }
+  .arch .flow.green { stroke: var(--green); stroke-width: 1.5; }
+  .arch .flow.dashed { stroke-dasharray: 5 5; animation: none; stroke-dashoffset: 0; stroke: var(--cyan); }
+  .arch .arrow { fill: var(--indigo); }
+  .arch .arrow.amber { fill: var(--amber); }
+  .arch .arrow.green { fill: var(--green); }
+  .arch .arrow.cyan { fill: var(--cyan); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .arch .flow { animation: none; stroke-dashoffset: 0; } }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 0 1rem; }
+  .facts div { padding: 1rem 1.2rem 1rem 0; border-right: 1px solid var(--line); margin-right: 1.2rem; }
+  .facts div:last-child { border-right: 0; margin-right: 0; }
+  .facts b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.55rem; letter-spacing: -0.02em; line-height: 1.1; }
+  .facts span { display: block; color: var(--muted); font-size: 0.85rem; margin-top: 0.25rem; }
+  @media (max-width: 700px) { .facts div { border-right: 0; border-bottom: 1px solid var(--line); margin-right: 0; } .facts div:last-child { border-bottom: 0; } }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; font-size: 0.8rem; color: var(--subtle); margin: -1.2rem 0 1.6rem; }
+  .legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--indigo); vertical-align: middle; margin-right: 0.45rem; }
+  .legend i.amber { border-color: var(--amber); }
+  .legend i.green { border-color: var(--green); }
+  .legend i.cyan { border-top-style: dashed; border-color: var(--cyan); }
+
+  /* ── tables ───────────────────────────────────────── */
+  .tbl { overflow-x: auto; margin: 0 0 1.4rem; border: 1px solid var(--line); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; vertical-align: top; padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--line); }
+  th { font-weight: 500; color: var(--muted); font-size: 0.8rem; background: var(--panel); }
+  tr:last-child td { border-bottom: 0; }
+  td:first-child { color: var(--text); font-weight: 500; white-space: nowrap; }
+  td code { white-space: nowrap; }
+  .tbl.wrap td:first-child { white-space: normal; }
+  td.yes { color: var(--green); }
+  td.no { color: var(--subtle); }
+  td.part { color: var(--amber); }
+  td.num { font-family: var(--display); text-align: right; white-space: nowrap; }
+
+  /* ── decisions (definition list) ──────────────────── */
+  .decisions { display: grid; grid-template-columns: minmax(150px, 0.8fr) minmax(0, 2fr); border-top: 1px solid var(--line); margin-bottom: 1.5rem; }
+  .decisions dt { padding: 0.95rem 1rem 0.95rem 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  .decisions dt small { display: block; color: var(--subtle); font-size: 0.78rem; margin-top: 0.15rem; }
+  .decisions dd { margin: 0; padding: 0.95rem 0; border-bottom: 1px solid var(--line); }
+  .decisions dd b { display: block; margin-bottom: 0.2rem; }
+  .decisions dd span { color: var(--muted); font-size: 0.92rem; }
+  @media (max-width: 600px) { .decisions { grid-template-columns: 1fr; } .decisions dt { border-bottom: 0; padding-bottom: 0; } }
+
+  /* ── segments ─────────────────────────────────────── */
+  .segments { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .seg { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1.2rem 1.3rem 1.1rem; border-left: 3px solid var(--indigo); }
+  .seg.mac { border-left-color: var(--amber); }
+  .seg.svc { border-left-color: var(--green); }
+  .seg.later { border-left-color: var(--line-strong); }
+  .seg h4 { font-family: var(--display); font-weight: 600; font-size: 1.05rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+  .seg .who { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.8rem; }
+  .seg .row { font-size: 0.9rem; margin: 0 0 0.45rem; }
+  .seg .row b { color: var(--subtle); font-weight: 500; }
+  .seg .order { float: right; font-size: 0.75rem; color: var(--subtle); border: 1px solid var(--line); border-radius: 999px; padding: 0.1rem 0.55rem; }
+  .seg ul { font-size: 0.9rem; margin: 0; padding-left: 1.1rem; }
+  .seg li { margin-bottom: 0.25rem; }
+
+  /* ── pills ────────────────────────────────────────── */
+  .pill { display: inline-block; font-size: 0.76rem; font-weight: 500; border-radius: 999px; padding: 0.12rem 0.6rem; border: 1px solid transparent; white-space: nowrap; }
+  .pill.go { color: var(--green); background: var(--green-soft); }
+  .pill.care { color: var(--amber); background: var(--amber-soft); }
+  .pill.no { color: var(--red); background: var(--red-soft); }
+  .pill.info { color: var(--indigo-bright); background: var(--indigo-soft); }
+  .pill.hub { color: var(--indigo-bright); background: var(--indigo-soft); }
+  .pill.mac { color: var(--amber); background: var(--amber-soft); }
+  .pill.cloud { color: var(--green); background: var(--green-soft); }
+
+  /* ── details ──────────────────────────────────────── */
+  details { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 0.7rem; background: var(--panel); }
+  details[open] { background: transparent; }
+  summary { cursor: pointer; padding: 0.85rem 1rem; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary .meta { color: var(--subtle); font-size: 0.82rem; font-weight: 400; }
+  summary::after { content: "+"; color: var(--subtle); font-family: var(--mono); margin-left: 0.5rem; }
+  details[open] summary::after { content: "–"; }
+  details .tbl { border: 0; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; margin: 0; }
+  details p { padding: 0 1rem; margin: 0.6rem 0 0.9rem; color: var(--muted); font-size: 0.9rem; }
+  details pre { margin: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0 0 10px 10px; }
+
+  /* ── steps (sequence) ─────────────────────────────── */
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 0 0 1.4rem; max-width: 74ch; }
+  .steps li { counter-increment: step; position: relative; padding: 0.7rem 0 0.7rem 3rem; border-bottom: 1px solid var(--line); }
+  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0.75rem; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid var(--line-strong); display: grid; place-items: center; font-family: var(--display); font-size: 0.8rem; color: var(--muted); }
+  .steps li b { display: block; }
+  .steps li span { color: var(--muted); font-size: 0.92rem; }
+
+  /* ── phase track ──────────────────────────────────── */
+  .track { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 0.5rem 0 1.6rem; }
+  .phase { border: 1px solid var(--line); border-radius: 10px; padding: 0.85rem 0.9rem; background: var(--panel); font-size: 0.85rem; position: relative; overflow: hidden; }
+  .phase::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--heat, var(--line-strong)); }
+  .phase b { display: block; font-family: var(--display); font-weight: 600; font-size: 0.95rem; }
+  .phase .days { color: var(--subtle); font-size: 0.78rem; margin-bottom: 0.5rem; display: block; }
+  .phase .num { font-family: var(--display); font-size: 1.15rem; font-weight: 600; letter-spacing: -0.02em; display: block; line-height: 1.2; margin-bottom: 0.2rem; }
+  .phase .lbl { color: var(--muted); font-size: 0.8rem; display: block; margin-bottom: 0.45rem; }
+  .phase .exit { color: var(--subtle); font-size: 0.78rem; display: block; border-top: 1px solid var(--line); padding-top: 0.45rem; margin-top: 0.45rem; }
+  .phase .exit b { display: inline; font-size: 0.78rem; color: var(--muted); font-family: var(--body); font-weight: 500; }
+  @media (max-width: 900px) { .track { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 460px) { .track { grid-template-columns: 1fr; } }
+
+  /* ── milestones ───────────────────────────────────── */
+  .milestones { display: grid; grid-template-columns: 5rem 1fr 7rem; font-size: 0.92rem; border-top: 1px solid var(--line); margin-bottom: 1.5rem; }
+  .milestones > div { padding: 0.7rem 0.6rem 0.7rem 0; border-bottom: 1px solid var(--line); }
+  .milestones .m { font-family: var(--display); font-weight: 600; color: var(--indigo-bright); }
+  .milestones .when { color: var(--subtle); text-align: right; }
+  @media (max-width: 560px) { .milestones { grid-template-columns: 4rem 1fr; } .milestones .when { grid-column: 2; text-align: left; padding-top: 0; margin-top: -0.6rem; } }
+
+  /* ── checklist ────────────────────────────────────── */
+  .check-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .check-head .count { font-family: var(--display); font-size: 0.95rem; color: var(--muted); }
+  .check-head .count b { color: var(--text); font-size: 1.3rem; }
+  .check-head button { font: inherit; font-size: 0.82rem; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.7rem; cursor: pointer; }
+  .check-head button:hover { color: var(--text); border-color: var(--line-strong); }
+  .bar { height: 4px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 1.6rem; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--indigo); transition: width 300ms; }
+  .group { margin-bottom: 1.6rem; }
+  .group h4 { font-family: var(--display); font-weight: 600; font-size: 0.95rem; margin: 0 0 0.4rem; color: var(--text); }
+  .group h4 small { color: var(--subtle); font-weight: 400; margin-left: 0.5rem; }
+  .task { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.7rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .task input { width: 1.05rem; height: 1.05rem; margin: 0.22rem 0 0; accent-color: var(--indigo); cursor: pointer; }
+  .task label { cursor: pointer; }
+  .task label span { display: block; color: var(--muted); font-size: 0.88rem; }
+  .task input:checked + label { color: var(--subtle); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+  .task input:checked + label span { text-decoration: none; }
+
+  .callout { border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 10px; background: var(--panel); padding: 0.9rem 1.1rem; margin: 0 0 1.4rem; max-width: 74ch; font-size: 0.93rem; }
+  .callout.blue { border-left-color: var(--indigo); }
+  .callout.red { border-left-color: var(--red); }
+  .callout.green { border-left-color: var(--green); }
+  .callout p:last-child { margin-bottom: 0; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem 2rem; }
+  .sources { font-size: 0.88rem; color: var(--muted); }
+  .sources li { margin-bottom: 0.3rem; word-break: break-word; }
+
+  @media print {
+    .rail, #progress, .check-head button { display: none; }
+    .shell { display: block; }
+    body { background: #fff; color: #111; font-size: 11pt; }
+    .stop { break-before: page; border-top: 0; padding-top: 0; }
+    .hero { break-before: auto; }
+    .seg, .phase, details, .tbl, pre, .callout { background: #fff !important; border-color: #ccc !important; }
+    th { background: #f2f2f2; color: #333; }
+    a { color: #111; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <p class="brand">Lucid Code Labs</p>
+    <p class="brand-sub">Mission Dock Hub plan, September 2026</p>
+    <ol id="railnav">
+      <li><a href="#top">Overview</a></li>
+      <li><a href="#today">Where we stand</a></li>
+      <li><a href="#shape">The shape of it</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#sync">What syncs, who owns it</a></li>
+      <li><a href="#agents">Agents on the box</a></li>
+      <li><a href="#web">The website</a></li>
+      <li><a href="#mac">Mission Dock changes</a></li>
+      <li><a href="#handoff">Handing work over</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#phases">Phases</a></li>
+      <li class="you"><a href="#decisions">Your decisions</a></li>
+      <li><a href="#cost">Cost and sizing</a></li>
+      <li><a href="#risks">Risks</a></li>
+      <li class="you"><a href="#checklist">Kick-off checklist</a></li>
+      <li><a href="#sources">Sources</a></li>
+    </ol>
+    <p class="hint">Sections in amber need you. Checklist ticks are remembered in this browser. Press <kbd>⌘P</kbd> for a printable copy.</p>
+  </nav>
+
+  <main>
+    <section class="hero" id="top">
+      <p class="kicker">Lucid Code Labs · Internal · Written 15 September 2026 · For George's review</p>
+      <h1>Mission Dock, always on.</h1>
+      <p class="lede">A small always-on hub on the Hetzner box that hosts Claude and Codex agents, mirrors Mission Dock's missions and workspaces, talks to Trello and Habitica with the same keys, and serves a web app on the Lucid domain. The notch, the phone and any browser then steer the same agents and the same task lists, and a piece of work can move between the server and the Mac in either direction.</p>
+
+      <div class="arch" aria-label="Architecture diagram: surfaces on the left, the Hetzner box with Hermes in the middle, cloud services on the right">
+        <svg viewBox="0 0 980 470" role="img">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow"/></marker>
+            <marker id="ah-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow amber"/></marker>
+            <marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow green"/></marker>
+            <marker id="ah-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrow cyan"/></marker>
+          </defs>
+
+          <!-- host box -->
+          <rect class="host" x="350" y="18" width="340" height="434" rx="16"/>
+          <text x="366" y="42" class="tiny">HETZNER BOX · maps-scraper-1 · Ubuntu 24.04 · systemd</text>
+
+          <!-- surfaces (left) -->
+          <rect class="box" x="30" y="52" width="210" height="80" rx="10"/>
+          <text x="46" y="78" class="strong">Phone · any browser</text>
+          <text x="46" y="98">dock.lucidcodelabs.com</text>
+          <text x="46" y="116" class="tiny">passkey login · installable PWA</text>
+
+          <rect class="box mac" x="30" y="158" width="210" height="150" rx="10"/>
+          <text x="46" y="184" class="strong">Mission Dock on the Mac</text>
+          <text x="46" y="206">notch · panes · Django</text>
+          <text x="46" y="226">WhatsApp · voice · journal</text>
+          <text x="46" y="254" class="tiny">HubClient dials OUT over TLS.</text>
+          <text x="46" y="270" class="tiny">No inbound port on the Mac.</text>
+          <text x="46" y="292" class="tiny">Remote panes: ssh + tmux attach</text>
+
+          <rect class="box" x="30" y="336" width="210" height="64" rx="10"/>
+          <text x="46" y="362" class="strong">Claude app on the iPhone</text>
+          <text x="46" y="382">Remote Control, no hub needed</text>
+
+          <!-- hub internals (center) -->
+          <rect class="box" x="368" y="62" width="304" height="40" rx="8"/>
+          <text x="384" y="87" class="strong">Caddy · TLS for dock.lucidcodelabs.com</text>
+
+          <rect class="box hub" x="368" y="122" width="304" height="120" rx="10"/>
+          <text x="384" y="148" class="strong">Hermes hub · Node 22 + TypeScript</text>
+          <text x="384" y="170">state document + SSE · decisions · sync</text>
+          <text x="384" y="190">link server for the Mac · relay · handoff</text>
+          <text x="384" y="210">Trello · Habitica · GitHub · ntfy</text>
+          <text x="384" y="230" class="tiny">speaks the phone remote's API contract</text>
+
+          <rect class="box" x="368" y="262" width="304" height="76" rx="10"/>
+          <text x="384" y="288" class="strong">Agent runtime · tmux sessions</text>
+          <text x="384" y="308">claude · codex, one session per run</text>
+          <text x="384" y="326" class="tiny">same hook shim as the Mac, over loopback</text>
+
+          <rect class="box" x="368" y="356" width="142" height="46" rx="10"/>
+          <text x="384" y="384" class="strong">Postgres 16</text>
+          <rect class="box faint" x="530" y="356" width="142" height="46" rx="10"/>
+          <text x="546" y="378" class="tiny">maps-scraper GUI</text>
+          <text x="546" y="394" class="tiny">unchanged, :4310</text>
+
+          <!-- services (right) -->
+          <rect class="box svc" x="760" y="60" width="190" height="48" rx="10"/>
+          <text x="776" y="82" class="strong">Trello</text>
+          <text x="776" y="99" class="tiny">already the source of truth</text>
+          <rect class="box svc" x="760" y="122" width="190" height="48" rx="10"/>
+          <text x="776" y="144" class="strong">Habitica</text>
+          <text x="776" y="161" class="tiny">already the source of truth</text>
+          <rect class="box svc" x="760" y="184" width="190" height="48" rx="10"/>
+          <text x="776" y="206" class="strong">GitHub</text>
+          <text x="776" y="223" class="tiny">branches carry the work</text>
+          <rect class="box svc" x="760" y="262" width="190" height="60" rx="10"/>
+          <text x="776" y="284" class="strong">Anthropic · OpenAI · Z.AI</text>
+          <text x="776" y="301" class="tiny">subscription token or API key</text>
+          <text x="776" y="315" class="tiny">Remote Control relays here</text>
+          <rect class="box svc" x="760" y="356" width="190" height="46" rx="10"/>
+          <text x="776" y="378" class="strong">ntfy</text>
+          <text x="776" y="394" class="tiny">"an agent needs you" pings</text>
+
+          <!-- flows -->
+          <path class="flow" d="M240 90 C 300 90, 310 82, 368 82" marker-end="url(#ah)"/>
+          <text x="250" y="76" class="label">HTTPS + SSE</text>
+
+          <path class="flow amber" d="M240 222 C 290 222, 310 182, 368 182" marker-start="url(#ah-amber)" marker-end="url(#ah-amber)"/>
+          <text x="250" y="248" class="label">link (WSS)</text>
+          <text x="250" y="262" class="label">sync + relay</text>
+
+          <path class="flow dashed" d="M240 368 C 290 368, 310 300, 368 300" marker-end="url(#ah-cyan)"/>
+          <text x="250" y="392" class="label">Remote Control</text>
+
+          <path class="flow green" d="M672 150 C 716 150, 716 84, 760 84" marker-end="url(#ah-green)"/>
+          <path class="flow green" d="M672 160 C 716 160, 716 146, 760 146" marker-end="url(#ah-green)"/>
+          <path class="flow green" d="M672 170 C 716 170, 716 208, 760 208" marker-end="url(#ah-green)"/>
+          <path class="flow green" d="M672 200 C 716 200, 716 379, 760 379" marker-end="url(#ah-green)"/>
+          <path class="flow green" d="M672 292 H760" marker-end="url(#ah-green)"/>
+          <text x="682" y="281" class="label">models</text>
+
+          <path class="flow" d="M528 242 V262" marker-end="url(#ah)"/>
+          <path class="flow" d="M439 338 V356" marker-end="url(#ah)"/>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i></i>Hermes traffic</span>
+        <span><i class="amber"></i>Mission Dock link</span>
+        <span><i class="green"></i>Cloud services</span>
+        <span><i class="cyan"></i>First-party Claude features, no code needed</span>
+      </div>
+
+      <div class="facts">
+        <div><b>1 hub</b><span>Node + Postgres on the box you already pay for</span></div>
+        <div><b>2 runtimes</b><span>Claude Code and Codex, both in tmux</span></div>
+        <div><b>5 phases</b><span>about 8 weeks, useful after week 2</span></div>
+        <div><b>≈ €15–25</b><span>a month, all in, on the existing Max plan</span></div>
+      </div>
+
+      <div class="callout blue">
+        <p><strong>How to read this.</strong> Sections 01 to 10 describe what exists, what gets built and in what order. Section 11 lists the eight decisions only you can make, with a recommendation for each. Section 14 is the kick-off checklist for the first four days. Everything in 01 was checked on the live server, the Mission Dock tree and the Lucid repo on 15 September 2026.</p>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 01 ───────────────────────────── -->
+    <section class="stop" id="today">
+      <div class="stop-head">
+        <div class="n">01</div>
+        <div>
+          <h2>Where we stand</h2>
+          <p>Most of the hub already exists in pieces. The job is to put a server under them, not to write them again.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <h3>The server today</h3>
+        <div class="tbl wrap"><table>
+          <tr><th>Item</th><th>Checked on 15 Sep</th></tr>
+          <tr><td>Machine</td><td>Hetzner CX23 in Nuremberg (nbg1-dc3): 2 shared vCPU (AMD EPYC), 3.7 GB RAM, 38 GB disk with 11% used, <strong>no swap</strong>. Public IPv4 46.225.63.221 plus IPv6.</td></tr>
+          <tr><td>System</td><td>Ubuntu 24.04.4, kernel 6.8, Node 22.23, npm 10.9, Python 3.12, git 2.43, tmux. Not installed: Docker, nginx or Caddy, Tailscale, <code>gh</code>, <code>claude</code>.</td></tr>
+          <tr><td>Running</td><td>PostgreSQL 16 on localhost. The maps-scraper GUI as a systemd service (user <code>scraper</code>, bound to 127.0.0.1:4310, code in <code>/opt/maps-scraper</code>). Timers: canary hourly, digest 08:00 UTC; the sweep timer is written but not enabled.</td></tr>
+          <tr><td>Codex</td><td>Codex CLI 0.154.0 signed in with ChatGPT, running its <code>app-server</code> daemon with code-mode host on a unix socket (the remote-agent support you added on 12 Sep). <code>codex remote-control</code> exists as an experimental subcommand. Agent checkout at <code>/srv/codex/repos/maps-scraper</code>, which holds uncommitted GUI work (GUI.md, READINESS.md, the GUI service unit).</td></tr>
+          <tr><td>Access</td><td>SSH is the only public listener. <code>ssh hetzner-codex</code> lands as user <code>codex</code> (uid 1000, no sudo); root uses the same key, <code>~/.ssh/hetzner_hermes</code>. ufw is present. No HTTPS, no hostname, no backups.</td></tr>
+        </table></div>
+
+        <h3>Mission Dock pieces this plan reuses</h3>
+        <div class="tbl wrap"><table>
+          <tr><th>Piece</th><th>What it already does</th><th>Role in the hub</th></tr>
+          <tr><td>Phone remote (<code>Remote/</code>, 4,145 lines)</td><td>HTTP/1.1 + SSE server, the routes in <code>RemoteAPI</code> (state, events, decision, answer, brief, spawn, end, chat, mission status, pane, repos, announcements, recap), a PWA in <code>RemoteWebApp</code> (1,622 lines, zero external requests, <code>textContent</code> only), ntfy push in <code>RemotePush</code>. Never yet run on a real phone.</td><td>The hub's API contract and the seed of the website.</td></tr>
+          <tr><td>Telemetry</td><td>Bash hook shim over <code>/dev/tcp</code>, <code>HookSocketServer</code> holding <code>PermissionRequest</code> connections, <code>PermissionDecision.json</code> (allow, deny, allow-all-session), the hook → <code>RunStatus</code> mapping in <code>IslandController.runState</code>.</td><td>Ported line for line to Node; the same shim runs on the server with a different port.</td></tr>
+          <tr><td>Panes</td><td><code>TerminalSessionManager</code> spawns <code>claude --model --effort --add-dir</code> with <code>AGENTDOCK_RUN_ID</code>, scrapes every second, detects selectors (<code>PermissionPromptDetector</code>), restores with <code>--resume</code>, briefs agents (<code>spawnBriefedAgent</code>).</td><td>A remote pane is the same pane running <code>ssh</code> + <code>tmux attach</code>.</td></tr>
+          <tr><td>Integrations</td><td><code>TrelloService</code> (586 lines), <code>TrelloTasksStore</code>, <code>HabiticaService</code> (454 lines), <code>HabiticaStore</code>, <code>HabiticaTrelloSync</code> (pairs a card and a to-do through a URL in the notes).</td><td>Ported to TypeScript for the hub; the pairing rule needs no mapping table so it works unchanged.</td></tr>
+          <tr><td>Data</td><td>GRDB tables <code>mission</code>, <code>agent_run</code>, <code>agent_event</code>, <code>jarvis_*</code>; the identity rules in <code>MissionStore.addExternalTask</code>; workspaces as UserDefaults JSON with a Trello list and an assign repo each.</td><td>The entities that sync. <code>docs/DATA_MODEL.md</code> §5 already designed the outbox and cursors; this plan builds them.</td></tr>
+          <tr><td>The Hermes seam</td><td><code>HermesClient</code>, <code>RunRemoteTool</code> (unregistered), <code>JarvisConfig.hermesHost/User/KeyPath</code> (stored, unused). Written in June for "remote agents on the VPS over SSH".</td><td>Filled in. Django gets a real remote tool.</td></tr>
+          <tr><td>Django's brain</td><td><code>ClaudeCLIBrain</code> runs <code>claude -p</code> with the operator prompt on the subscription, streaming a JSON plan.</td><td>The same shape runs on the hub for a text-only Django (Phase 4).</td></tr>
+          <tr><td>maps-scraper deploy kit</td><td><code>deploy/setup-server.sh</code>, <code>bootstrap-remote.sh</code> (deploy key via <code>gh</code>), systemd units and timers.</td><td>Template for <code>hermes.service</code>, the env file and the repo deploy keys.</td></tr>
+        </table></div>
+
+        <h3>What the viability report already settled</h3>
+        <p><code>docs/CLOUD_VIABILITY.md</code> (11 Sep) looked at three routes: port the app to Linux (a rewrite; WhatsApp and the voice loop can never move), keep an always-on Mac (works, needs a Mac mini), or use Claude's own cloud (agents only, invisible to Mission Dock). It recommended the Mac mini.</p>
+        <p>This plan is the fourth route it left open: <strong>not a port, a hub</strong>. The Mac stays the home of the notch, the panes, WhatsApp, voice and the journal vault. The server hosts the things that gain from being always on: agents, the task mirror, the website. Mission Dock becomes a client of the hub, which the report itself called "a natural later extension of RemoteAPI".</p>
+        <p>The Lucid site is Next.js on Vercel, deployed from <code>main</code> on every push. Its admin area serves repo-shipped documents; this page is one of them.</p>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 02 ───────────────────────────── -->
+    <section class="stop" id="shape">
+      <div class="stop-head">
+        <div class="n">02</div>
+        <div>
+          <h2>The shape of it</h2>
+          <p>Seven rules that keep this small. Every design choice below follows from one of them.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <ol class="steps">
+          <li><b>Trello and Habitica are already in the cloud.</b><span>There is nothing to "sync" for them. Mission Dock and the hub both talk to their APIs with the same credentials. The website edits boards directly; the Mac sees the edit through the polling it already does, plus a nudge over the link so it is immediate.</span></li>
+          <li><b>Sync only what Mission Dock owns.</b><span>Missions, workspace definitions, agent runs and their events, pending decisions, announcements, a settings snapshot. The journal vault and Django's memory stay on the Mac until a later phase.</span></li>
+          <li><b>Every entity has one owner; the other side mirrors.</b><span>An agent run belongs to the machine that hosts its terminal. Missions are shared with last-writer-wins and the identity rules <code>MissionStore</code> already enforces. Events are append-only, so they merge trivially.</span></li>
+          <li><b>The Mac never opens an inbound port.</b><span>Mission Dock dials out to the hub over TLS with a device token. The hub relays website commands to the Mac through that connection. This is the phone remote's "never port-forward" rule, kept.</span></li>
+          <li><b>One protocol.</b><span>The hub speaks the phone remote's contract (<code>/api/state</code>, <code>/api/events</code>, <code>/api/decision</code> and friends) with one added field, <code>origin</code>, on every agent row. The PWA you already have works against the hub on day one.</span></li>
+          <li><b>Humans approve the edge.</b><span>The AGENTS.md rule holds on the server: agents can move a mission to ready-for-review, never to completed, archived or deleted. Permission prompts use the same held-hook mechanism as the notch.</span></li>
+          <li><b>Fail toward the terminal.</b><span>If the hub is down, server agents keep running in tmux and are reachable over SSH and Remote Control. If the Mac is off, the website still runs server agents and edits Trello and Habitica. Nothing here is a single point of failure for work that is already in flight.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 03 ───────────────────────────── -->
+    <section class="stop" id="architecture">
+      <div class="stop-head">
+        <div class="n">03</div>
+        <div>
+          <h2>Architecture</h2>
+          <p>Six components. Three are new code, two are ports of Swift you have, one is configuration.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="segments">
+          <div class="seg">
+            <span class="order">new · TypeScript</span>
+            <h4>Hermes hub</h4>
+            <p class="who">One systemd service on the box, Node 22 with type stripping (no build step, like maps-scraper), Postgres 16.</p>
+            <ul>
+              <li>Hook receiver: the loopback line protocol, held <code>PermissionRequest</code> connections, decisions table.</li>
+              <li>State document built every second, diffed, pushed over SSE, agents tagged <code>origin: "hub"</code> or <code>"mac"</code>.</li>
+              <li>Link server for Mission Dock (WebSocket): sync batches, relay, presence.</li>
+              <li>Trello, Habitica, GitHub and ntfy clients.</li>
+              <li>Serves the web app and the API behind Caddy.</li>
+            </ul>
+          </div>
+          <div class="seg">
+            <span class="order">new · on the box</span>
+            <h4>Agent runtime</h4>
+            <p class="who">One tmux session per run, named <code>hermes-&lt;runId&gt;</code>, as the <code>hermes</code> user.</p>
+            <ul>
+              <li>Spawns <code>claude</code> with the same flags the Mac uses, plus <code>AGENTDOCK_RUN_ID</code> for correlation.</li>
+              <li>Spawns <code>codex</code> the same way; <code>codex exec</code> for headless jobs.</li>
+              <li>Pane text via <code>tmux capture-pane</code> (400 lines, the phone's cap); briefs and answers via <code>send-keys</code>.</li>
+              <li>Per-mission git worktrees under <code>/srv/hermes/work</code>.</li>
+            </ul>
+          </div>
+          <div class="seg">
+            <span class="order">new · web</span>
+            <h4>Mission Dock Web</h4>
+            <p class="who">The PWA, grown. Served by Hermes at <code>dock.lucidcodelabs.com</code>, linked from the Lucid admin.</p>
+            <ul>
+              <li>Phase 1: agents, decisions, briefs, pane view, spawn (what the PWA does today).</li>
+              <li>Phase 3: Trello lists and boards, Habitica, missions, announcements, Django chat, "Mac online" presence.</li>
+              <li>Passkey login, httpOnly cookies, push via ntfy (Web Push later).</li>
+            </ul>
+          </div>
+          <div class="seg mac">
+            <span class="order">Swift · Mission Dock</span>
+            <h4>Hub client in the Mac app</h4>
+            <p class="who">The one place the app changes shape. Details in section 07.</p>
+            <ul>
+              <li><code>HubClient</code>: outbound WebSocket, reconnect, device token in the Keychain.</li>
+              <li><code>HubSync</code>: the outbox and cursors from DATA_MODEL.md §5.</li>
+              <li>Hub agents in LIVE AGENTS with a hub badge; their prompts answered from the notch.</li>
+              <li>Remote panes, "Assign to Hermes", Django's <code>run_remote</code> tool, handoff actions.</li>
+            </ul>
+          </div>
+          <div class="seg svc">
+            <span class="order">ported · TypeScript</span>
+            <h4>Integrations</h4>
+            <p class="who">Straight ports of Swift you have, with tests carried across.</p>
+            <ul>
+              <li><code>TrelloService</code> and <code>HabiticaService</code> methods the tools use.</li>
+              <li><code>HabiticaTrelloSync</code>: complete one side, the other follows.</li>
+              <li><code>RemotePush</code>: edge-triggered ntfy with the same rate limits.</li>
+              <li>The hook → status mapping and the decision JSON, pinned by the same test cases.</li>
+            </ul>
+          </div>
+          <div class="seg later">
+            <span class="order">configuration</span>
+            <h4>Box preparation</h4>
+            <p class="who">Once, by script, the way <code>setup-server.sh</code> did it for the scraper.</p>
+            <ul>
+              <li>Resize, swap, <code>hermes</code> user, <code>/etc/hermes.env</code>.</li>
+              <li><code>claude</code> install pinned near the Mac's 2.1.272, auto-update off.</li>
+              <li>Caddy with automatic TLS, ufw 22/80/443, fail2ban.</li>
+              <li>Nightly <code>pg_dump</code> and tarball to a Storage Box; weekly snapshot.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>What works when the Mac is closed</h3>
+        <p>The matrix the whole plan is built around. "Relay" means the website sends the action to Mission Dock over its link and Mission Dock performs it.</p>
+        <div class="tbl wrap"><table>
+          <tr><th>From the website</th><th>Mac off</th><th>Mac on</th><th>Phase</th></tr>
+          <tr><td>Watch, steer, approve, brief, end a server agent</td><td class="yes">yes</td><td class="yes">yes</td><td>1</td></tr>
+          <tr><td>Start a new agent on the server</td><td class="yes">yes</td><td class="yes">yes</td><td>1</td></tr>
+          <tr><td>Edit Trello boards and lists, score Habitica</td><td class="yes">yes</td><td class="yes">yes, Mac refreshes within a second</td><td>3</td></tr>
+          <tr><td>Promote a card to a mission, reorder, set a deadline</td><td class="yes">yes, applied on the Mac when it returns</td><td class="yes">yes, live</td><td>2–3</td></tr>
+          <tr><td>Watch and approve a Mac agent</td><td class="no">no</td><td class="yes">yes, by relay</td><td>2</td></tr>
+          <tr><td>Start an agent on the Mac</td><td class="no">no</td><td class="yes">yes, by relay</td><td>3</td></tr>
+          <tr><td>Chat with Django</td><td class="part">text-only hub Django</td><td class="yes">the Mac's Django by relay, voice stays there</td><td>3–4</td></tr>
+          <tr><td>Hand a run to the other machine</td><td class="part">queued until the Mac is back</td><td class="yes">yes</td><td>4</td></tr>
+          <tr><td>WhatsApp, voice, journal writing</td><td class="no">never on the server</td><td class="part">later, by relay</td><td>5+</td></tr>
+        </table></div>
+
+        <h3>Two flows, end to end</h3>
+        <div class="two">
+          <div>
+            <h4 style="font-family:var(--display);margin:0 0 .5rem">A server agent asks permission</h4>
+            <ol class="steps">
+              <li><b><code>claude</code> in tmux fires the <code>PermissionRequest</code> hook.</b><span>The shim connects to Hermes on loopback and holds the socket, exactly as on the Mac.</span></li>
+              <li><b>Hermes stores a <code>decision</code> row and marks the run needs-you.</b><span>The next state tick goes out over SSE; ntfy pings the phone; the Mac's link gets the same row.</span></li>
+              <li><b>You answer from anywhere.</b><span>Website tap, notch button, or the Claude app if that session is under Remote Control. First answer wins; the others see it disappear.</span></li>
+              <li><b>Hermes writes the decision JSON down the held socket.</b><span>The shim echoes it to stdout, Claude Code applies it, the run goes back to working.</span></li>
+            </ol>
+          </div>
+          <div>
+            <h4 style="font-family:var(--display);margin:0 0 .5rem">You move a Trello card from the phone</h4>
+            <ol class="steps">
+              <li><b>The website calls Hermes.</b><span><code>POST /api/tasks/trello/move</code> with the card and the list.</span></li>
+              <li><b>Hermes calls Trello with your key and token.</b><span>The same pair the Mac keeps in its Keychain, copied once into <code>/etc/hermes.env</code>.</span></li>
+              <li><b>Hermes nudges the Mac if it is online.</b><span>A <code>trello.changed</code> relay message; Mission Dock posts its own <code>trelloDidChange</code> and the Tasks panel refreshes.</span></li>
+              <li><b>If the card is a mission, Hermes updates the mission too.</b><span>Same rules as the Mac: moving to Done is a human act, so it completes the mission; agents cannot do this step.</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 04 ───────────────────────────── -->
+    <section class="stop" id="sync">
+      <div class="stop-head">
+        <div class="n">04</div>
+        <div>
+          <h2>What syncs, who owns it</h2>
+          <p>Ownership decides conflicts before they happen. The table is the contract; the protocol is small on purpose.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="tbl wrap"><table>
+          <tr><th>Entity</th><th>Owner</th><th>Mirror</th><th>Conflict rule</th><th>Phase</th></tr>
+          <tr><td>Trello cards, lists, boards</td><td><span class="pill cloud">Trello</span></td><td>both read and write directly; hub keeps a read cache for the website</td><td>Trello's</td><td>1 (read), 3 (write)</td></tr>
+          <tr><td>Habitica tasks and stats</td><td><span class="pill cloud">Habitica</span></td><td>both; 30 requests a minute shared, so the hub polls slowly when the Mac is on</td><td>Habitica's</td><td>3</td></tr>
+          <tr><td>Missions</td><td>shared</td><td>both, through the outbox</td><td>last writer wins on <code>updatedAt</code>; a <code>taskId</code> is promoted once; one live title at a time (the <code>MissionStore</code> rules, applied on both ends)</td><td>2</td></tr>
+          <tr><td>Workspaces (name, folder, Trello list, assign repo)</td><td><span class="pill mac">Mac</span></td><td>hub, read-only, with a repo-name map to server paths</td><td>Mac wins</td><td>2</td></tr>
+          <tr><td>Agent runs and events, Mac panes</td><td><span class="pill mac">Mac</span></td><td>hub shows them while the link is up</td><td>owner only; events append</td><td>2</td></tr>
+          <tr><td>Agent runs and events, server sessions</td><td><span class="pill hub">Hermes</span></td><td>Mac shows them in LIVE AGENTS</td><td>owner only; events append</td><td>2</td></tr>
+          <tr><td>Pending decisions and selector prompts</td><td>the run's owner</td><td>the other side, plus the website</td><td>first answer wins; answers are idempotent by decision id</td><td>1–2</td></tr>
+          <tr><td>Announcements and offers</td><td><span class="pill mac">Mac</span></td><td>hub keeps the last 20 for the website</td><td>Mac wins</td><td>3</td></tr>
+          <tr><td>Journal (Obsidian vault)</td><td><span class="pill mac">Mac</span></td><td>hub reads a vault clone for the website</td><td>vault sync tool's (git or Syncthing)</td><td>5</td></tr>
+          <tr><td>Django conversation and memory</td><td><span class="pill mac">Mac</span></td><td>hub Django has its own, text only</td><td>separate, by design</td><td>4</td></tr>
+          <tr><td>Handoff packets</td><td><span class="pill hub">Hermes</span></td><td>Mac consumes them</td><td>one packet per run; the source session ends first</td><td>4</td></tr>
+        </table></div>
+
+        <h3>The link protocol</h3>
+        <p>One WebSocket from Mission Dock to <code>wss://dock.lucidcodelabs.com/link</code>, authenticated with a device token, JSON messages, 20-second pings. Reconnect with backoff; a reconnect resends everything after the last acknowledged cursor.</p>
+        <div class="tbl"><table>
+          <tr><th>Message</th><th>Direction</th><th>Carries</th></tr>
+          <tr><td><code>hello</code> / <code>welcome</code></td><td>Mac → hub → Mac</td><td>device id, app and CLI versions, last cursor each side has seen</td></tr>
+          <tr><td><code>state</code></td><td>Mac → hub</td><td>the Mac's agent rows and counts, on change, at most once a second (the existing snapshot code, reused)</td></tr>
+          <tr><td><code>push</code> / <code>ack</code></td><td>both ways</td><td>outbox batches: entity, op, version, <code>updatedAt</code>, device; acknowledged by cursor</td></tr>
+          <tr><td><code>relay</code> / <code>relayResult</code></td><td>hub → Mac → hub</td><td>a website action for the Mac: decide, answer, brief, spawn, end, chat, refresh Trello</td></tr>
+          <tr><td><code>handoff</code></td><td>both ways</td><td>a packet offer, its acceptance, and the transcript upload URL</td></tr>
+        </table></div>
+
+        <details>
+          <summary>Postgres tables in the hub <span class="meta">the <code>hermes</code> database, next to <code>maps_scraper</code></span></summary>
+          <p><code>device</code> (Macs and browsers, token hashes) · <code>web_session</code> · <code>mission</code> · <code>workspace</code> · <code>agent_run</code> · <code>agent_event</code> · <code>decision</code> · <code>announcement</code> · <code>handoff</code> · <code>outbox</code> · <code>sync_cursor</code> · <code>trello_cache</code> · <code>habitica_cache</code> · <code>audit</code> (every website action with who, what, when). The first six mirror the GRDB schema field for field so the Swift and TypeScript models can be diffed by eye.</p>
+        </details>
+        <details>
+          <summary>Mission Dock migration <span class="meta"><code>v11_hub_sync</code></span></summary>
+          <p>Adds <code>outbox</code> and <code>sync_state</code> as designed in <code>docs/DATA_MODEL.md</code> §5, plus <code>origin</code> and <code>version</code> columns on <code>mission</code> and <code>agent_run</code>, and a <code>hub_device_id</code> setting. No existing column changes; an older build can still open the database.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 05 ───────────────────────────── -->
+    <section class="stop" id="agents">
+      <div class="stop-head">
+        <div class="n">05</div>
+        <div>
+          <h2>Agents on the box</h2>
+          <p>Claude Code and Codex run as real interactive sessions in tmux. That keeps Remote Control, hooks and your existing pane tooling all working unchanged.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <h3>Why tmux and not a headless SDK loop</h3>
+        <p>A <code>claude</code> TUI in tmux behaves exactly like a pane on the Mac: the same hooks fire, the same <code>PermissionRequest</code> hold works, <code>--resume</code> works, and the Claude iPhone app can attach to it with Remote Control. The Agent SDK (<code>@anthropic-ai/claude-agent-sdk</code>) is the right tool for the hub's own Django later, where a JSON plan is wanted rather than a terminal; it is the wrong tool for sessions a human wants to sit in.</p>
+
+        <h3>Remote Control is the zero-code head start</h3>
+        <div class="callout green">
+          <p>Before a line of Hermes exists, <code>claude remote-control</code> running in a tmux session on the box gives you: start a session on the server from the Claude app, steer it, answer its permission prompts, attach files, see subagents, all on the subscription. The docs state it works on a remote machine inside tmux or screen. What it does not give you is Mission Dock visibility, Trello and Habitica, missions, Codex, handoff, or the Lucid-domain web app. Those are what Hermes adds. Spike 2 in the checklist is exactly this test.</p>
+        </div>
+        <div class="tbl wrap"><table>
+          <tr><th>Mode</th><th>Command</th><th>Use</th></tr>
+          <tr><td>Server mode</td><td><code>claude remote-control</code></td><td>Serves on-demand sessions the Claude app can create, default capacity 32. Runs in the foreground, so in tmux. Gives up after about ten minutes of outage.</td></tr>
+          <tr><td>One session</td><td><code>claude --rc</code> or <code>/rc</code> inside a session</td><td>Exposes that one session to the app; retries indefinitely. This is what a Hermes-spawned run turns on.</td></tr>
+          <tr><td>Constraints</td><td colspan="2">Subscription login only, direct access to <code>api.anthropic.com</code> (no GLM base URL on those sessions), the telemetry-off environment variables must stay unset, and the project must have been trusted once by running <code>claude</code> in it.</td></tr>
+        </table></div>
+
+        <h3>Authentication on the server</h3>
+        <div class="tbl wrap"><table>
+          <tr><th>Option</th><th>How</th><th>Verdict</th></tr>
+          <tr><td>Subscription token</td><td><code>claude setup-token</code> on the box (URL and paste-code flow over SSH) yields a one-year OAuth token; store it as <code>CLAUDE_CODE_OAUTH_TOKEN</code> in <code>/etc/hermes.env</code>.</td><td><span class="pill care">recommended, grey area</span> The docs describe the flow but say nothing about a personal always-on server. Single user, no resale, same account as the Mac. Keep option two ready.</td></tr>
+          <tr><td>API key with a cap</td><td><code>ANTHROPIC_API_KEY</code> in the env file, a monthly budget in the Console.</td><td><span class="pill go">clean fallback</span> Costs real money per token; Remote Control is not available on API-key sessions.</td></tr>
+          <tr><td>GLM via Z.AI</td><td>The provider Mission Dock already supports per pane (<code>ANTHROPIC_BASE_URL</code> to Z.AI).</td><td><span class="pill info">for bulk work</span> Cheap and already wired; no Remote Control on those sessions.</td></tr>
+          <tr><td>Codex</td><td>Already signed in with ChatGPT on the box.</td><td><span class="pill go">keep</span> Codex has no permission hook; approvals happen in its own TUI (through the remote pane) or by running it with a sandboxed full-auto policy for chores.</td></tr>
+        </table></div>
+
+        <h3>Runtime details</h3>
+        <ul>
+          <li><strong>Correlation.</strong> Hermes sets <code>AGENTDOCK_RUN_ID</code> when it spawns, the shim folds it into every hook event, and the run id becomes the row key. Sessions started by hand in tmux still show up, keyed by session id, the way iTerm sessions do on the Mac.</li>
+          <li><strong>Versions.</strong> <code>DISABLE_AUTOUPDATER=1</code>, and the server's <code>claude</code> is kept within one minor of the Mac's (2.1.272 today), because the hook and decision JSON shapes track the CLI. A single <code>hermes update-claude</code> script upgrades and runs the contract tests.</li>
+          <li><strong>Selectors.</strong> Since CLI 2.1.26x the <code>PermissionRequest</code> hook also fires for <code>AskUserQuestion</code>, so most prompts arrive as decisions. For the remaining scraped selectors, the hub answers with <code>tmux send-keys</code> using the option index, the same index the phone already sends.</li>
+          <li><strong>Isolation.</strong> Everything runs as <code>hermes</code>, never root. One worktree per mission under <code>/srv/hermes/work/&lt;mission&gt;</code>; <code>--add-dir</code> only inside <code>/srv/hermes</code>; the scraper's user and database are untouched.</li>
+          <li><strong>Repos.</strong> A bare clone per repo under <code>/srv/hermes/repos</code>, fetched through a GitHub deploy key registered with the same script that did it for maps-scraper. Start with maps-scraper, landing-page-lucid and the web projects. Mission Dock itself stays Mac-only: nothing on Linux can <code>swift build</code> it.</li>
+          <li><strong>Recurring chores</strong> (nightly tests, dependency bumps) do not need the hub at all: Claude routines run them on Anthropic's cloud on a schedule or from a webhook. They stay invisible to Mission Dock, which is fine for chores.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 06 ───────────────────────────── -->
+    <section class="stop" id="web">
+      <div class="stop-head">
+        <div class="n">06</div>
+        <div>
+          <h2>The website</h2>
+          <p>Mission Dock Web is the phone remote with a real address, a real login and the task lists added. It is a remote, not a second Mission Dock.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <h3>Where it lives</h3>
+        <p><strong>Served by Hermes at <code>dock.lucidcodelabs.com</code></strong>, behind Caddy, with a link in the Lucid admin sidebar next to Documents and Files. The alternative, building it inside the Next.js admin on Vercel, was considered and set aside: server-sent events do not survive serverless function timeouts, and the admin's password login would need a second bridge to the hub's device tokens. One origin means the API, the SSE stream and the page share cookies and need no CORS. The Lucid site keeps what it is good at: documents, files and this plan.</p>
+
+        <h3>What it shows</h3>
+        <div class="tbl wrap"><table>
+          <tr><th>Tab</th><th>Phase 1 (the PWA, re-hosted)</th><th>Phase 3 (Mission Dock Web)</th></tr>
+          <tr><td>Agents</td><td>Server agents: status, needs-you cards with Deny / Allow once / Allow all, selector answers, brief, end, spawn on a repo, plain-text pane view.</td><td>Mac agents too, marked by origin, acted on by relay. "Open in Claude app" link for Remote Control sessions.</td></tr>
+          <tr><td>Tasks</td><td>Missions, read-only.</td><td>Trello: board and list picker, card create, move, comment, due date, labels; the active workspace's list first. Habitica: dailies, habits, to-dos with scoring, the avatar strip. Promote a card, reorder, complete (human only).</td></tr>
+          <tr><td>Django</td><td>Chat by relay when the Mac is on.</td><td>Hub Django when the Mac is off, text only, same operator prompt and tools minus voice, WhatsApp and calendar.</td></tr>
+          <tr><td>Home</td><td>Counts, announcements, recap button (relay).</td><td>Presence ("Mac online since 09:12"), handoff offers, the day's journal entry read-only (Phase 5 for writing).</td></tr>
+        </table></div>
+
+        <h3>Login and push</h3>
+        <ul>
+          <li><strong>Passkey</strong> (WebAuthn) for you, with a TOTP recovery code. Session in an httpOnly, Secure cookie. The pairing-token-in-fragment dance goes away because there is a real certificate now.</li>
+          <li><strong>Device tokens</strong> for Mission Dock and for browsers you mark as trusted, revocable from the website.</li>
+          <li><strong>Push</strong> stays on ntfy in Phase 1 (the topic name is the secret; nothing sensitive in the body, as <code>RemotePush</code> already insists). Web Push becomes possible once the PWA is installed from an HTTPS origin; Phase 5.</li>
+          <li><strong>Rendering rule</strong> carried over unchanged: agent output and card titles are attacker-shaped text, written with <code>textContent</code> only.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 07 ───────────────────────────── -->
+    <section class="stop" id="mac">
+      <div class="stop-head">
+        <div class="n">07</div>
+        <div>
+          <h2>Mission Dock changes</h2>
+          <p>All of it lives in a new <code>Hub/</code> folder plus small touches where hub agents surface. Nothing about panes, the notch or Django's loop is reworked.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="tbl wrap"><table>
+          <tr><th>Item</th><th>Where</th><th>Notes</th></tr>
+          <tr><td>Hub client</td><td><code>Hub/HubClient.swift</code></td><td><code>URLSessionWebSocketTask</code>, reconnect with backoff, device token in the Keychain as <code>hub-device-token</code>. Settings ▸ Hub with URL, pair and status; <code>JarvisConfig.hermesHost</code> finally gets used.</td></tr>
+          <tr><td>Sync engine</td><td><code>Hub/HubSync.swift</code>, migration <code>v11_hub_sync</code></td><td>Outbox rows written by the stores, drained over the link, cursors both ways. Pure merge rules with <code>HubSyncTests</code>, the same shape as <code>WorkspaceChipStateTests</code>.</td></tr>
+          <tr><td>Hub agents in the notch</td><td><code>IslandModel</code>, <code>LiveSession.origin</code></td><td>Rows badged like external sessions, with "hub" as the host. Needs-you rows route their <code>PendingDecision</code> to the hub instead of <code>HookSocketServer.respond</code>. Done rows follow the same yellow-dot review rule.</td></tr>
+          <tr><td>Remote panes</td><td><code>TerminalSessionManager.spawn</code></td><td>A pane whose command is <code>ssh -t hetzner-hermes tmux attach -t hermes-&lt;runId&gt;</code>. The 1-second scrape, <code>PermissionPromptDetector</code> and <code>TerminalClickPolicy</code> keep working because SwiftTerm does not care what is on the other end. Restored after a relaunch like any pane.</td></tr>
+          <tr><td>Assign to Hermes</td><td>Tasks panel, Assign menu</td><td>"Assign to → Hermes: &lt;repo&gt;" sends the same brief the local spawn would, through <code>POST /api/hub/agents/spawn</code>. The card's screenshots go up as attachments so <code>--add-dir</code> works there too.</td></tr>
+          <tr><td>Django's remote tool</td><td><code>Jarvis/Hermes/RunRemoteTool.swift</code></td><td>Registered with an <code>HTTPHermesClient</code> that calls the hub's API rather than raw SSH. Risk stays destructive, so the gate always confirms.</td></tr>
+          <tr><td>Handoff actions</td><td>pane menu, notch row context menu</td><td>"Send to server" and "Bring back here". Section 08.</td></tr>
+          <tr><td>Phone contract</td><td><code>RemoteAPI</code>, <code>RemoteWebApp</code></td><td>Add <code>origin</code> to agent rows; nothing else changes, so the Mac's own remote and the hub stay interchangeable for the PWA.</td></tr>
+        </table></div>
+        <div class="callout">
+          <p><strong>Relaunch discipline.</strong> Every item above is built and verified with <code>swift build</code> and tests; the running app is only restarted when you ask, per CLAUDE.md. The hub client is designed so that a relaunch reconnects and resends from its cursor with no manual step.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 08 ───────────────────────────── -->
+    <section class="stop" id="handoff">
+      <div class="stop-head">
+        <div class="n">08</div>
+        <div>
+          <h2>Handing work over</h2>
+          <p>A run moves as a packet: the branch carries the code, the transcript carries the conversation, the brief carries the intent.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <h3>The packet</h3>
+        <p>Repo name, branch (<code>hermes/&lt;mission-slug&gt;</code>), base commit, Claude session id, the transcript JSONL, a brief the agent wrote about where it is, what is next and what is open, and any pending decisions. Codex runs carry the brief only, since their history lives in Codex's own store.</p>
+
+        <h3>Server → Mac</h3>
+        <ol class="steps">
+          <li><b>You choose "Bring back here" on the row.</b><span>From the notch, the website or the pane menu.</span></li>
+          <li><b>Hermes asks the agent for a handoff brief, then to commit and push.</b><span>A fixed prompt, or a <code>/handoff</code> command shipped in each repo's <code>.claude/commands</code>. The session ends; the Stop hook confirms.</span></li>
+          <li><b>Hermes stores the packet and offers it over the link.</b><span>If the Mac is off, the offer waits and shows on the Home tab.</span></li>
+          <li><b>Mission Dock fetches and checks out the branch.</b><span>In the workspace's repo, or in a worktree if that repo is busy in another pane.</span></li>
+          <li><b>The conversation resumes.</b><span>The transcript is copied to <code>~/.claude/projects/&lt;encoded cwd&gt;/&lt;id&gt;.jsonl</code> and a pane spawns <code>claude --resume &lt;id&gt;</code>; the docs say <code>--resume</code> also accepts a transcript path and searches every project on the machine. If it fails to open, the pane spawns plain <code>claude</code> with the brief as its first prompt through <code>spawnBriefedAgent</code>.</span></li>
+          <li><b>The row changes origin.</b><span>The hub run is marked handed off; events from both halves stay under one mission.</span></li>
+        </ol>
+
+        <h3>Mac → server</h3>
+        <p>The mirror image. Mission Dock already knows every pane's <code>transcript_path</code> from the hooks, pushes the branch, uploads the transcript, and Hermes starts <code>claude --resume</code> in a fresh tmux session under the repo's worktree. The Mac pane closes only after the server confirms the session is up.</p>
+
+        <div class="callout">
+          <p><strong>Rules.</strong> The source session ends before the target starts, so there is never two agents on one branch. A handoff is a mission event with the human as actor. Spike 3 in the checklist verifies the transcript path trick on both machines before any of this is built; if it does not hold, the brief path is the design and the transcript is kept as an attachment for reading.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 09 ───────────────────────────── -->
+    <section class="stop" id="security">
+      <div class="stop-head">
+        <div class="n">09</div>
+        <div>
+          <h2>Security</h2>
+          <p>The hub can answer permission prompts and start agents that hold tools. It is treated like the phone remote, with a public address.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <ul>
+          <li><strong>Surface.</strong> Ports 22, 80 and 443 only. Caddy terminates TLS; Hermes listens on loopback. fail2ban on SSH. Optionally Tailscale on the box and the Mac, after which SSH and the link can leave the public internet and 22 closes.</li>
+          <li><strong>Login.</strong> Passkey with a recovery code; rate-limited; every failed attempt logged. Device tokens are hashed at rest and shown once.</li>
+          <li><strong>Secrets.</strong> <code>/etc/hermes.env</code>, mode 0600, owned by <code>hermes</code>: the OAuth token or API key, Trello key and token, Habitica id and token, the ntfy topic, the GitHub deploy key path. Nothing secret in Postgres or logs. The Mac keeps its Keychain; the copy is made once by hand.</li>
+          <li><strong>Untrusted text.</strong> Card titles and descriptions are a prompt-injection surface (AGENTS.md). Briefs wrap them as delimited data, on the server as on the Mac, and the website renders everything with <code>textContent</code>.</li>
+          <li><strong>Authority.</strong> Agents cannot complete, archive, delete or merge. The hub enforces it in the API, not only in the UI. Every website action lands in <code>audit</code> with the actor.</li>
+          <li><strong>Blast radius.</strong> Agents run as <code>hermes</code> in their own worktrees; the scraper's data and user are separate; no sudo anywhere in the runtime.</li>
+          <li><strong>Policy.</strong> Subscription use on a personal server is a grey area the viability report already flagged. Single user, same account, no resale. The API-key fallback is a one-line change in the env file if that ever changes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 10 ───────────────────────────── -->
+    <section class="stop" id="phases">
+      <div class="stop-head">
+        <div class="n">10</div>
+        <div>
+          <h2>Phases</h2>
+          <p>Five phases, each ending in something you can use. Estimates are Claude-assisted with you reviewing part-time.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="track">
+          <div class="phase" style="--heat: var(--amber)"><b>Phase 0</b><span class="days">3–4 days</span><span class="num">Spikes</span><span class="lbl">Resize, users, claude on the box, Remote Control, cross-machine resume, DNS and Caddy, decisions.</span><span class="exit"><b>Exit:</b> you steer a server session from the iPhone.</span></div>
+          <div class="phase" style="--heat: var(--indigo)"><b>Phase 1</b><span class="days">~1.5 weeks</span><span class="num">Hermes core</span><span class="lbl">Hook receiver, tmux runtime, state and SSE, decisions, briefs, spawn, pane view, ntfy, passkey, the PWA served.</span><span class="exit"><b>Exit:</b> from Safari on the phone, start, watch, allow and end an agent.</span></div>
+          <div class="phase" style="--heat: var(--indigo)"><b>Phase 2</b><span class="days">~1.5 weeks</span><span class="num">The link</span><span class="lbl">HubClient, sync engine, hub agents in the notch, remote panes, Assign to Hermes, Django's remote tool.</span><span class="exit"><b>Exit:</b> a server agent's prompt answered from the notch in one click.</span></div>
+          <div class="phase" style="--heat: var(--indigo)"><b>Phase 3</b><span class="days">~2 weeks</span><span class="num">The website</span><span class="lbl">Trello, Habitica, missions, announcements, Django chat, relay to the Mac, presence.</span><span class="exit"><b>Exit:</b> the hotel test, section 10 below.</span></div>
+          <div class="phase" style="--heat: var(--green)"><b>Phase 4</b><span class="days">~1.5 weeks</span><span class="num">Handoff + ops</span><span class="lbl">Handoff both ways, Codex in the runtime, backups, monitoring, hub Django.</span><span class="exit"><b>Exit:</b> a run moves server → Mac → server with its conversation.</span></div>
+        </div>
+
+        <h3>Milestones</h3>
+        <div class="milestones">
+          <div class="m">M0</div><div>Box resized, <code>hermes</code> user, <code>claude</code> signed in, one session driven from the phone by Remote Control. Eight decisions recorded.</div><div class="when">week 1</div>
+          <div class="m">M1</div><div>Hermes serving the PWA at <code>dock.lucidcodelabs.com</code>; a permission prompt from a server agent answered from the phone; ntfy ping on wait.</div><div class="when">week 2–3</div>
+          <div class="m">M2</div><div>Mission Dock paired; server agents in LIVE AGENTS; a remote pane tile; a card assigned to a server agent from the Tasks panel; missions in sync.</div><div class="when">week 4–5</div>
+          <div class="m">M3</div><div>The hotel test: on a phone with the Mac closed, move a Trello card, promote it, assign it to a server agent, get pinged, approve, see the PR link. Then open the Mac and find everything already there.</div><div class="when">week 6–7</div>
+          <div class="m">M4</div><div>Handoff round trip under a minute; Codex sessions listed and steerable; nightly backups restored once on purpose; uptime ping wired.</div><div class="when">week 8</div>
+        </div>
+
+        <h3>Later, deliberately</h3>
+        <ul>
+          <li><strong>Phase 5:</strong> journal vault on the server (git-backed vault or Syncthing), Web Push, voice notes uploaded from the phone and transcribed on the Mac by relay, a second Mac as another device on the same hub.</li>
+          <li><strong>Never on the server:</strong> WhatsApp, the voice loop, Swift builds. Those are what the Mac is for.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 11 ───────────────────────────── -->
+    <section class="stop" id="decisions">
+      <div class="stop-head">
+        <div class="n">11</div>
+        <div>
+          <h2>Your decisions</h2>
+          <p>Eight choices with a recommendation each. Everything else in the plan follows a default that can be changed later without rework.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <dl class="decisions">
+          <dt>1 · Names<small>service and site</small></dt>
+          <dd><b>Hermes for the service, dock.lucidcodelabs.com for the site.</b><span>The code already reserves Hermes (the client seam, the config fields, the SSH key). The subdomain keeps it on the Lucid domain as you asked without touching the marketing site.</span></dd>
+          <dt>2 · The box<small>resize or add one</small></dt>
+          <dd><b>Resize this one to CX33 (4 vCPU, 8 GB), add 2 GB swap.</b><span>One box, one bill, the scraper's Chromium and three agents fit. Go CX43 (8 vCPU, 16 GB) if you want five or more agents at once. A second box only makes sense if the scraper's sweeps turn out to starve the agents; that is measurable in Phase 1.</span></dd>
+          <dt>3 · Model auth<small>on the server</small></dt>
+          <dd><b>Subscription token, API key ready in the same env file.</b><span>Remote Control and the subscription's flat cost are worth the grey area for a single-user box. If it ever becomes a problem, one line switches to the key with a monthly cap.</span></dd>
+          <dt>4 · Website home<small>hub or Vercel</small></dt>
+          <dd><b>Served by Hermes.</b><span>Real-time streams, one origin, one login. The Lucid admin links to it and keeps the documents.</span></dd>
+          <dt>5 · Tailscale<small>on Mac and box</small></dt>
+          <dd><b>Yes, in Phase 0, for SSH and later the link.</b><span>Free personal plan. The Mac's Tailscale is installed but stopped; the box has none. Public 443 stays for the website; 22 can close once both are on the tailnet.</span></dd>
+          <dt>6 · Repos on the server<small>deploy keys</small></dt>
+          <dd><b>maps-scraper, landing-page-lucid, then the web projects you name.</b><span>Each needs a deploy key and a bare clone. Mission Dock's repo is excluded on purpose (no Swift toolchain on Linux).</span></dd>
+          <dt>7 · Codex's place<small>keep the daemon?</small></dt>
+          <dd><b>Keep it, fold the checkout into <code>/srv/hermes</code>.</b><span>The app-server daemon keeps serving the Codex app as today; Hermes lists and spawns Codex sessions alongside Claude ones. Commit the uncommitted GUI work in <code>/srv/codex/repos/maps-scraper</code> first.</span></dd>
+          <dt>8 · Journal and vault<small>scope</small></dt>
+          <dd><b>Out of scope until Phase 5, read-only first.</b><span>The vault is Mac-owned. A git-backed vault is the simplest route to a server copy; Syncthing if you would rather not commit notes.</span></dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 12 ───────────────────────────── -->
+    <section class="stop" id="cost">
+      <div class="stop-head">
+        <div class="n">12</div>
+        <div>
+          <h2>Cost and sizing</h2>
+          <p>The box is the only new line on the bill, and it is the one you already have, one size up.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <h3>Memory budget</h3>
+        <div class="tbl"><table>
+          <tr><th>Process</th><th>Resident memory</th><th>Note</th></tr>
+          <tr><td><code>claude</code> TUI session</td><td class="num">300–600 MB</td><td>Measure in Spike 2; long sessions grow.</td></tr>
+          <tr><td><code>codex</code> session</td><td class="num">300–500 MB</td><td>The idle app-server is 116 MB today.</td></tr>
+          <tr><td>Hermes</td><td class="num">~150 MB</td><td>Node, one process.</td></tr>
+          <tr><td>Postgres 16</td><td class="num">100–300 MB</td><td>Two small databases.</td></tr>
+          <tr><td>Scraper crawl (Chromium)</td><td class="num">1–2 GB peaks</td><td>Only during sweeps; the timer is not enabled yet.</td></tr>
+          <tr><td>Three agents + scraper + hub</td><td class="num">≈ 5–7 GB</td><td>Too much for 3.7 GB with no swap. CX33 with swap fits; CX43 is comfortable.</td></tr>
+        </table></div>
+
+        <h3>Monthly</h3>
+        <div class="tbl wrap"><table>
+          <tr><th>Item</th><th class="num">Per month</th><th>Note</th></tr>
+          <tr><td>Hetzner CX33 (4 vCPU, 8 GB, 80 GB)</td><td class="num">€8.49</td><td>June 2026 list price ex-IPv4; CX43 is €15.99; CX23 stays €5.49 on its old contract. One tracker showed the shared plans as unavailable on 4 Sep, so check the console; if a rescale is refused, the CPX line is the fallback.</td></tr>
+          <tr><td>Primary IPv4</td><td class="num">≈ €0.60</td><td>Already on the bill.</td></tr>
+          <tr><td>Storage Box for backups</td><td class="num">≈ €4</td><td>Smallest tier is plenty for nightly dumps and tarballs.</td></tr>
+          <tr><td>Domain, TLS, ntfy, Tailscale</td><td class="num">€0</td><td>Existing domain, Let's Encrypt via Caddy, ntfy.sh free, Tailscale personal plan.</td></tr>
+          <tr><td>Models</td><td class="num">€0 extra</td><td>The Max subscription; set a US$50 cap on the API key fallback so a policy change cannot surprise you.</td></tr>
+          <tr><td><strong>Total</strong></td><td class="num"><strong>≈ €13–21</strong></td><td>Against a Mac mini at about US$800 once, plus its electricity, in the viability report.</td></tr>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 13 ───────────────────────────── -->
+    <section class="stop" id="risks">
+      <div class="stop-head">
+        <div class="n">13</div>
+        <div>
+          <h2>Risks</h2>
+          <p>What could bite, how likely, and what is already in the plan for it.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="tbl wrap"><table>
+          <tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr>
+          <tr><td>Subscription use on a server is disallowed or throttled</td><td><span class="pill care">medium</span></td><td>API key fallback in the same env file with a cap; GLM for bulk work. Remote Control is the only feature lost.</td></tr>
+          <tr><td>Hetzner will not rescale the CX23 (shared plans marked unavailable)</td><td><span class="pill care">medium</span></td><td>Order a CPX box and move with the setup script; the scraper's own bootstrap already proves the path.</td></tr>
+          <tr><td>Claude Code hook or decision JSON changes shape</td><td><span class="pill care">medium</span></td><td>Pinned version, auto-update off, contract tests on both ends, one upgrade script that runs them.</td></tr>
+          <tr><td>Cross-machine transcript resume does not work</td><td><span class="pill care">medium</span></td><td>Spike 3 decides before Phase 4; the brief-first handoff is the fallback design and works today.</td></tr>
+          <tr><td>Memory pressure kills an agent mid-turn</td><td><span class="pill go">low after resize</span></td><td>Resize first, swap, a per-run memory watch in Hermes that warns before the kernel acts.</td></tr>
+          <tr><td>The website grows into a second Mission Dock</td><td><span class="pill care">medium</span></td><td>The matrix in section 03 is the scope. Anything that needs the Mac is done by relay, not rebuilt.</td></tr>
+          <tr><td>Two sources edit a mission at once</td><td><span class="pill go">low</span></td><td>Last writer wins on <code>updatedAt</code> with the existing identity rules; events are append-only so nothing is lost, only ordered.</td></tr>
+          <tr><td>A public login on the box</td><td><span class="pill care">real</span></td><td>Passkeys, rate limits, audit log, loopback-only Hermes, Tailscale option to take SSH private.</td></tr>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── 14 ───────────────────────────── -->
+    <section class="stop" id="checklist">
+      <div class="stop-head">
+        <div class="n">14</div>
+        <div>
+          <h2>Kick-off checklist</h2>
+          <p>Phase 0 in tick boxes. Spikes first, decisions alongside. Ticks are saved in this browser only.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <div class="check-head">
+          <div class="count"><b id="done-count">0</b> of <span id="total-count">0</span> done</div>
+          <button type="button" id="reset-checks">Clear ticks</button>
+        </div>
+        <div class="bar"><i id="check-bar"></i></div>
+
+        <div class="group">
+          <h4>Spikes <small>each is a day or less</small></h4>
+          <div class="task"><input type="checkbox" id="s1"><label for="s1">S1 · Resize to CX33 and add 2 GB swap<span>Hetzner console → rescale (or order CPX if refused). <code>fallocate -l 2G /swapfile</code>, <code>mkswap</code>, <code>swapon</code>, fstab. Reboot once.</span></label></div>
+          <div class="task"><input type="checkbox" id="s2"><label for="s2">S2 · Claude Code on the box, driven from the iPhone<span>Create the <code>hermes</code> user. Install with the native installer, <code>DISABLE_AUTOUPDATER=1</code>, <code>claude setup-token</code>. In tmux: <code>claude --rc</code> inside a clone of maps-scraper; open it in the Claude app; approve one tool. Note the RSS.</span></label></div>
+          <div class="task"><input type="checkbox" id="s3"><label for="s3">S3 · Cross-machine resume<span>Copy a finished Mac transcript to the box under the encoded project path and run <code>claude --resume &lt;id&gt;</code>, then by absolute path; repeat box → Mac. Record what breaks and whether <code>CLAUDE_CODE_PROJECT_DIR_NAME</code> helps.</span></label></div>
+          <div class="task"><input type="checkbox" id="s4"><label for="s4">S4 · Hook shim against a stub listener<span>Install Mission Dock's shim on the box pointed at a 20-line Node listener; confirm every event arrives and that a held <code>PermissionRequest</code> resolves when the listener writes the decision JSON.</span></label></div>
+          <div class="task"><input type="checkbox" id="s5"><label for="s5">S5 · DNS and TLS<span>A record <code>dock.lucidcodelabs.com</code> → 46.225.63.221. Install Caddy, serve a hello page, ufw allow 80 and 443. Confirm the certificate from the phone.</span></label></div>
+          <div class="task"><input type="checkbox" id="s6"><label for="s6">S6 · Tailscale on both<span>Start the Mac's Tailscale, install on the box, <code>tailscale up --ssh</code>. Test <code>ssh</code> over the tailnet.</span></label></div>
+          <div class="task"><input type="checkbox" id="s7"><label for="s7">S7 · Codex coexistence<span>Commit the GUI work in <code>/srv/codex/repos/maps-scraper</code>. Confirm the app-server daemon survives the resize and that <code>codex exec</code> runs from a script as <code>hermes</code>.</span></label></div>
+        </div>
+
+        <div class="group">
+          <h4>Decisions <small>section 11</small></h4>
+          <div class="task"><input type="checkbox" id="d1"><label for="d1">D1 · Names: Hermes and dock.lucidcodelabs.com</label></div>
+          <div class="task"><input type="checkbox" id="d2"><label for="d2">D2 · Box: resize to CX33, or CX43, or a second box</label></div>
+          <div class="task"><input type="checkbox" id="d3"><label for="d3">D3 · Model auth: subscription token with the API key fallback</label></div>
+          <div class="task"><input type="checkbox" id="d4"><label for="d4">D4 · Website served by Hermes</label></div>
+          <div class="task"><input type="checkbox" id="d5"><label for="d5">D5 · Tailscale yes or no</label></div>
+          <div class="task"><input type="checkbox" id="d6"><label for="d6">D6 · Which repos get deploy keys</label></div>
+          <div class="task"><input type="checkbox" id="d7"><label for="d7">D7 · Codex daemon kept, checkout moved</label></div>
+          <div class="task"><input type="checkbox" id="d8"><label for="d8">D8 · Journal out of scope until Phase 5</label></div>
+        </div>
+
+        <div class="group">
+          <h4>Before Phase 1 starts</h4>
+          <div class="task"><input type="checkbox" id="p1"><label for="p1">Create the <code>hermes</code> repo (private) with the maps-scraper conventions: Node 22 type stripping, <code>pg</code>, <code>ws</code>, a <code>deploy/</code> folder<span>Copy <code>setup-server.sh</code> and the unit files as the starting point.</span></label></div>
+          <div class="task"><input type="checkbox" id="p2"><label for="p2">Copy the Trello, Habitica and ntfy secrets into <code>/etc/hermes.env</code> once, by hand</label></div>
+          <div class="task"><input type="checkbox" id="p3"><label for="p3">Register deploy keys for the Phase 1 repos with the maps-scraper bootstrap script</label></div>
+          <div class="task"><input type="checkbox" id="p4"><label for="p4">Add a link to <code>dock.lucidcodelabs.com</code> in the Lucid admin sidebar</label></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────────────────── sources ───────────────────────────── -->
+    <section class="stop" id="sources">
+      <div class="stop-head">
+        <div class="n">§</div>
+        <div>
+          <h2>Sources</h2>
+          <p>What the plan was checked against. Repo paths are in the Mission Dock, maps-scraper and landing-page-lucid checkouts.</p>
+        </div>
+      </div>
+      <div class="stop-body">
+        <ul class="sources">
+          <li>Live server survey on 15 Sep 2026 over <code>ssh hetzner-codex</code>: system, services, timers, processes, Codex daemon, repo state.</li>
+          <li>Mission Dock: <code>docs/CLOUD_VIABILITY.md</code>, <code>docs/DATA_MODEL.md</code> §5, <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>Remote/</code>, <code>AgentBridge/HookInstaller.swift</code>, <code>AgentBridge/HookSocketServer.swift</code>, <code>Jarvis/Hermes/</code>, <code>Jarvis/TrelloService.swift</code>, <code>Jarvis/HabiticaService.swift</code>, <code>Jarvis/HabiticaTrelloSync.swift</code>, <code>Persistence/MissionStore.swift</code>, <code>UI/Console/TerminalSessionManager.swift</code>.</li>
+          <li>maps-scraper: <code>deploy/setup-server.sh</code>, <code>deploy/bootstrap-remote.sh</code>, the systemd units, <code>GUI.md</code>, <code>READINESS.md</code>.</li>
+          <li>landing-page-lucid: <code>content/adminDocs.js</code>, <code>lib/admin/</code>, Vercel deployments from <code>main</code>.</li>
+          <li>Claude Code docs: <a href="https://code.claude.com/docs/en/remote-control">Remote Control</a>, <a href="https://code.claude.com/docs/en/sessions">Sessions</a> (transcript paths, <code>--resume</code>, <code>--fork-session</code>), <a href="https://code.claude.com/docs/en/authentication">Authentication</a> (<code>setup-token</code>, API keys), <a href="https://code.claude.com/docs/en/hooks">Hooks</a>, <a href="https://code.claude.com/docs/en/headless">Headless</a>, <a href="https://code.claude.com/docs/en/agent-sdk/typescript">Agent SDK</a>, <a href="https://code.claude.com/docs/en/routines">Routines</a>, <a href="https://code.claude.com/docs/en/claude-code-on-the-web">Claude Code on the web</a>.</li>
+          <li>Hetzner pricing, June 2026 list: <a href="https://www.bitdoze.com/hetzner-cloud-cost-optimized-plans/">bitdoze summary</a>, <a href="https://costgoat.com/pricing/hetzner">costgoat calculator</a>, <a href="https://www.hetzner.com/pressroom/new-cx-plans/">Hetzner press note on the CX line</a>.</li>
+        </ul>
+        <p class="sources" style="margin-top:1.5rem">Source text for this page: <code>mission-dock/docs/HUB_PLAN.md</code>. This page: <code>landing-page-lucid/content/admin-pages/mission-dock-hub-plan.html</code>.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  // Progress bar
+  var bar = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Rail active state
+  var links = Array.prototype.slice.call(document.querySelectorAll('#railnav a'));
+  var items = links.map(function (a) { return a.parentNode; });
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
+      var first = targets.find(function (t) { return visible[t.id]; });
+      if (!first) return;
+      items.forEach(function (li, i) { li.classList.toggle('active', links[i].getAttribute('href') === '#' + first.id); });
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+
+  // Checklist persistence
+  var KEY = 'mdhub-plan-checks-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.task input[type=checkbox]'));
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+  boxes.forEach(function (b) { b.checked = !!state[b.id]; });
+  var doneEl = document.getElementById('done-count');
+  var totalEl = document.getElementById('total-count');
+  var fill = document.getElementById('check-bar');
+  function render() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    doneEl.textContent = done;
+    totalEl.textContent = boxes.length;
+    fill.style.width = (boxes.length ? (done / boxes.length) * 100 : 0) + '%';
+  }
+  boxes.forEach(function (b) {
+    b.addEventListener('change', function () {
+      state[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+      render();
+    });
+  });
+  document.getElementById('reset-checks').addEventListener('click', function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    state = {};
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
