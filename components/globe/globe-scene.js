@@ -110,6 +110,13 @@ function bezier(p0, p1, p2, t, out) {
   return out;
 }
 
+// Hand the main thread back between start-up steps so no single task runs long.
+const yieldToMain = () =>
+  new Promise((resolve) => {
+    if (typeof window.scheduler?.yield === 'function') window.scheduler.yield().then(resolve, resolve);
+    else setTimeout(resolve, 0);
+  });
+
 const roulette = (weights) => {
   let total = 0;
   for (let i = 0; i < weights.length; i++) total += weights[i];
@@ -457,26 +464,32 @@ export function createGlobeScene(canvas, options = {}) {
   let dots = null;
   let dotMat = null;
 
-  function buildDots(mask) {
+  async function buildDots(mask) {
     // Rows of dots along parallels, half-step staggered, so the lattice reads
-    // as a calm grid and follows the spin without spiral banding.
+    // as a calm grid and follows the spin without spiral banding. Sampled in
+    // slices of rows, yielding in between, to stay clear of long tasks.
     const radiusPx = layout.r * height;
     const spacingPx = layout.mobile ? 9.5 : 8.5;
     const spacing = Math.max(0.0055, spacingPx / radiusPx); // radians
     const rows = Math.round(Math.PI / spacing);
     const pos = [];
     const rand = [];
-    for (let ri = 1; ri < rows; ri++) {
-      const lat = -Math.PI / 2 + (ri / rows) * Math.PI;
-      const c = Math.cos(lat);
-      const count = Math.max(1, Math.round((2 * Math.PI * c) / spacing));
-      const offset = ri % 2 ? 0.5 : 0;
-      for (let ci = 0; ci < count; ci++) {
-        const lon = ((ci + offset) / count) * 2 * Math.PI - Math.PI;
-        if (!mask.isLand(lat, lon)) continue;
-        pos.push(c * Math.sin(lon), Math.sin(lat), c * Math.cos(lon));
-        rand.push(Math.random());
+    const SLICE = 40;
+    for (let r0 = 1; r0 < rows; r0 += SLICE) {
+      for (let ri = r0; ri < Math.min(rows, r0 + SLICE); ri++) {
+        const lat = -Math.PI / 2 + (ri / rows) * Math.PI;
+        const c = Math.cos(lat);
+        const count = Math.max(1, Math.round((2 * Math.PI * c) / spacing));
+        const offset = ri % 2 ? 0.5 : 0;
+        for (let ci = 0; ci < count; ci++) {
+          const lon = ((ci + offset) / count) * 2 * Math.PI - Math.PI;
+          if (!mask.isLand(lat, lon)) continue;
+          pos.push(c * Math.sin(lon), Math.sin(lat), c * Math.cos(lon));
+          rand.push(Math.random());
+        }
       }
+      await yieldToMain();
+      if (state.destroyed) return;
     }
     const geo = track(new BufferGeometry());
     geo.setAttribute('position', new Float32BufferAttribute(new Float32Array(pos), 3));
@@ -777,9 +790,17 @@ export function createGlobeScene(canvas, options = {}) {
   const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (!reducedMotion && hasFinePointer) window.addEventListener('pointermove', onPointer, { passive: true });
 
-  const ready = loadLandMask().then((mask) => {
+  const ready = (async () => {
+    const mask = await loadLandMask({ scale: layout.mobile ? 0.5 : 1 });
     if (state.destroyed) return;
-    buildDots(mask);
+    await yieldToMain();
+    await buildDots(mask);
+    if (state.destroyed) return;
+    // Compile the shader programs before the first frame, in parallel where
+    // the driver allows, instead of stalling the first render call.
+    if (renderer.extensions.has('KHR_parallel_shader_compile')) await renderer.compileAsync(scene, camera);
+    else renderer.compile(scene, camera);
+    if (state.destroyed) return;
     state.built = true;
     if (reducedMotion) {
       renderStill();
@@ -788,7 +809,7 @@ export function createGlobeScene(canvas, options = {}) {
       render();
       if (state.active) start();
     }
-  });
+  })();
 
   return {
     ready,

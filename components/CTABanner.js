@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const CTABanner = () => {
   return (
@@ -13,7 +13,7 @@ const CTABanner = () => {
         }}
       />
       <div className="relative z-[1] mx-auto max-w-container px-container text-center">
-        <motion.h2
+        <m.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -21,8 +21,8 @@ const CTABanner = () => {
           className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-extrabold tracking-[-0.02em] text-white"
         >
           Ready to build something great?
-        </motion.h2>
-        <motion.p
+        </m.h2>
+        <m.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
@@ -30,8 +30,8 @@ const CTABanner = () => {
           className="mx-auto mb-10 max-w-[600px] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.7] text-white/85"
         >
           Start the conversation today and let&apos;s turn your vision into reality.
-        </motion.p>
-        <motion.a
+        </m.p>
+        <m.a
           href="#contact"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -41,7 +41,7 @@ const CTABanner = () => {
           className="inline-flex cursor-pointer items-center justify-center rounded-pill border-none bg-[var(--cta-btn-bg)] px-10 py-3.5 font-display text-base font-semibold text-[color:var(--cta-btn-text)] transition-all duration-medium ease-smooth hover:-translate-y-[2px] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]"
         >
           Contact Us
-        </motion.a>
+        </m.a>
       </div>
     </section>
   );

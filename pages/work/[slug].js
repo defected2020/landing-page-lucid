@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import SEO, { createBreadcrumbSchema, createCaseStudySchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -173,10 +173,10 @@ export default function WorkCaseStudyPage({ project, caseStudy }) {
         </h2>
         <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 px-container">
           {project.screenshots.map((shot, i) => (
-            <motion.figure
+            <m.figure
               key={`${shot.src}-${i}`}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ y: 16 }}
+              whileInView={{ y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3) }}
               className="m-0 overflow-hidden rounded-lg border border-border bg-bg-elevated"
@@ -199,7 +199,7 @@ export default function WorkCaseStudyPage({ project, caseStudy }) {
                   {shot.caption}
                 </figcaption>
               )}
-            </motion.figure>
+            </m.figure>
           ))}
         </div>
       </section>

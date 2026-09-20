@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
 import services from '../../data/services';
 import { getServiceIcon } from '../../components/icons/ServiceIcons';
-import { staggerContainer, fadeInUp } from '../../components/animations/variants';
+import { staggerContainer, fadeInUp, liftUp } from '../../components/animations/variants';
 
 export default function ServicesPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -45,18 +45,18 @@ export default function ServicesPage() {
 
       <section className="py-section bg-bg">
         <div className="mx-auto max-w-container px-container">
-          <motion.div
+          <m.div
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
             variants={staggerContainer(0.06)}
             initial="hidden"
             animate="visible"
           >
-            {services.map((service) => {
+            {services.map((service, i) => {
               const Icon = getServiceIcon(service.iconName);
               return (
                 <Link key={service.id} href={service.link} className="no-underline">
-                  <motion.div
-                    variants={fadeInUp}
+                  <m.div
+                    variants={i < 2 ? liftUp : fadeInUp}
                     className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-bg-elevated transition-[border-color,transform] duration-fast hover:-translate-y-0.5 hover:border-border-hover"
                   >
                     {service.image && (
@@ -66,6 +66,7 @@ export default function ServicesPage() {
                           alt={service.title}
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          priority={i < 2}
                           style={{ objectFit: 'cover' }}
                           className="transition-transform [transition-duration:400ms] ease-out group-hover:scale-105"
                         />
@@ -85,11 +86,11 @@ export default function ServicesPage() {
                         </svg>
                       </span>
                     </div>
-                  </motion.div>
+                  </m.div>
                 </Link>
               );
             })}
-          </motion.div>
+          </m.div>
         </div>
       </section>
 

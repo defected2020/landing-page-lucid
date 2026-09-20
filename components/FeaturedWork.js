@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -36,7 +36,7 @@ const FeaturedWork = () => {
           </Link>
         </div>
 
-        <motion.div
+        <m.div
           ref={ref}
           variants={staggerContainer(0.12)}
           initial="hidden"
@@ -45,7 +45,7 @@ const FeaturedWork = () => {
         >
           {featured.map((project) => (
             <Link key={project.slug} href={`/work/${project.slug}`} className="no-underline">
-              <motion.div
+              <m.div
                 variants={fadeInUp}
                 className="group grid grid-cols-1 gap-8 overflow-hidden rounded-lg border border-border bg-bg-elevated transition-[border-color] duration-fast ease-smooth hover:border-border-hover md:grid-cols-[3fr_2fr]"
               >
@@ -75,10 +75,10 @@ const FeaturedWork = () => {
                     View case study <ArrowIcon />
                   </span>
                 </div>
-              </motion.div>
+              </m.div>
             </Link>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

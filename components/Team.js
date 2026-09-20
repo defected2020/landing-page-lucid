@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import { staggerContainer, fadeInUp } from './animations/variants';
@@ -24,7 +24,7 @@ const Team = () => {
           </p>
         </div>
 
-        <motion.div
+        <m.div
           ref={ref}
           variants={staggerContainer(0.15)}
           initial="hidden"
@@ -32,7 +32,7 @@ const Team = () => {
           className="mx-auto grid max-w-[800px] grid-cols-1 gap-6 sm:grid-cols-2"
         >
           {team.map((member, index) => (
-            <motion.div
+            <m.div
               key={member.name}
               variants={fadeInUp}
               className={cn(
@@ -53,9 +53,9 @@ const Team = () => {
                 <h3 className="mb-1 text-lg font-bold text-text">{member.name}</h3>
                 <p className="text-sm text-text-muted">{member.role}</p>
               </div>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

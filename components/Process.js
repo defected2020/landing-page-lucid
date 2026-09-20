@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { staggerContainer, fadeInUp } from './animations/variants';
 
@@ -46,7 +46,7 @@ const Process = () => {
           </h2>
         </div>
 
-        <motion.div
+        <m.div
           ref={ref}
           variants={staggerContainer(0.1)}
           initial="hidden"
@@ -54,7 +54,7 @@ const Process = () => {
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5"
         >
           {steps.map((step, index) => (
-            <motion.div
+            <m.div
               key={step.number}
               variants={fadeInUp}
               className="relative rounded-lg border border-border bg-bg-elevated px-6 py-8 text-center lg:text-left"
@@ -67,9 +67,9 @@ const Process = () => {
               {index < steps.length - 1 && (
                 <div className="absolute right-[-0.5rem] top-1/2 z-[1] hidden h-px w-4 border-t border-dashed border-border-hover lg:block" />
               )}
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

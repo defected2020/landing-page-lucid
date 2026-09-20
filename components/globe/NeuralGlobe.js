@@ -30,7 +30,18 @@ const NeuralGlobe = ({ className }) => {
     observer.observe(canvas);
     document.addEventListener('visibilitychange', syncActive);
 
-    import('./globe-scene')
+    // Let hydration and the first paint finish before the scene's chunk is
+    // even requested; the poster carries the hero until then.
+    const whenIdle = (fn) =>
+      typeof window.requestIdleCallback === 'function'
+        ? window.requestIdleCallback(fn, { timeout: 2500 })
+        : window.setTimeout(fn, 600);
+    const cancelIdle = (id) =>
+      typeof window.cancelIdleCallback === 'function' ? window.cancelIdleCallback(id) : window.clearTimeout(id);
+
+    const idleId = whenIdle(() => {
+      if (cancelled) return;
+      import('./globe-scene')
       .then(({ createGlobeScene }) => {
         if (cancelled) return;
         scene = createGlobeScene(canvas, { reducedMotion });
@@ -44,9 +55,11 @@ const NeuralGlobe = ({ className }) => {
         // eslint-disable-next-line no-console
         console.warn('Neural globe unavailable, keeping the poster.', err);
       });
+    });
 
     return () => {
       cancelled = true;
+      cancelIdle(idleId);
       observer.disconnect();
       document.removeEventListener('visibilitychange', syncActive);
       if (scene) scene.destroy();
@@ -58,7 +71,7 @@ const NeuralGlobe = ({ className }) => {
       <canvas
         ref={canvasRef}
         className={cn(
-          'absolute inset-0 block h-full w-full transition-opacity duration-[1600ms] ease-out',
+          'absolute inset-0 block h-full w-full transition-opacity [transition-duration:900ms] ease-out',
           ready ? 'opacity-100' : 'opacity-0'
         )}
       />

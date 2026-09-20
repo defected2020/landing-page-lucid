@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -111,7 +111,7 @@ const Navbar = ({ scrolled }) => {
                 {dropdownOpen && (
                   <>
                     <div className="absolute left-[-200px] top-full h-6 w-[700px]" />
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, y: -8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
@@ -140,7 +140,7 @@ const Navbar = ({ scrolled }) => {
                           </NextLink>
                         );
                       })}
-                    </motion.div>
+                    </m.div>
                   </>
                 )}
               </AnimatePresence>
@@ -236,7 +236,7 @@ const Navbar = ({ scrolled }) => {
                   onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
                   className="flex cursor-pointer items-center justify-between"
                 >
-                  <motion.span
+                  <m.span
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.15, duration: 0.4 }}
@@ -252,12 +252,12 @@ const Navbar = ({ scrolled }) => {
                         mobileServicesOpen && 'rotate-180'
                       )}
                     />
-                  </motion.span>
+                  </m.span>
                 </div>
 
                 <AnimatePresence>
                   {mobileServicesOpen && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -272,7 +272,7 @@ const Navbar = ({ scrolled }) => {
                             href={service.link}
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <motion.div
+                            <m.div
                               initial={{ opacity: 0, y: 8 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: i * 0.04, duration: 0.25 }}
@@ -284,16 +284,16 @@ const Navbar = ({ scrolled }) => {
                               <span className="text-[0.8125rem] font-medium text-text-muted">
                                 {service.title}
                               </span>
-                            </motion.div>
+                            </m.div>
                           </NextLink>
                         );
                       })}
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
 
                 <NextLink href="/work" onClick={() => setMobileMenuOpen(false)}>
-                  <motion.span
+                  <m.span
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.25, duration: 0.4 }}
@@ -304,16 +304,16 @@ const Navbar = ({ scrolled }) => {
                     </span>
                     Work
                     {isActive('/work') && (
-                      <motion.span
+                      <m.span
                         layoutId="mobileActiveDot"
                         className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent"
                       />
                     )}
-                  </motion.span>
+                  </m.span>
                 </NextLink>
 
                 <NextLink href="/blog" onClick={() => setMobileMenuOpen(false)}>
-                  <motion.span
+                  <m.span
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
@@ -324,12 +324,12 @@ const Navbar = ({ scrolled }) => {
                     </span>
                     Blog
                     {isActive('/blog') && (
-                      <motion.span
+                      <m.span
                         layoutId="mobileActiveDot"
                         className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent"
                       />
                     )}
-                  </motion.span>
+                  </m.span>
                 </NextLink>
 
                 <NextLink
@@ -339,7 +339,7 @@ const Navbar = ({ scrolled }) => {
                     setMobileMenuOpen(false);
                   }}
                 >
-                  <motion.span
+                  <m.span
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.35, duration: 0.4 }}
@@ -349,12 +349,12 @@ const Navbar = ({ scrolled }) => {
                       04
                     </span>
                     Contact
-                  </motion.span>
+                  </m.span>
                 </NextLink>
               </nav>
 
               <div className="flex flex-shrink-0 flex-col gap-5 border-t border-border px-container pb-10 pt-6">
-                <motion.button
+                <m.button
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.45, duration: 0.4 }}
@@ -365,7 +365,7 @@ const Navbar = ({ scrolled }) => {
                   className="block cursor-pointer rounded-pill bg-accent px-8 py-4 text-center font-display text-base font-semibold text-white transition-all duration-medium hover:scale-[1.02] hover:bg-accent-hover"
                 >
                   Start a Project
-                </motion.button>
+                </m.button>
 
                 <div className="flex items-center justify-between">
                   <span className="text-[0.8125rem] font-medium uppercase tracking-[0.05em] text-text-muted">

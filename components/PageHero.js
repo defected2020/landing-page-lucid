@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const PageHero = ({ title, subtitle, breadcrumbs = [], children }) => {
   return (
@@ -34,23 +34,23 @@ const PageHero = ({ title, subtitle, breadcrumbs = [], children }) => {
             ))}
           </div>
         )}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <m.h1
+          initial={{ y: 14 }}
+          animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
           className="mb-4 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-0.02em] text-text"
         >
           {title}
-        </motion.h1>
+        </m.h1>
         {subtitle && (
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <m.p
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto max-w-[720px] text-[clamp(0.9375rem,1.2vw,1.125rem)] leading-[1.7] text-text-muted"
           >
             {subtitle}
-          </motion.p>
+          </m.p>
         )}
         {children}
       </div>

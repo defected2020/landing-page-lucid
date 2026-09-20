@@ -14,14 +14,6 @@ export default function Document() {
         {googleVerification && (
           <meta name="google-site-verification" content={googleVerification} />
         )}
-        {/* Open the font connections early — the stylesheet blocks render, so
-            the extra round trips come straight off Largest Contentful Paint. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <body>
         <Main />

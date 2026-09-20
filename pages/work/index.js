@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import SEO, { createBreadcrumbSchema } from '../../components/SEO';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
 import { portfolioProjects } from '../../data/portfolioProjects';
-import { staggerContainer, fadeInUp } from '../../components/animations/variants';
+import { staggerContainer, fadeInUp, liftUp } from '../../components/animations/variants';
 
 export default function WorkIndexPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -44,20 +44,20 @@ export default function WorkIndexPage() {
 
       <section className="py-section bg-bg">
         <div className="mx-auto max-w-container px-container">
-          <motion.div
+          <m.div
             className="grid grid-cols-1 gap-6 min-[640px]:grid-cols-2 min-[1024px]:grid-cols-3"
             variants={staggerContainer(0.08)}
             initial="hidden"
             animate="visible"
           >
-            {portfolioProjects.map((project) => (
+            {portfolioProjects.map((project, i) => (
               <Link
                 key={project.slug}
                 href={`/work/${project.slug}`}
                 className="no-underline text-inherit"
               >
-                <motion.article
-                  variants={fadeInUp}
+                <m.article
+                  variants={i < 2 ? liftUp : fadeInUp}
                   className="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-bg-elevated transition-[border-color,transform] duration-fast hover:-translate-y-0.5 hover:border-border-hover"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-bg-subtle">
@@ -66,6 +66,7 @@ export default function WorkIndexPage() {
                       alt={project.screenshots[0].alt}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={i < 2}
                       style={{ objectFit: 'cover' }}
                       className="transition-transform duration-slow group-hover:scale-[1.03]"
                     />
@@ -83,10 +84,10 @@ export default function WorkIndexPage() {
                       </svg>
                     </span>
                   </div>
-                </motion.article>
+                </m.article>
               </Link>
             ))}
-          </motion.div>
+          </m.div>
         </div>
       </section>
 

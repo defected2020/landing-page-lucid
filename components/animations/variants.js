@@ -42,13 +42,24 @@ export const slideInRight = {
   },
 };
 
+// The container itself stays visible: children carry their own fade, and an
+// invisible container would hide above-the-fold cards until JavaScript ran.
 export const staggerContainer = (staggerDelay = 0.08) => ({
-  hidden: { opacity: 0 },
+  hidden: {},
   visible: {
-    opacity: 1,
     transition: { staggerChildren: staggerDelay },
   },
 });
+
+// For elements above the fold: same rise as fadeInUp, but never invisible,
+// so they are painted from the server HTML (Largest Contentful Paint).
+export const liftUp = {
+  hidden: { y: 30 },
+  visible: {
+    y: 0,
+    transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+  },
+};
 
 export const textReveal = {
   hidden: { opacity: 0, y: 20 },

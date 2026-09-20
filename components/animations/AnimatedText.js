@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const AnimatedText = ({ text, as: Tag = 'h1', delay = 0, className, style }) => {
   const words = text.split(' ');
@@ -27,7 +27,7 @@ const AnimatedText = ({ text, as: Tag = 'h1', delay = 0, className, style }) => 
   };
 
   return (
-    <motion.div
+    <m.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -39,13 +39,13 @@ const AnimatedText = ({ text, as: Tag = 'h1', delay = 0, className, style }) => 
             key={i}
             className="inline-block overflow-hidden mr-[0.3em] last:mr-0"
           >
-            <motion.span variants={wordVariants} className="inline-block">
+            <m.span variants={wordVariants} className="inline-block">
               {word}
-            </motion.span>
+            </m.span>
           </span>
         ))}
       </Tag>
-    </motion.div>
+    </m.div>
   );
 };
 

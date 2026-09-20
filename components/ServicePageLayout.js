@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { cn } from '../lib/utils';
 
@@ -77,7 +77,7 @@ export const Container = ({ children, className, ...props }) => (
 export const SectionTitle = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.3);
   return (
-    <motion.h2
+    <m.h2
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -89,7 +89,7 @@ export const SectionTitle = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.h2>
+    </m.h2>
   );
 };
 
@@ -98,7 +98,7 @@ export const SectionTitle = ({ children, className, ...props }) => {
 export const SectionDescription = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.3);
   return (
-    <motion.p
+    <m.p
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -116,7 +116,7 @@ export const SectionDescription = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.p>
+    </m.p>
   );
 };
 
@@ -125,7 +125,7 @@ export const SectionDescription = ({ children, className, ...props }) => {
 export const CardsGrid = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.05);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -137,14 +137,14 @@ export const CardsGrid = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 /* ── Animated Card ── */
 
 export const Card = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={cardAnim}
     className={cn(
       'bg-bg-elevated border border-border rounded-lg p-8',
@@ -157,7 +157,7 @@ export const Card = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 /* ── Animated Process Step ── */
@@ -165,7 +165,7 @@ export const Card = ({ children, className, ...props }) => (
 export const ProcessStep = ({ children, index = 0, className, ...props }) => {
   const { ref, inView } = useAnim(0.2);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -185,7 +185,7 @@ export const ProcessStep = ({ children, index = 0, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
@@ -275,7 +275,7 @@ export const FeatureImageSection = ({ children, $alt, className, ...props }) => 
 export const FeatureImageGrid = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.1);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -289,12 +289,12 @@ export const FeatureImageGrid = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 export const FeatureImageWrapper = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={scaleUp}
     className={cn(
       'relative rounded-lg overflow-hidden border border-border aspect-[16/10]',
@@ -303,11 +303,11 @@ export const FeatureImageWrapper = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 export const FeatureTextContent = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={slideRight}
     className={cn(
       '[&_h3]:font-display [&_h3]:text-[clamp(1.5rem,2.5vw,2rem)] [&_h3]:font-bold [&_h3]:text-text [&_h3]:mb-4',
@@ -317,7 +317,7 @@ export const FeatureTextContent = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 /* ── Animated Stats Bar ── */
@@ -325,7 +325,7 @@ export const FeatureTextContent = ({ children, className, ...props }) => (
 export const StatsBar = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.2);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -338,18 +338,18 @@ export const StatsBar = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 export const StatItem = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={countUp}
     className={cn('bg-bg-elevated py-8 px-6 text-center', className)}
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 // Matches an optional prefix (<, ~, etc.), then a number (with optional decimals),
@@ -439,7 +439,7 @@ export const SplitSection = ({ children, $alt, className, ...props }) => (
 export const SplitGrid = ({ children, $reverse, className, ...props }) => {
   const { ref, inView } = useAnim(0.1);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -454,12 +454,12 @@ export const SplitGrid = ({ children, $reverse, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 export const SplitImage = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={scaleUp}
     className={cn(
       'relative rounded-lg overflow-hidden border border-border aspect-[4/3]',
@@ -468,11 +468,11 @@ export const SplitImage = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 export const SplitText = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={slideRight}
     className={cn(
       '[&_h3]:font-display [&_h3]:text-[clamp(1.5rem,2.5vw,2rem)] [&_h3]:font-bold [&_h3]:text-text [&_h3]:mb-4',
@@ -486,7 +486,7 @@ export const SplitText = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 /* ── Animated Highlight Box ── */
@@ -494,7 +494,7 @@ export const SplitText = ({ children, className, ...props }) => (
 export const HighlightBox = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.2);
   return (
-    <motion.div
+    <m.div
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -508,14 +508,14 @@ export const HighlightBox = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };
 
 /* ── Icon Card ── */
 
 export const IconCard = ({ children, className, ...props }) => (
-  <motion.div
+  <m.div
     variants={cardAnim}
     className={cn(
       'relative overflow-hidden bg-bg-elevated border border-border rounded-lg p-8',
@@ -530,7 +530,7 @@ export const IconCard = ({ children, className, ...props }) => (
     {...props}
   >
     {children}
-  </motion.div>
+  </m.div>
 );
 
 export const IconCardIcon = ({ children, className, ...props }) => (
@@ -560,7 +560,7 @@ export const CTASection = ({ children, className, ...props }) => (
 export const CTATitle = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.3);
   return (
-    <motion.h2
+    <m.h2
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -572,14 +572,14 @@ export const CTATitle = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.h2>
+    </m.h2>
   );
 };
 
 export const CTAText = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.3);
   return (
-    <motion.p
+    <m.p
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -597,14 +597,14 @@ export const CTAText = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.p>
+    </m.p>
   );
 };
 
 export const CTAButton = ({ children, className, ...props }) => {
   const { ref, inView } = useAnim(0.3);
   return (
-    <motion.a
+    <m.a
       ref={ref}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
@@ -626,7 +626,7 @@ export const CTAButton = ({ children, className, ...props }) => {
       {...props}
     >
       {children}
-    </motion.a>
+    </m.a>
   );
 };
 

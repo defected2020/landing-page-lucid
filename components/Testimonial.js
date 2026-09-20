@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 
@@ -22,15 +22,15 @@ const Testimonial = () => {
         >
           &ldquo;
         </span>
-        <motion.blockquote
+        <m.blockquote
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
           className="m-0 mb-8 text-[clamp(1.0625rem,1.5vw,1.25rem)] italic leading-[1.8] text-text"
         >
           {testimonial.content}
-        </motion.blockquote>
-        <motion.div
+        </m.blockquote>
+        <m.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -42,7 +42,7 @@ const Testimonial = () => {
               Read the case study &rarr;
             </span>
           </Link>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

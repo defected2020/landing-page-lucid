@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -26,7 +26,7 @@ const Services = () => {
           </p>
         </div>
 
-        <motion.div
+        <m.div
           ref={ref}
           variants={staggerContainer(0.06)}
           initial="hidden"
@@ -37,7 +37,7 @@ const Services = () => {
             const Icon = getServiceIcon(service.iconName);
             return (
               <Link key={service.id} href={service.link} className="no-underline">
-                <motion.div
+                <m.div
                   variants={fadeInUp}
                   className={cn(
                     'group relative col-span-1 flex cursor-pointer flex-col overflow-hidden rounded-lg border border-border bg-bg-elevated transition-[border-color,background-color,transform] duration-fast ease-smooth hover:-translate-y-0.5 hover:border-border-hover hover:bg-bg-subtle',
@@ -51,6 +51,7 @@ const Services = () => {
                         alt={service.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        quality={60}
                         className="object-cover transition-transform [transition-duration:400ms] ease-out group-hover:scale-105"
                       />
                     </div>
@@ -71,11 +72,11 @@ const Services = () => {
                       </svg>
                     </span>
                   </div>
-                </motion.div>
+                </m.div>
               </Link>
             );
           })}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

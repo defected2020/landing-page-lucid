@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { ChevronsLeftRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from './ui/button';
@@ -21,34 +21,26 @@ const TYPE_SPEED = 45;
 const DELETE_SPEED = 20;
 const PAUSE_AFTER_TYPE = 2400;
 const PAUSE_AFTER_DELETE = 300;
-const INITIAL_DELAY = 600;
+// The page opens on the complete first headline (it is in the server HTML,
+// so it is the Largest Contentful Paint the moment the page renders); the
+// typewriter then cycles through the other phrases.
+const INITIAL_HOLD = 3200;
 
 const Hero = () => {
   const { isDark } = useTheme();
   const onImage = !isDark;
-  const [phase, setPhase] = useState('idle');
-  const [staticText, setStaticText] = useState('');
-  const [phraseText, setPhraseText] = useState('');
+  const [phase, setPhase] = useState('hold');
+  const [phraseText, setPhraseText] = useState(ROTATING_PHRASES[0]);
   const [phraseIdx, setPhraseIdx] = useState(0);
-  const [showContent, setShowContent] = useState(false);
 
   const currentPhrase = ROTATING_PHRASES[phraseIdx];
 
   const tick = useCallback(() => {
     switch (phase) {
-      case 'typing-static': {
-        if (staticText.length < STATIC_LINE.length) {
-          setStaticText(STATIC_LINE.slice(0, staticText.length + 1));
-        } else {
-          setPhase('typing-phrase');
-        }
-        break;
-      }
-      case 'typing-phrase': {
+      case 'typing': {
         if (phraseText.length < currentPhrase.length) {
           setPhraseText(currentPhrase.slice(0, phraseText.length + 1));
         } else {
-          setShowContent(true);
           setPhase('pausing');
         }
         break;
@@ -65,32 +57,23 @@ const Hero = () => {
       default:
         break;
     }
-  }, [phase, staticText, phraseText, currentPhrase]);
+  }, [phase, phraseText, currentPhrase]);
 
   useEffect(() => {
-    if (phase === 'idle') return;
-    if (phase === 'pausing') {
-      const t = setTimeout(() => setPhase('deleting'), PAUSE_AFTER_TYPE);
-      return () => clearTimeout(t);
-    }
-    if (phase === 'pause-deleted') {
-      const t = setTimeout(() => setPhase('typing-phrase'), PAUSE_AFTER_DELETE);
-      return () => clearTimeout(t);
-    }
-    if (phase === 'typing-static' || phase === 'typing-phrase') {
-      const t = setTimeout(tick, TYPE_SPEED);
-      return () => clearTimeout(t);
-    }
-    if (phase === 'deleting') {
-      const t = setTimeout(tick, DELETE_SPEED);
-      return () => clearTimeout(t);
-    }
-  }, [phase, tick]);
-
-  useEffect(() => {
-    const t = setTimeout(() => setPhase('typing-static'), INITIAL_DELAY);
+    const delays = {
+      hold: INITIAL_HOLD,
+      pausing: PAUSE_AFTER_TYPE,
+      'pause-deleted': PAUSE_AFTER_DELETE,
+      typing: TYPE_SPEED,
+      deleting: DELETE_SPEED,
+    };
+    const t = setTimeout(() => {
+      if (phase === 'hold' || phase === 'pausing') setPhase('deleting');
+      else if (phase === 'pause-deleted') setPhase('typing');
+      else tick();
+    }, delays[phase]);
     return () => clearTimeout(t);
-  }, []);
+  }, [phase, tick]);
 
   return (
     <section
@@ -107,9 +90,9 @@ const Hero = () => {
 
       <div className="relative z-[3] mx-auto flex min-h-screen w-full max-w-container items-center px-container">
         <div className="max-w-[620px] py-24 max-md:max-w-full max-md:text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <m.div
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
             className="mb-8 inline-block"
           >
@@ -117,7 +100,7 @@ const Hero = () => {
               <ChevronsLeftRight />
               Design · Develop · Deploy
             </Badge>
-          </motion.div>
+          </m.div>
 
           <h1
             className={cn(
@@ -125,30 +108,19 @@ const Hero = () => {
               onImage ? 'text-white' : 'text-text'
             )}
           >
-            {/* The typewriter starts from an empty string, so the animated spans
-                render as an empty <h1> on the server. This carries the real
-                headline in the markup for crawlers and screen readers, while the
-                visible text below animates to exactly the same words. */}
-            <span className="sr-only">{`${STATIC_LINE} ${ROTATING_PHRASES[0]}`}</span>
-            <span aria-hidden="true">
-              {staticText}
-              {staticText.length === STATIC_LINE.length && phraseText && (
-                <>
-                  <br />
-                  {phraseText}
-                </>
-              )}
-              <motion.span
-                animate={{ opacity: [1, 1, 0, 0] }}
-                transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-                className="ml-1 inline-block h-[0.85em] w-[3px] rounded-sm bg-accent align-baseline"
-              />
-            </span>
+            {STATIC_LINE}
+            <br />
+            {phraseText}
+            <m.span
+              animate={{ opacity: [1, 1, 0, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+              className="ml-1 inline-block h-[0.85em] w-[3px] rounded-sm bg-accent align-baseline"
+            />
           </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={showContent ? { opacity: 1, y: 0 } : {}}
+          <m.p
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.6 }}
             className={cn(
               'mb-10 max-w-[540px] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.7] max-md:mx-auto',
@@ -157,12 +129,12 @@ const Hero = () => {
           >
             We combine cutting-edge technology with creative problem-solving to deliver
             software that transforms businesses and delights users.
-          </motion.p>
+          </m.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={showContent ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15 }}
+          <m.div
+            initial={{ y: 14 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="flex gap-4 max-md:justify-center max-[480px]:flex-col max-[480px]:items-center"
           >
             <Button asChild>
@@ -178,7 +150,7 @@ const Hero = () => {
             >
               <a href="/services">Explore Services</a>
             </Button>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

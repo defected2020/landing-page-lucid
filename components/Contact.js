@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import Script from 'next/script';
 
 const socialIconClass =
@@ -28,7 +28,7 @@ const Contact = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -39,7 +39,7 @@ const Contact = () => {
               <>
                 <Script
                   src="https://tally.so/widgets/embed.js"
-                  strategy="afterInteractive"
+                  strategy="lazyOnload"
                   onLoad={() => {
                     if (typeof window !== 'undefined' && window.Tally) {
                       window.Tally.loadEmbeds();
@@ -63,10 +63,10 @@ const Contact = () => {
                 Loading contact form...
               </div>
             )}
-          </motion.div>
+          </m.div>
 
           <div className="flex flex-col gap-8 py-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -89,9 +89,9 @@ const Contact = () => {
                   </a>
                 </p>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -115,9 +115,9 @@ const Contact = () => {
                   </a>
                 </p>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -136,7 +136,7 @@ const Contact = () => {
                   Berlin, Germany &middot; Working globally
                 </p>
               </div>
-            </motion.div>
+            </m.div>
 
             <div className="mt-4 flex gap-3">
               <a
