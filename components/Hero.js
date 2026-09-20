@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { ChevronsLeftRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { cn } from '../lib/utils';
+import NeuralGlobe from './globe/NeuralGlobe';
 
 const STATIC_LINE = 'We Build Software';
 const ROTATING_PHRASES = [
@@ -95,18 +95,13 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center overflow-hidden bg-bg"
+      className="relative flex min-h-screen items-center overflow-hidden bg-[#06070f]"
     >
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0b0d1a] from-0% via-[#0b0d1a] via-[18%] to-transparent to-[40%] after:absolute after:inset-0 after:z-[1] after:bg-gradient-to-r after:from-[rgba(11,13,26,0.5)] after:from-0% after:to-transparent after:to-[50%] after:content-['']">
-        <Image
-          src="/images/stock/earth-day.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[center_20%]"
-        />
-      </div>
+      <NeuralGlobe className="z-0" />
+
+      {/* Veils: settle the space under the navbar and keep the copy legible
+          over the planet without dimming the whole scene. */}
+      <div className="hero-veil pointer-events-none absolute inset-0 z-[1]" />
 
       <div className="pointer-events-none absolute inset-0 z-[2] bg-[url('data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%20256%20256%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%3E%3Cfilter%20id%3D%27noise%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.9%27%20numOctaves%3D%274%27%20stitchTiles%3D%27stitch%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23noise%29%27%2F%3E%3C%2Fsvg%3E')] bg-[length:256px_256px] bg-repeat opacity-[0.04]" />
 
