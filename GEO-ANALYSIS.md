@@ -9,18 +9,27 @@ the two share a diagnosis.
 
 ---
 
-## GEO Readiness Score: 59/100
+## GEO Readiness Score: 67/100
 
-| Criterion | Weight | Score | Verdict |
-|---|---|---|---|
-| Technical accessibility | 20% | 95 | Excellent — nothing to do |
-| Structural readability | 20% | 65 | Good hierarchy, headings don't match queries |
-| Citability | 25% | 60 | Blog is strong, homepage and services are thin |
-| Multi-modal content | 15% | 45 | Images only; no video, charts or tools |
-| **Authority & brand signals** | **20%** | **25** | **The binding constraint** |
+Re-measured against the live site on 2026-09-21 after the changes below shipped.
+First run was **59**.
 
-The technical work is done and done well. The score is held down by one thing,
-and it is not on the website.
+| Criterion | Weight | Was | Now | What moved |
+|---|---|---|---|---|
+| Technical accessibility | 20% | 95 | 95 | Already maxed; sitemap 27 → 29 |
+| Structural readability | 20% | 65 | 68 | Genuine question headings 1 → 2 of ~38 |
+| Citability | 25% | 60 | **75** | Homepage definition; blog 3 → 5 posts; filler gone |
+| Multi-modal content | 15% | 45 | 45 | Untouched — still images only |
+| **Authority & brand signals** | **20%** | **25** | **42** | Person schema and founders landed; off-site still zero |
+
+**+8, and the ceiling is exactly where the first run said it was.** Every point
+came from on-page work. The axis that carries the most weight in AI citation —
+off-site entity presence — is unchanged, because nothing off-site was done.
+
+Measured, not assumed: homepage `ai_patterns` is now `[]` (was `['cutting-edge']`),
+all five posts carry `Person` authorship where three carried `Organization`, the
+organisation schema names both founders, and post quality ranges 80–84 with zero
+filler across the blog.
 
 ---
 
@@ -34,7 +43,9 @@ a specific company called 'Lucid Code Labs.'"* What it returned instead:
 
 | Company | Signal it has that you don't |
 |---|---|
-| **Lucid Labs GmbH** (Berlin, AI agency) | Companyhouse, Northdata, Implisense records; HRB 262926 B, Charlottenburg |
+| **Lucid Labs** (Berlin, AI studio) | Companyhouse, Northdata, Implisense, **Tracxn profile**, active job listings; **named founder, Marek Janetzke**, ex-CEO of Flightright |
+| **Lucid Code** | Its own Tracxn company profile — a third near-identical name |
+| Lucid.Studio (Berlin) | Established LinkedIn company page |
 | Lucid Reality Labs | Clutch 100 2023, VR/AR trade press, active LinkedIn |
 | Lucid Labs LLC / Lucid Labs (DeFi) | Established LinkedIn company pages |
 | Lucidworks, Lucid IT, Lucidsamples | Wikipedia articles |
@@ -50,6 +61,15 @@ backlinks do (Ahrefs, 75,000 brands): AI search resolves an *entity* before it
 cites a *page*. You currently have no entity to resolve to. Perfect passage
 formatting cannot fix that, which is why the on-page items below are ranked
 beneath it.
+
+**Re-checked 2026-09-21, after `founder` schema shipped.** Searching
+`"Lucid Code Labs" software studio Berlin founders` still returns Lucid Labs'
+founder by name, with a Tracxn profile and a hiring page behind him, and states
+plainly that the results *"don't provide specific founder information"* for Lucid
+Code Labs. Naming your founders in your own JSON-LD does not make them findable —
+schema on your own domain is a claim, not corroboration. A third name, **Lucid
+Code**, also turned up with its own Tracxn profile. The namespace is more crowded
+than the first pass recorded, not less.
 
 It also reframes SEO.md's gap #3. "No off-site authority" is not only a ranking
 problem — it is an identity problem, and the name collision makes it urgent
