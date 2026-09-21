@@ -18,7 +18,7 @@ export const blogPosts = [
     title: "Offline-first React Native: what syncing actually costs",
     description: "Caching reads is easy. The cost is in write conflicts, record identity, clock skew and background execution — and none of it is a library decision.",
     date: '2026-09-21',
-    draft: true,
+    draft: false,
     author: 'george',
     tags: ["React Native", "Mobile", "Offline-first", "Architecture"],
     body: [
@@ -54,7 +54,7 @@ export const blogPosts = [
     title: "Push notifications are a delivery problem, not a feature",
     description: "Token lifecycle, permission timing, silent-notification budgets and cold-start routing — the parts of push that break after launch rather than during it.",
     date: '2026-09-21',
-    draft: true,
+    draft: false,
     author: 'george',
     tags: ["React Native", "Mobile", "Push notifications", "Production engineering"],
     body: [
