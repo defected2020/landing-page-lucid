@@ -31,27 +31,21 @@ a browser and your accounts.
 
 ### Not done yet
 
-- [ ] **Search Console.** A `google-site-verification` TXT record already
-      exists on the domain (`u7rRgsbYHb27ypAls6w7ersciy2lew_5QKpNj3tix4A`), so
-      someone has verified it. Sign in at
-      [search.google.com/search-console](https://search.google.com/search-console)
-      with britcardmeme@gmail.com and check whether the property is yours. If it
-      is, historical data is already waiting. If not, work out who has it, then
-      create your own **Domain** property — a second verification TXT record
-      coexists fine with the existing one.
-      DNS is at **Namecheap** (Domain List → lucidcodelabs.com → Advanced DNS →
-      Add New Record → TXT, host `@`). **Do not delete the existing TXT
-      records** — the Zoho ones carry your email.
-- [ ] **Submit the sitemap** in Search Console: enter `sitemap.xml`.
-- [ ] **Request indexing** via URL Inspection for `/`, `/about`, `/services`,
-      `/work`, `/blog`, `/services/web-development`, `/services/ai-powered-software`.
-- [ ] **Vercel → Analytics tab → Enable.** Same for **Speed Insights**. The code
-      is already wired in; it does nothing until these are on.
-- [ ] **Vercel → Settings → Domains.** The apex currently redirects to www with a
-      **307 (temporary)**. Make it **308 (permanent)** so Google treats the move
-      as final. If the UI won't expose the status code, a `vercel.json` redirect
-      rule with `has: [{ type: 'host', value: 'lucidcodelabs.com' }]` does the
-      same job.
+- [x] **Search Console.** Domain property `sc-domain:lucidcodelabs.com` is
+      verified and owned by britcardmeme@gmail.com (checked 2026-09-12). No
+      `GOOGLE_SITE_VERIFICATION` env var is needed.
+- [x] **Sitemap submitted** 2026-09-12 — status Success, 27 URLs discovered.
+- [x] **Indexing requested** 2026-09-12 for `/`, `/about`, `/services`, `/work`,
+      `/blog`, `/services/web-development`, `/services/ai-powered-software`.
+      Note: before this, Google had `www` homepage as "Alternative page with
+      proper canonical tag" (it had picked the non-www URL) and
+      `/services/ai-powered-software` as "not served over HTTPS". Both should
+      clear on recrawl now that canonicals say www. Re-check in the monthly review.
+- [x] **Vercel Analytics enabled** 2026-09-12 (free tier). **Speed Insights**
+      was already on — RES 76 on desktop, "needs improvement".
+- [ ] **Vercel → Settings → Domains → lucidcodelabs.com → Edit.** Change the
+      redirect dropdown from **307 Temporary** to **308 Permanent** and Save.
+      (Claude in Chrome is blocked from domain changes; one click for you.)
 - [ ] **Bing Webmaster Tools** — [bing.com/webmasters](https://www.bing.com/webmasters),
       "Import from Google Search Console". Five minutes, and it also feeds
       DuckDuckGo and several AI assistants.
@@ -85,6 +79,10 @@ a browser and your accounts.
 - [x] Canonical host standardised on `www` across all 27 pages.
 - [x] Homepage `<h1>` server-rendered (it was shipping empty).
 - [x] Broken social links hidden rather than leaking link equity.
+      **Regression found and fixed 2026-09-21:** `components/Contact.js`
+      hardcoded the GitHub and LinkedIn URLs, bypassing the `enabled` guard,
+      so the live contact section was still linking a 404 GitHub profile.
+      It now renders from `activeSocialProfiles()` like the footer.
 - [x] Sitemap `lastmod` made honest; `/about` and `/blog` added.
 - [x] Font preconnects for LCP.
 - [x] Vercel Analytics + Speed Insights installed.
@@ -179,6 +177,14 @@ route to `staticPages` in `pages/sitemap.xml.js`** — that step is easy to forg
 - **Don't keyword-stuff.** The brand voice is an asset.
 
 ---
+
+## AI search (GEO)
+
+See [GEO-ANALYSIS.md](GEO-ANALYSIS.md) — whether AI Overviews, ChatGPT and
+Perplexity can cite this site. Readiness 59/100: the technical side is done,
+but the brand has no entity presence and shares its name with a registered
+Berlin AI agency (**Lucid Labs GmbH**), which is a stronger reason to create
+the LinkedIn and GitHub profiles than link equity was.
 
 ## Monthly review
 

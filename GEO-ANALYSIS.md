@@ -1,0 +1,195 @@
+# GEO analysis — lucidcodelabs.com
+
+Generative Engine Optimisation: whether AI search surfaces (Google AI Overviews,
+Google AI Mode, ChatGPT Search, Perplexity, Claude) can find, trust and cite this
+site. Run 2026-09-21 with the `claude-seo` plugin (v2.3.1) against the live site.
+
+Companion to [SEO.md](SEO.md), which covers classic search. Read that first —
+the two share a diagnosis.
+
+---
+
+## GEO Readiness Score: 59/100
+
+| Criterion | Weight | Score | Verdict |
+|---|---|---|---|
+| Technical accessibility | 20% | 95 | Excellent — nothing to do |
+| Structural readability | 20% | 65 | Good hierarchy, headings don't match queries |
+| Citability | 25% | 60 | Blog is strong, homepage and services are thin |
+| Multi-modal content | 15% | 45 | Images only; no video, charts or tools |
+| **Authority & brand signals** | **20%** | **25** | **The binding constraint** |
+
+The technical work is done and done well. The score is held down by one thing,
+and it is not on the website.
+
+---
+
+## The finding that matters
+
+**Lucid Code Labs has no entity presence, and the name is crowded.**
+
+Searching `"Lucid Code Labs" reddit OR linkedin OR youtube OR clutch` returns
+nothing for this company. The search engine's own summary said: *"I couldn't find
+a specific company called 'Lucid Code Labs.'"* What it returned instead:
+
+| Company | Signal it has that you don't |
+|---|---|
+| **Lucid Labs GmbH** (Berlin, AI agency) | Companyhouse, Northdata, Implisense records; HRB 262926 B, Charlottenburg |
+| Lucid Reality Labs | Clutch 100 2023, VR/AR trade press, active LinkedIn |
+| Lucid Labs LLC / Lucid Labs (DeFi) | Established LinkedIn company pages |
+| Lucidworks, Lucid IT, Lucidsamples | Wikipedia articles |
+
+The first row is the problem. There is a **registered Berlin AI agency called
+Lucid Labs**, in your city and your sector, with company-registry records that
+machines can verify. When an AI assistant is asked about an AI/software agency in
+Berlin with "Lucid" in the name, it has a well-evidenced entity to resolve to,
+and it is not you.
+
+This is why brand mentions correlate ~3x more strongly with AI citation than
+backlinks do (Ahrefs, 75,000 brands): AI search resolves an *entity* before it
+cites a *page*. You currently have no entity to resolve to. Perfect passage
+formatting cannot fix that, which is why the on-page items below are ranked
+beneath it.
+
+It also reframes SEO.md's gap #3. "No off-site authority" is not only a ranking
+problem — it is an identity problem, and the name collision makes it urgent
+rather than gradual.
+
+---
+
+## What's already right
+
+Worth stating plainly, because it means the foundation needs no work:
+
+- **Server-side rendering.** AI crawlers do not execute JavaScript. Every heading
+  and paragraph is present in the raw HTML — verified by fetching without a
+  browser. Next.js static prerendering is doing its job.
+- **Every AI crawler is allowed.** `robots.txt` is `User-agent: *` / `Allow: /`,
+  which covers `OAI-SearchBot` (ChatGPT Search citability), `Claude-SearchBot`,
+  `PerplexityBot` and `Googlebot`. No AI-specific directives needed.
+- **`max-snippet:-1`** is set, so AI surfaces may quote at any length. This is the
+  actual control for AI Overview appearance — there is no AI-specific opt-out file.
+- **Image alt coverage is 100%** (32/32 on the homepage).
+- **Blog content is genuinely good.** 1,500–1,900 words each, scoring 80–84 on the
+  plugin's quality scorer with **zero** AI-filler phrases detected. Specific,
+  opinionated, technically concrete — exactly what gets cited. `BlogPosting` and
+  `BreadcrumbList` schema present on all three.
+
+**`/llms.txt` is absent and that is fine.** Google states explicitly that
+`llms.txt` neither helps nor hurts. Do not let anyone sell you one as an AI
+ranking lever.
+
+---
+
+## Fixed in this pass
+
+- [x] **404 GitHub link removed from the contact section.**
+      `components/Contact.js` hardcoded `github.com/lucidcodelabs` (confirmed
+      404) and `linkedin.com/company/lucidcodelabs`, bypassing the
+      `enabled` guard in `data/siteConfig.js` entirely. The footer respected the
+      guard; the contact section never did, so the site was publicly linking a
+      dead profile — the exact thing SEO.md records as already fixed. Contact now
+      renders from `activeSocialProfiles()` like the footer, so profiles appear in
+      both places the moment you flip `enabled: true`. Verified gone from all 27
+      built pages.
+
+---
+
+## Recommended, in priority order
+
+### 1. Establish the entity (off-site, highest impact)
+
+Nothing on the website substitutes for this.
+
+- [ ] **LinkedIn company page.** The single cheapest entity anchor. Already on
+      SEO.md's list; it is now the top item, not a nice-to-have.
+- [ ] **GitHub organisation.** You are a software agency with no public code
+      presence. Even a few real repos disambiguate you from the other Lucids.
+- [ ] **Clutch / GoodFirms listing.** Note that Lucid Reality Labs ranks on
+      Clutch — this is the register AI assistants read for agency queries.
+- [ ] **Decide the name question.** Consider consistently presenting as
+      "Lucid Code Labs" in full, never "Lucid Labs", in every off-site profile,
+      bio and byline. Consistency is what lets a machine separate you from the
+      Berlin company with the near-identical name.
+- [ ] **German company registry.** If the entity is registered, its registry
+      record is a machine-verifiable signal the competing Lucid Labs already has.
+
+*How you'd know it worked:* ask ChatGPT or Claude "who are Lucid Code Labs?" in a
+fresh session. Today it cannot answer. That question is the KPI.
+
+### 2. Person schema and bylines (on-site, needs your input)
+
+Currently **every** article is authored by an `Organization`, there is no `Person`
+schema anywhere on the site, and no visible byline. Anonymous authorship is a weak
+E-E-A-T signal, and it wastes the two real, named, credentialed engineers you
+already display on the homepage and `/about`.
+
+- [ ] Decide who wrote each of the three posts, add an `author` field to
+      `data/blogPosts.js`, render a visible byline, and emit `Person` schema
+      referencing `data/team.js`.
+- [ ] Once the LinkedIn/GitHub profiles exist, add them as `sameAs` on each
+      `Person` — this is what ties the article, the human and the entity together.
+
+I did not implement this: attributing authorship is your call, and inventing a
+byline would be a false statement on a public page. Tell me who wrote what and it
+is a small change.
+
+### 3. Question-form headings (on-site, low risk)
+
+Across the three blog posts, roughly one H2 in twenty is phrased as a question
+("So when is the answer really native?"). The rest are statements —
+"The ledger is the product", "Where the shared line breaks". They are good
+writing, and I would not touch the voice.
+
+The surgical version: **add** a question-phrased H2 where one is already implicitly
+being answered, rather than rewriting existing ones. "What actually shares" →
+"What actually shares between iOS and Android?" costs nothing and matches how the
+query is typed.
+
+### 4. Front-load a definition block
+
+~44% of AI citations come from the first 30% of a page, and the optimal citable
+passage is 134–167 self-contained words. The homepage is 632 words and opens with
+a brand statement. Neither it nor `/about` contains a short, extractable "Lucid
+Code Labs is a …" paragraph that an AI can lift wholesale. That paragraph is also
+the thing that would disambiguate you from the other Lucids.
+
+### 5. Trim three stock phrases
+
+The quality scorer flagged `cutting-edge` (homepage), plus `at the heart of` and
+`transform your` (`/services/web-development`). The blog has none of this. SEO.md
+says the brand voice is an asset — these three phrases are the only places the
+site sounds like everyone else.
+
+### 6. Multi-modal (lowest priority, highest effort)
+
+Multi-modal pages see materially higher AI selection rates, and you have images
+only. A diagram in the loyalty-platform post, or a short video walkthrough, would
+lift the weakest scoring criterion. Real effort; do it after 1–3.
+
+---
+
+## Deliberately not recommended
+
+- **`/llms.txt`** — Google ignores it. No citation value.
+- **Rewriting content "for AI"** — Google's own guidance rejects AI-specific
+  rephrasing, chunking and keyword rewriting as ineffective. The blog is already
+  above the bar.
+- **Mention-farming** — buying mentions is the same trap as buying links.
+
+---
+
+## Re-running this
+
+```bash
+P=~/.claude/plugins/cache/agricidaniel-claude-seo/claude-seo/2.3.1
+"$P/scripts/claude-seo" doctor --json          # check runtime
+"$P/scripts/claude-seo" run parse_html.py <file> --json
+"$P/scripts/claude-seo" run content_quality.py <file> --json
+```
+
+Or, in a fresh Claude Code session (the plugin is installed, so `/seo` is
+available): `/seo geo https://www.lucidcodelabs.com`.
+
+A full `/seo audit` fans out 7–11 subagents, five of them on Opus. It is
+expensive; the narrow commands above are not.
