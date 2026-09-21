@@ -117,22 +117,33 @@ Nothing on the website substitutes for this.
 *How you'd know it worked:* ask ChatGPT or Claude "who are Lucid Code Labs?" in a
 fresh session. Today it cannot answer. That question is the KPI.
 
-### 2. Person schema and bylines (on-site, needs your input)
+### 2. Person schema and bylines — **done**
 
 Currently **every** article is authored by an `Organization`, there is no `Person`
 schema anywhere on the site, and no visible byline. Anonymous authorship is a weak
 E-E-A-T signal, and it wastes the two real, named, credentialed engineers you
 already display on the homepage and `/about`.
 
-- [ ] Decide who wrote each of the three posts, add an `author` field to
-      `data/blogPosts.js`, render a visible byline, and emit `Person` schema
-      referencing `data/team.js`.
-- [ ] Once the LinkedIn/GitHub profiles exist, add them as `sameAs` on each
-      `Person` — this is what ties the article, the human and the entity together.
+All three posts are George's, confirmed 2026-09-21, and are now attributed.
 
-I did not implement this: attributing authorship is your call, and inventing a
-byline would be a false statement on a public page. Tell me who wrote what and it
-is a small change.
+- Each post carries `author: 'george'`, an id into `data/team.js`, so a name or
+  role is only ever edited in one place.
+- Posts render a visible byline — *"By George Beard, Founder & Fullstack
+  Developer"* — with the name linking to `/about`. Both the name **and** the role
+  are on the page because the schema claims both, and structured data must never
+  describe a byline a reader cannot see.
+- `createPersonSchema()` emits `Person` with `@id`, `jobTitle`, `url` and
+  `worksFor` pointing at the organisation. `createArticleSchema` falls back to the
+  organisation when a post has no author, so nothing breaks for future posts.
+- The organisation schema now carries `founder: [Aline, George]`. Both are named
+  and pictured on the homepage and `/about`, so the claim is backed by visible
+  content — and it ties two real humans to the entity, which is the weakest signal
+  in this audit.
+
+Still open: **no `sameAs` on either `Person`.** None of the social profiles in
+`siteConfig` exist, and the company GitHub/LinkedIn would not be a person's
+`sameAs` in any case. Personal profiles are what close the loop from article →
+human → entity, and they do not exist yet. This is item 1's work.
 
 ### 3. Question-form headings (on-site, low risk)
 

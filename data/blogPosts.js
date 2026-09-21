@@ -9,6 +9,8 @@
 // Set `draft: true` to keep a post out of the listing, the sitemap, and the
 // index (it stays reachable by direct URL for review, marked noindex).
 // `date` is the publish date in YYYY-MM-DD and drives the article schema.
+// `author` is an id from data/team.js. It renders as a visible byline and as
+// Person schema; omit it and the post is attributed to the organisation.
 
 export const blogPosts = [
   {
@@ -17,6 +19,7 @@ export const blogPosts = [
     description: "What it takes to add a model to a live Express app: staging output before it reaches production data, per-attempt timeouts, cost control and cheap evaluation.",
     date: '2026-08-26',
     draft: false,
+    author: 'george',
     tags: ["AI integration", "Architecture", "Node.js", "Production engineering"],
     body: [
       { type: "p", text: "Most AI work is not greenfield. There is a system in production, people depending on it, a schema that has accumulated meaning over years, and someone has asked whether a model could do a job the software currently cannot. The interesting engineering is almost never the prompt. It is everything around the call that keeps the rest of the product as reliable as it was the week before. We recently added two model-backed features to a live Express and MongoDB application using the OpenAI SDK: extracting a printed menu from photographs, and grading free-text answers. Almost none of the work was the API call." },
@@ -63,6 +66,7 @@ export const blogPosts = [
     description: "The engineering behind a rewards product: ledger integrity, tenant-scoped authorisation, QR redemption, wallet passes, scheduled jobs and insider fraud.",
     date: '2026-08-26',
     draft: false,
+    author: 'george',
     tags: ["Engineering", "Loyalty & Rewards", "Node.js", "System design"],
     body: [
       { type: "p", text: "A loyalty product looks small from the outside. A customer scans something, a number goes up, and eventually they get a free coffee. Almost none of the engineering effort goes into that. It goes into making the number correct, keeping it correct when two things happen at once, and stopping anyone from making it go up without earning it. This is drawn from building a rewards platform on Node, Express and MongoDB; the shape applies to any stack." },
@@ -104,6 +108,7 @@ export const blogPosts = [
     description: "What genuinely shares between iOS and Android, where cross-platform quietly costs you, and when a limited budget still points towards writing native code.",
     date: '2026-08-26',
     draft: false,
+    author: 'george',
     tags: ["React Native", "Expo", "Mobile", "Architecture"],
     body: [
       { type: "p", text: "The question comes up in almost every first conversation about a mobile product: React Native or native? It is asked as a technology question, but on a limited budget it is a question about where the money goes. Cross-platform does not halve your cost; it moves the cost into places that are harder to see when you are writing the estimate. The useful exercise is working out which parts of your specific product genuinely share, and which parts will make you write platform code anyway." },

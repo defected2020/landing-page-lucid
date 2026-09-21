@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SEO, { createArticleSchema, createBreadcrumbSchema } from '../../components/SEO';
+import { findTeamMember } from '../../data/team';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -51,6 +52,7 @@ function PostBody({ body }) {
 }
 
 export default function BlogPostPage({ post, readingTime }) {
+  const author = findTeamMember(post.author);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function BlogPostPage({ post, readingTime }) {
             description: post.description,
             path: `/blog/${post.slug}`,
             datePublished: post.date,
+            author: post.author,
           }),
           createBreadcrumbSchema([
             { name: 'Home', url: '/' },
@@ -99,6 +102,18 @@ export default function BlogPostPage({ post, readingTime }) {
       <ContentSection>
         <Container>
           <div className="mx-auto mb-10 flex max-w-[720px] flex-wrap items-center gap-3 font-mono text-xs text-text-subtle">
+            {author && (
+              <>
+                <span>
+                  By{' '}
+                  <Link href="/about" className="text-text-muted hover:text-accent">
+                    {author.name}
+                  </Link>
+                  , {author.role}
+                </span>
+                <span aria-hidden="true">&middot;</span>
+              </>
+            )}
             <time dateTime={post.date}>{formatPostDate(post.date)}</time>
             <span aria-hidden="true">&middot;</span>
             <span>{readingTime} min read</span>
