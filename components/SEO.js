@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { SITE_URL, SITE_NAME, CONTACT, sameAsUrls } from '../data/siteConfig';
+import { findTeamMember } from '../data/team';
 
 const DEFAULT_OG_IMAGE = `${SITE_URL}/images/og-default.png`;
 
@@ -63,6 +64,24 @@ export default SEO;
 
 // Reusable JSON-LD schemas
 
+// Authors are real, named people from data/team.js. Only call this for an author
+// whose name and role are actually rendered on the page — structured data must
+// not describe a byline the reader cannot see. No `sameAs` yet: none of the
+// social profiles in siteConfig exist, and company profiles would not be a
+// person's `sameAs` anyway.
+export const createPersonSchema = (memberId) => {
+  const member = findTeamMember(memberId);
+  if (!member) return null;
+  return {
+    '@type': 'Person',
+    '@id': `${SITE_URL}/about#${member.id}`,
+    name: member.name,
+    jobTitle: member.role,
+    url: `${SITE_URL}/about`,
+    worksFor: { '@id': `${SITE_URL}/#organization` },
+  };
+};
+
 export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
@@ -98,6 +117,10 @@ export const organizationSchema = {
     'Process automation',
   ],
   sameAs: sameAsUrls(),
+  // Both founders are named and pictured on the homepage and /about, so naming
+  // them here ties two real people to the organisation — the entity signal
+  // GEO-ANALYSIS.md identifies as the weakest one.
+  founder: ['aline', 'george'].map(createPersonSchema).filter(Boolean),
 };
 
 export const websiteSchema = {
@@ -147,7 +170,8 @@ export const createFAQSchema = (faqs) => ({
   })),
 });
 
-export const createArticleSchema = ({ title, description, path, datePublished, image }) => ({
+
+export const createArticleSchema = ({ title, description, path, datePublished, image, author }) => ({
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: title,
@@ -156,7 +180,8 @@ export const createArticleSchema = ({ title, description, path, datePublished, i
   datePublished,
   dateModified: datePublished,
   image: image ? `${SITE_URL}${image}` : `${SITE_URL}/images/og-default.png`,
-  author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  author:
+    createPersonSchema(author) || { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
   publisher: { '@id': `${SITE_URL}/#organization` },
   mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}${path}` },
 });

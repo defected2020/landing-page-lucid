@@ -3,7 +3,7 @@ const services = [
     id: 'ai-powered-software',
     title: 'AI Powered Software',
     shortDescription: 'Smart applications that evolve with your business using artificial intelligence.',
-    description: 'We integrate cutting-edge artificial intelligence to create smart applications that evolve with your business. Our AI solutions learn from data and improve over time.',
+    description: 'We integrate artificial intelligence to create smart applications that evolve with your business. Our AI solutions learn from data and improve over time.',
     link: '/services/ai-powered-software',
     iconName: 'brain',
     image: '/images/stock/ai-abstract.jpg',

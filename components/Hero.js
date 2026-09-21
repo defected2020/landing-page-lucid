@@ -118,6 +118,11 @@ const Hero = () => {
             />
           </h1>
 
+          {/* Names the studio in full rather than opening with a slogan. This is
+              the first prose an AI search crawler reads, and "Lucid Code Labs"
+              has to be separable from Lucid Labs GmbH, an unrelated Berlin AI
+              agency. Keep the first sentence self-contained and quotable; see
+              GEO-ANALYSIS.md. */}
           <m.p
             initial={{ y: 14 }}
             animate={{ y: 0 }}
@@ -127,8 +132,9 @@ const Hero = () => {
               onImage ? 'text-white/80' : 'text-text-muted'
             )}
           >
-            We combine cutting-edge technology with creative problem-solving to deliver
-            software that transforms businesses and delights users.
+            Lucid Code Labs is a founder-led software studio in Berlin, building
+            AI-powered platforms, web applications and mobile apps for clients
+            worldwide. The people you meet are the people who write the code.
           </m.p>
 
           <m.div
