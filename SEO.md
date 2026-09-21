@@ -37,6 +37,10 @@ a browser and your accounts.
 - [x] **Sitemap submitted** 2026-09-12 — status Success, 27 URLs discovered.
 - [x] **Indexing requested** 2026-09-12 for `/`, `/about`, `/services`, `/work`,
       `/blog`, `/services/web-development`, `/services/ai-powered-software`.
+      Again 2026-09-21 for the two new posts, `/blog/offline-first-react-native-sync`
+      and `/blog/push-notifications-are-a-delivery-problem`. Both were "URL is
+      unknown to Google" beforehand, as expected for same-day publication, and
+      both now read "Indexing requested".
       Note: before this, Google had `www` homepage as "Alternative page with
       proper canonical tag" (it had picked the non-www URL) and
       `/services/ai-powered-software` as "not served over HTTPS". Both should
@@ -158,6 +162,14 @@ route to `staticPages` in `pages/sitemap.xml.js`** — that step is easy to forg
   statement to Google. That is what the `enabled` flags in `siteConfig.js` guard.
 - **Don't stamp today's date as `lastmod`** on every sitemap URL. Google learns
   to distrust inaccurate `lastmod` and then ignores it.
+- **Requesting indexing.** GSC deep links of the form
+  `/search-console/inspect?resource_id=…&id=<url>` return a Google 404. Open the
+  property root and use the inspection bar at the top instead; the bar needs two
+  clicks before it takes keyboard input. Submitting two requests in quick
+  succession tends to return "Oops! Something went wrong" on the second — wait
+  half a minute and click Request Indexing again rather than assuming it failed.
+- **Never run `next build` while a dev server is on 3040.** They share `.next`,
+  and the running server's artifacts make `next start` fail with MODULE_NOT_FOUND.
 - **Verifying rendered output:** the Chrome extension can't reach
   `localhost:3040`. Inspect `.next/server/pages/*.html` after a build, or curl
   `http://127.0.0.1:3040`, rather than relying on screenshots.
