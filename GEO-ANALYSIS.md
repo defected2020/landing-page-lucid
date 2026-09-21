@@ -146,7 +146,7 @@ being answered, rather than rewriting existing ones. "What actually shares" →
 "What actually shares between iOS and Android?" costs nothing and matches how the
 query is typed.
 
-### 4. Give the homepage the definition `/about` already has
+### 4. Give the homepage the definition `/about` already has — **done**
 
 ~44% of AI citations come from the first 30% of a page, and the optimal citable
 passage is 134–167 self-contained words.
@@ -165,16 +165,34 @@ citation real estate you own. An AI asked "who are Lucid Code Labs?" gets nothin
 liftable from it.
 
 Note that Berlin does **not** disambiguate you here — Lucid Labs GmbH is also
-Berlin. What separates you is the full name used consistently and the two named
-founders. Both belong in that paragraph.
+Berlin. What separates you is the full name used consistently.
+
+**Rewritten 2026-09-21** to:
+
+> Lucid Code Labs is a founder-led software studio in Berlin, building AI-powered
+> platforms, web applications and mobile apps for clients worldwide. The people
+> you meet are the people who write the code.
+
+Every claim is one the site already makes: "founder-led software studio" and
+"clients around the world" are `/about`'s own subtitle, Berlin is `CONTACT.locality`,
+the service list is `/about`'s meta description, and the closing sentence restates
+`/about`'s "the people you meet are the people who do the work" — accurate, since
+`data/team.js` lists two founders who are both engineers.
+
+The first sentence is deliberately self-contained so it can be lifted whole in
+answer to "who are Lucid Code Labs?". Verified server-rendered in
+`.next/server/pages/index.html`, since AI crawlers do not execute JavaScript.
+`components/Hero.js` carries a comment explaining why the name is spelled out, so
+it does not get optimised back into a slogan.
 
 ### 5. Trim three stock phrases
 
 The quality scorer flagged these on the two pages sampled; grepping the repo found
 13 instances across 7 files. The blog has none of this.
 
-**Done in this pass** — four removals in body copy, no meaning lost, nothing
-indexed touched: `cutting-edge` in `data/services.js`,
+**Done in this pass** — five removals in body copy, no meaning lost, nothing
+indexed touched. `cutting-edge` no longer appears anywhere on the site: removed
+from `components/Hero.js` (see item 4), `data/services.js`,
 `pages/services/web-development.js` and `pages/services/cloud-computing.js`, and
 `at the heart of` in `pages/services/web-development.js`.
 
