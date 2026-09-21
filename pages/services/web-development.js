@@ -68,7 +68,7 @@ export default function WebDevelopment() {
             </Card>
             <Card>
               <h3>UX-Driven Design</h3>
-              <p>User experience is at the heart of our design process, ensuring intuitive navigation, accessibility, and conversion-focused interfaces.</p>
+              <p>User experience drives our design process, ensuring intuitive navigation, accessibility, and conversion-focused interfaces.</p>
             </Card>
             <Card>
               <h3>Performance Optimization</h3>
@@ -172,7 +172,7 @@ export default function WebDevelopment() {
         <Container>
           <SectionTitle>Technologies We Leverage</SectionTitle>
           <SectionDescription>
-            We utilize cutting-edge technologies and frameworks to deliver robust, scalable web solutions.
+            We use well-supported technologies and frameworks to deliver robust, scalable web solutions.
           </SectionDescription>
 
           <TechTabs>

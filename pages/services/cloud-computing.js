@@ -67,7 +67,7 @@ export default function CloudComputingPage() {
             </Card>
             <Card>
               <h3>Innovation Acceleration</h3>
-              <p>Access cutting-edge technologies like AI, machine learning, IoT, and serverless computing without massive upfront investment or specialized expertise.</p>
+              <p>Access technologies like AI, machine learning, IoT, and serverless computing without massive upfront investment or specialized expertise.</p>
             </Card>
           </CardsGrid>
         </Container>

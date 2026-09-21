@@ -146,20 +146,43 @@ being answered, rather than rewriting existing ones. "What actually shares" →
 "What actually shares between iOS and Android?" costs nothing and matches how the
 query is typed.
 
-### 4. Front-load a definition block
+### 4. Give the homepage the definition `/about` already has
 
 ~44% of AI citations come from the first 30% of a page, and the optimal citable
-passage is 134–167 self-contained words. The homepage is 632 words and opens with
-a brand statement. Neither it nor `/about` contains a short, extractable "Lucid
-Code Labs is a …" paragraph that an AI can lift wholesale. That paragraph is also
-the thing that would disambiguate you from the other Lucids.
+passage is 134–167 self-contained words.
+
+`/about` is already right, and is the most citable page on the site. It opens
+*"Lucid Code Labs is a founder-led software studio. We design and build AI-powered
+platforms, web applications, and mobile products for clients around the world,"*
+then *"run by its two founders, and the people you meet are the people who do the
+work."* Specific, self-contained, liftable verbatim. Leave it alone.
+
+The **homepage** is the gap. It is 632 words and its opening paragraph is
+*"We combine cutting-edge technology with creative problem-solving to deliver
+software that transforms businesses and delights users"* — which is the one piece
+of copy on the site that would fit any agency on earth, sitting in the highest-value
+citation real estate you own. An AI asked "who are Lucid Code Labs?" gets nothing
+liftable from it.
+
+Note that Berlin does **not** disambiguate you here — Lucid Labs GmbH is also
+Berlin. What separates you is the full name used consistently and the two named
+founders. Both belong in that paragraph.
 
 ### 5. Trim three stock phrases
 
-The quality scorer flagged `cutting-edge` (homepage), plus `at the heart of` and
-`transform your` (`/services/web-development`). The blog has none of this. SEO.md
-says the brand voice is an asset — these three phrases are the only places the
-site sounds like everyone else.
+The quality scorer flagged these on the two pages sampled; grepping the repo found
+13 instances across 7 files. The blog has none of this.
+
+**Done in this pass** — four removals in body copy, no meaning lost, nothing
+indexed touched: `cutting-edge` in `data/services.js`,
+`pages/services/web-development.js` and `pages/services/cloud-computing.js`, and
+`at the heart of` in `pages/services/web-development.js`.
+
+**Left alone deliberately:** the `Transform your …` subtitles on five service
+pages. Several are also `description=` meta and `createServiceSchema` text, so
+rewriting them changes what Google has already indexed — worth doing, but as a
+deliberate copy pass rather than a side effect of this one. And the hero
+paragraph, which is item 4's business.
 
 ### 6. Multi-modal (lowest priority, highest effort)
 
