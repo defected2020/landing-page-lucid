@@ -4,6 +4,7 @@ import { LazyMotion } from 'framer-motion';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { ThemeProvider } from '../contexts/ThemeContext';
+import MetaPixel from '../components/MetaPixel';
 
 // Self-hosted, subsetted and preloaded by Next: no render-blocking request to
 // Google Fonts and no layout shift when the real face swaps in.
@@ -34,6 +35,8 @@ function MyApp({ Component, pageProps }) {
           once per project in the Vercel dashboard; they no-op until then. */}
       <Analytics />
       <SpeedInsights />
+      {/* Meta Pixel — no consent gate, see components/MetaPixel.js */}
+      <MetaPixel />
     </ThemeProvider>
   );
 }
