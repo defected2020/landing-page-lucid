@@ -9,6 +9,13 @@
 
 module.exports = [
   {
+    file: 'content/admin-pages/seo-what-needs-doing.html',
+    format: 'html',
+    title: 'SEO: What Needs Doing',
+    tags: ['seo', 'geo', 'ai-search', 'actions', 'plan'],
+    pinned: true,
+  },
+  {
     file: 'content/admin-pages/mission-dock-hub-plan.html',
     format: 'html',
     title: 'Mission Dock Hub Plan',
@@ -26,6 +33,12 @@ module.exports = [
     file: 'SEO.md',
     title: 'SEO Runbook',
     tags: ['seo', 'runbook'],
+    pinned: false,
+  },
+  {
+    file: 'GEO-ANALYSIS.md',
+    title: 'GEO / AI Search Analysis',
+    tags: ['seo', 'geo', 'ai-search', 'analysis'],
     pinned: false,
   },
 ];
