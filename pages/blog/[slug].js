@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SEO, { createArticleSchema, createBreadcrumbSchema } from '../../components/SEO';
 import { findTeamMember } from '../../data/team';
+import BLOG_DIAGRAMS from '../../components/blogDiagrams';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import PageHero from '../../components/PageHero';
@@ -25,6 +26,20 @@ function PostBody({ body }) {
             >
               {block.text}
             </h2>
+          );
+        }
+        if (block.type === 'figure') {
+          const Diagram = BLOG_DIAGRAMS[block.diagram];
+          if (!Diagram) return null;
+          return (
+            <figure key={i} className="mb-8 mt-10 text-text-muted">
+              <div className="rounded-lg border border-border bg-bg-subtle px-5 py-6">
+                <Diagram />
+              </div>
+              <figcaption className="mt-3 text-[0.875rem] leading-[1.6] text-text-subtle">
+                {block.caption}
+              </figcaption>
+            </figure>
           );
         }
         if (block.type === 'ul') {

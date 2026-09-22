@@ -9,18 +9,18 @@ the two share a diagnosis.
 
 ---
 
-## GEO Readiness Score: 67/100
+## GEO Readiness Score: 71/100
 
-Re-measured against the live site on 2026-09-21 after the changes below shipped.
-First run was **59**.
+Re-measured against the live site. First run was **59**, then **67** after the
+on-page work, then **71** once every post carried a diagram.
 
-| Criterion | Weight | Was | Now | What moved |
-|---|---|---|---|---|
-| Technical accessibility | 20% | 95 | 95 | Already maxed; sitemap 27 → 29 |
-| Structural readability | 20% | 65 | 68 | Genuine question headings 1 → 2 of ~38 |
-| Citability | 25% | 60 | **75** | Homepage definition; blog 3 → 5 posts; filler gone |
-| Multi-modal content | 15% | 45 | 45 | Untouched — still images only |
-| **Authority & brand signals** | **20%** | **25** | **42** | Person schema and founders landed; off-site still zero |
+| Criterion | Weight | Run 1 | Run 2 | Now | What moved |
+|---|---|---|---|---|---|
+| Technical accessibility | 20% | 95 | 95 | 95 | Already maxed; sitemap 27 → 29 |
+| Structural readability | 20% | 65 | 68 | 68 | Genuine question headings 1 → 2 of ~38 |
+| Citability | 25% | 60 | 75 | **77** | Homepage definition; 3 → 5 posts; figure captions |
+| Multi-modal content | 15% | 45 | 45 | **70** | Five hand-built diagrams, one per post |
+| **Authority & brand signals** | **20%** | **25** | **42** | **42** | Person schema landed; off-site still zero |
 
 **+8, and the ceiling is exactly where the first run said it was.** Every point
 came from on-page work. The axis that carries the most weight in AI citation —
@@ -233,11 +233,29 @@ rewriting them changes what Google has already indexed — worth doing, but as a
 deliberate copy pass rather than a side effect of this one. And the hero
 paragraph, which is item 4's business.
 
-### 6. Multi-modal (lowest priority, highest effort)
+### 6. Multi-modal — **partly done**
 
-Multi-modal pages see materially higher AI selection rates, and you have images
-only. A diagram in the loyalty-platform post, or a short video walkthrough, would
-lift the weakest scoring criterion. Real effort; do it after 1–3.
+Every post now carries a hand-authored SVG diagram, built to show a mechanism the
+prose otherwise makes the reader assemble:
+
+| Post | Diagram |
+|---|---|
+| Offline-first | The three architectures called "offline", and where the source of truth sits in each |
+| Push notifications | The five delivery stages, and the boundary past which you measure nothing |
+| React Native or native | Share of files against share of effort — the same split, two proportions |
+| Adding AI | The staging table and review gate, with the direct write-through crossed out |
+| Loyalty platform | A QR that carries the grant against one that carries identity |
+
+They are inline SVG in `components/blogDiagrams.js`, keyed by id and referenced
+from `data/blogPosts.js` as `{ type: 'figure', diagram, caption }`. Built on
+`currentColor` and the theme's own CSS variables, so one drawing serves light and
+dark with no second asset and no JavaScript — verified in both. Each is a real
+`<figure>` with a `<figcaption>` and `role="img"` plus an `aria-label` carrying
+the same claim, and all of it is server-rendered, which matters because AI
+crawlers do not execute JavaScript. No `dangerouslySetInnerHTML` anywhere.
+
+Still missing for a full multi-modal score: video, and any interactive element
+such as a calculator. Both are real effort and neither is next in priority.
 
 ---
 
