@@ -13,14 +13,17 @@ export const CONTACT = {
 };
 
 // `enabled: false` profiles are hidden in the footer and omitted from the
-// Organization `sameAs` list. All three currently return 404 — linking to a
-// profile that does not exist wastes crawl signals and breaks trust, and
+// Organization `sameAs` list. GitHub, LinkedIn and X still return 404 — linking
+// to a profile that does not exist wastes crawl signals and breaks trust, and
 // claiming it in structured data is a false statement to search engines.
 // Create the profile, then flip the flag.
+// Facebook is live and enabled. The URL is the numeric profile.php form because
+// the Page has no username yet; swap in facebook.com/<username> once claimed.
 export const SOCIAL_PROFILES = [
   { id: 'github', label: 'GitHub', url: 'https://github.com/lucidcodelabs', enabled: false },
   { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/company/lucidcodelabs', enabled: false },
   { id: 'x', label: 'X (Twitter)', url: 'https://x.com/lucidcodelabs', enabled: false },
+  { id: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61594588054171', enabled: true },
 ];
 
 export const activeSocialProfiles = () => SOCIAL_PROFILES.filter((p) => p.enabled);
