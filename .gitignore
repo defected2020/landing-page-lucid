@@ -25,3 +25,6 @@ Thumbs.db
 
 # Internal admin: local-dev document/file storage
 .admin-data/
+
+# Private ops notes (account IDs, logins, recovery paths) - never publish, repo is public
+EMAIL-DNS.md
