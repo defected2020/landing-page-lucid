@@ -1,6 +1,7 @@
 import { getPortfolioSlugs } from '../data/portfolioProjects';
 import { getPublishedPosts } from '../data/blogPosts';
 import { SITE_URL } from '../data/siteConfig';
+import { isLegalEntityComplete } from '../data/legalEntity';
 
 // `lastmod` is only emitted where a real date exists (blog posts). Stamping
 // today's date on every URL on every request tells Google the whole site
@@ -40,7 +41,17 @@ function generateSitemap() {
     lastmod: post.date,
   }));
 
-  const allPages = [...staticPages, ...caseStudies, ...posts];
+  // Kept out of the sitemap until data/legalEntity.js is complete, because the
+  // pages carry noindex until then and advertising a noindex URL is a
+  // contradiction Google reports as an error.
+  const legalPages = isLegalEntityComplete()
+    ? [
+        { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
+        { path: '/impressum', priority: '0.3', changefreq: 'yearly' },
+      ]
+    : [];
+
+  const allPages = [...staticPages, ...legalPages, ...caseStudies, ...posts];
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

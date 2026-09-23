@@ -123,8 +123,10 @@ const Footer = () => {
             &copy; {currentYear} Lucid Code Labs. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className={bottomLinkClass}>Privacy Policy</a>
-            <a href="#" className={bottomLinkClass}>Terms of Service</a>
+            <NextLink href="/privacy-policy" className={bottomLinkClass}>Privacy Policy</NextLink>
+            <NextLink href="/impressum" className={bottomLinkClass}>Impressum</NextLink>
+            {/* Terms of Service has no page yet, so it stays out rather than
+                shipping another dead "#" link. */}
           </div>
         </div>
       </div>
