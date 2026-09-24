@@ -33,7 +33,7 @@ const COPIES = 3
 const SPEED = 36 // px/s at rest
 const DRAG_THRESHOLD = 6
 
-const LogoCard = ({ item, hidden }) => {
+const LogoCard = ({ item, hidden, withColour }) => {
   const light = item.plate === 'light'
   const inner = (
     <>
@@ -46,17 +46,34 @@ const LogoCard = ({ item, hidden }) => {
             : 'bg-[#0e1233] shadow-[0_18px_50px_-18px_rgba(99,102,241,0.8)] ring-1 ring-inset ring-indigo-300/20'
         )}
       />
-      {/* The wrapper scales logos whose artwork carries extra padding. */}
+      {/* The outer wrapper scales logos whose artwork carries extra padding.
+          The white silhouette and the full-colour logo are stacked and
+          crossfaded; animating the filter itself passes through a muddy grey. */}
       <span className="relative flex items-center justify-center" style={{ transform: `scale(${item.size})` }}>
-        <Image
-          src={item.logo}
-          alt={hidden ? '' : item.name}
-          width={400}
-          height={120}
-          sizes="(max-width: 767px) 200px, 300px"
-          draggable={false}
-          className="trusted-logo relative w-auto opacity-60 transition-[filter,opacity,transform] duration-500 ease-smooth [filter:brightness(0)_invert(1)] group-hover:-translate-y-2 group-hover:opacity-100 group-hover:[filter:none] group-focus-visible:-translate-y-2 group-focus-visible:opacity-100 group-focus-visible:[filter:none]"
-        />
+        <span className="relative block transition-transform duration-500 ease-smooth group-hover:-translate-y-2 group-focus-visible:-translate-y-2">
+          <Image
+            src={item.logo}
+            alt={hidden ? '' : item.name}
+            width={400}
+            height={120}
+            sizes="(max-width: 767px) 200px, 300px"
+            draggable={false}
+            className="trusted-logo block w-auto opacity-60 transition-opacity duration-300 ease-smooth [filter:brightness(0)_invert(1)] group-hover:opacity-0 group-focus-visible:opacity-0"
+          />
+          {/* Added after mount only, to keep the server HTML small. */}
+          {withColour && (
+            <Image
+              src={item.logo}
+              alt=""
+              aria-hidden="true"
+              width={400}
+              height={120}
+              sizes="(max-width: 767px) 200px, 300px"
+              draggable={false}
+              className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-500 ease-smooth group-hover:opacity-100 group-focus-visible:opacity-100"
+            />
+          )}
+        </span>
       </span>
       <span
         aria-hidden="true"
@@ -321,7 +338,7 @@ const TrustedBy = () => {
                 aria-hidden={copy > 0 ? 'true' : undefined}
                 className="trusted-item w-[clamp(210px,21vw,290px)] shrink-0 px-3 max-md:w-[46vw] max-md:px-1.5"
               >
-                <LogoCard item={item} hidden={copy > 0} />
+                <LogoCard item={item} hidden={copy > 0} withColour={copies > 1} />
               </li>
             ))
           )}

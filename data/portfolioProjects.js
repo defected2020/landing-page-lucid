@@ -87,7 +87,7 @@ export const portfolioProjects = [
   {
     slug: 'awakenest',
     name: 'Awakenest (Stayfly Studio)',
-    logo: '/images/logos/awakenist.png',
+    logo: '/images/logos/awakenest.png',
     url: 'https://www.stayflystudio.com/awakenest',
     tagline: 'A wellness festival in Thailand—community, program, and tickets in one flow.',
     summary: [
