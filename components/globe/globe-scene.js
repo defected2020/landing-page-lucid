@@ -18,13 +18,16 @@ import {
   RingGeometry,
   Scene,
   ShaderMaterial,
+  FrontSide,
   SphereGeometry,
   Vector3,
+  Vector4,
   WebGLRenderer,
 } from 'three';
 import * as GLSL from './shaders';
 import { buildNetwork } from './nodes';
 import { loadLandMask } from './land-mask';
+import { createSky } from './sky';
 
 // ---------------------------------------------------------------------------
 // Tuning
@@ -50,6 +53,14 @@ const RINGS_PER_NODE = 2;
 const RING_LIFE = 1.3;
 const RING_STAGGER = 0.22;
 const MAX_CHAIN = 3;
+
+const AURORA_R = 1.014;
+const REVEAL_SPEED = 0.9; // rad/s: the opening wave from Berlin
+const SWEEP_RATE = 0.22; // rad/s: the scan across the meridians
+const HOVER_PX = 22; // how close the pointer has to be to wake a city
+const HOVER_COOLDOWN = 1.6;
+const BEACON_EVERY = 3.2; // Berlin's idle heartbeat
+const CITY_SIGMA = 0.045; // radians: how far a city's lights spread
 
 const SUN = new Vector3(0.5, 0.75, 0.45).normalize();
 
@@ -77,6 +88,16 @@ const C = {
   ring: '#9bb5ff',
   star: '#e2e8ff',
   starBlue: '#a5b4fc',
+  city: '#e6eeff',
+  grid: '#1f2a78',
+  auroraLow: '#2dd4bf',
+  auroraHigh: '#7c6cf2',
+  orbit: '#6d7cf5',
+  orbitHot: '#c7d2fe',
+  sat: '#f0f9ff',
+  satTrail: '#93a8ff',
+  beam: '#a5f3fc',
+  meteor: '#e0e7ff',
 };
 
 // Screen-space placement of the globe, as fractions of the canvas size.
@@ -87,6 +108,14 @@ function layoutFor(width, height) {
   }
   return { cx: 0.68, cy: 1.34, r: 1.15, mobile: false, dots: 2.8, nodePx: 10, headPx: 26, ring: 0.04 };
 }
+
+const smoothstep = (a, b, x) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
+const formatCoord = (lat, lon) =>
+  `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'}  ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`;
 
 const v3a = new Vector3();
 const v3b = new Vector3();
@@ -133,6 +162,8 @@ const roulette = (weights) => {
 // ---------------------------------------------------------------------------
 export function createGlobeScene(canvas, options = {}) {
   const reducedMotion = !!options.reducedMotion;
+  const labels = options.labels || {};
+  const section = canvas.closest('section');
 
   const renderer = new WebGLRenderer({
     canvas,
@@ -150,6 +181,13 @@ export function createGlobeScene(canvas, options = {}) {
     lastMs: 0,
     time: 0,
     built: false,
+    revealAt: -1,
+    nextBeacon: 2,
+    spinVel: 0,
+    scrollY: window.scrollY,
+    dprCap: Infinity, // lowered if the first frames run slow
+    perfFrames: 0,
+    perfSum: 0,
   };
 
   const scene = new Scene();
@@ -169,6 +207,10 @@ export function createGlobeScene(canvas, options = {}) {
   const uNodePx = { value: 9 };
   const uHeadPx = { value: 7 };
   const uSunDir = { value: SUN };
+  const uHome = { value: new Vector3(0, 0, 1) };
+  const uFront = { value: reducedMotion ? 10 : 0 };
+  const uSweep = { value: 0 };
+  const uCursor = { value: new Vector4(0, 0, 1, 0) };
 
   let layout = layoutFor(1, 1);
   let width = 1;
@@ -192,6 +234,7 @@ export function createGlobeScene(canvas, options = {}) {
         uNight: { value: rgb(C.night) },
         uDay: { value: rgb(C.day) },
         uRim: { value: rgb(C.rim) },
+        uGrid: { value: rgb(C.grid) },
         uSunDir,
       },
     })
@@ -221,6 +264,29 @@ export function createGlobeScene(canvas, options = {}) {
   const atmosphere = new Mesh(atmoGeo, atmoMat);
   atmosphere.renderOrder = 6;
   spin.add(atmosphere);
+
+  // Aurora over the northern latitudes. It hangs in the tilted frame rather
+  // than the spinning one, so the planet turns beneath it.
+  const auroraGeo = track(new SphereGeometry(AURORA_R, 192, 12, 0, Math.PI * 2, 5 * DEG, 32 * DEG));
+  const auroraMat = track(
+    new ShaderMaterial({
+      vertexShader: GLSL.surfaceVert,
+      fragmentShader: GLSL.auroraFrag,
+      uniforms: {
+        uTime,
+        uLow: { value: rgb(C.auroraLow) },
+        uHigh: { value: rgb(C.auroraHigh) },
+        uIntensity: { value: 0.75 },
+      },
+      side: FrontSide,
+      transparent: true,
+      blending: AdditiveBlending,
+      depthWrite: false,
+    })
+  );
+  const aurora = new Mesh(auroraGeo, auroraMat);
+  aurora.renderOrder = 5;
+  tilt.add(aurora);
 
   // --- Stars ---------------------------------------------------------------
   const starCount = 2400;
@@ -270,6 +336,7 @@ export function createGlobeScene(canvas, options = {}) {
   const nodeCount = net.nodes.length;
   const nodeVec = net.nodes.map((n) => new Vector3(n.pos[0], n.pos[1], n.pos[2]));
   const nodeFacing = new Float32Array(nodeCount);
+  uHome.value.copy(nodeVec[net.home]);
 
   // Nodes
   const nodeGeo = track(new BufferGeometry());
@@ -295,6 +362,8 @@ export function createGlobeScene(canvas, options = {}) {
         uPixelRatio,
         uRefDepth,
         uNodePx,
+        uHome,
+        uFront,
         uCore: { value: rgb(C.core) },
         uHalo: { value: rgb(C.halo) },
         uFlash: { value: rgb(C.flash) },
@@ -351,6 +420,8 @@ export function createGlobeScene(canvas, options = {}) {
       vertexShader: GLSL.linksVert,
       fragmentShader: GLSL.linksFrag,
       uniforms: {
+        uHome,
+        uFront,
         uColor: { value: rgb(C.link) },
         uHot: { value: rgb(C.linkHot) },
         uOpacity: { value: 0.075 },
@@ -474,7 +545,23 @@ export function createGlobeScene(canvas, options = {}) {
     const rows = Math.round(Math.PI / spacing);
     const pos = [];
     const rand = [];
+    const city = [];
     const SLICE = 40;
+    // City lights: each dot glows by its closeness to the network's cities,
+    // plus a sparse sprinkle of towns so the night side is never empty.
+    const near = Math.cos(CITY_SIGMA * 3.2);
+    const cityGlow = (x, y, z) => {
+      let g = 0;
+      for (let i = 0; i < nodeCount; i++) {
+        const v = nodeVec[i];
+        const d = x * v.x + y * v.y + z * v.z;
+        if (d < near) continue;
+        const a2 = 2 * (1 - d); // angle squared, small-angle
+        g += (net.nodes[i].weight / 2.2) * Math.exp(-a2 / (CITY_SIGMA * CITY_SIGMA));
+      }
+      if (Math.random() < 0.035) g = Math.max(g, 0.18 + Math.random() * 0.3);
+      return Math.min(1, g);
+    };
     for (let r0 = 1; r0 < rows; r0 += SLICE) {
       for (let ri = r0; ri < Math.min(rows, r0 + SLICE); ri++) {
         const lat = -Math.PI / 2 + (ri / rows) * Math.PI;
@@ -484,8 +571,12 @@ export function createGlobeScene(canvas, options = {}) {
         for (let ci = 0; ci < count; ci++) {
           const lon = ((ci + offset) / count) * 2 * Math.PI - Math.PI;
           if (!mask.isLand(lat, lon)) continue;
-          pos.push(c * Math.sin(lon), Math.sin(lat), c * Math.cos(lon));
+          const x = c * Math.sin(lon);
+          const y = Math.sin(lat);
+          const z = c * Math.cos(lon);
+          pos.push(x, y, z);
           rand.push(Math.random());
+          city.push(cityGlow(x, y, z));
         }
       }
       await yieldToMain();
@@ -494,6 +585,7 @@ export function createGlobeScene(canvas, options = {}) {
     const geo = track(new BufferGeometry());
     geo.setAttribute('position', new Float32BufferAttribute(new Float32Array(pos), 3));
     geo.setAttribute('aRand', new Float32BufferAttribute(new Float32Array(rand), 1));
+    geo.setAttribute('aCity', new Float32BufferAttribute(new Float32Array(city), 1));
     dotMat = track(
       new ShaderMaterial({
         vertexShader: GLSL.dotsVert,
@@ -507,8 +599,13 @@ export function createGlobeScene(canvas, options = {}) {
           uRippleSpeed: { value: RIPPLE_SPEED },
           uRippleLife: { value: RIPPLE_LIFE },
           uRipples: { value: ripples },
+          uHome,
+          uFront,
+          uSweep,
+          uCursor,
           uColor: { value: rgb(C.dot) },
           uHot: { value: rgb(C.dotHot) },
+          uCity: { value: rgb(C.city) },
           uOpacity: { value: 0.62 },
         },
         transparent: true,
@@ -529,7 +626,7 @@ export function createGlobeScene(canvas, options = {}) {
     width = w;
     height = h;
     layout = layoutFor(w, h);
-    const dpr = Math.min(window.devicePixelRatio || 1, layout.mobile ? 2 : 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, layout.mobile ? 2 : 1.5, state.dprCap);
     renderer.setPixelRatio(dpr);
     renderer.setSize(w, h, false);
     uPixelRatio.value = dpr;
@@ -638,6 +735,8 @@ export function createGlobeScene(canvas, options = {}) {
       v3a.copy(nodeVec[i]).applyMatrix4(spin.matrixWorld).sub(v3c).normalize();
       nodeFacing[i] = v3a.dot(toCam);
     }
+    centre.copy(v3c);
+    spinInverse.copy(spin.matrixWorld).invert();
   }
 
   function choreograph(dt) {
@@ -703,14 +802,208 @@ export function createGlobeScene(canvas, options = {}) {
   function openingBurst() {
     const home = net.home;
     net.adjacency[home].forEach((link, k) => {
-      events.push({ at: 0.5 + k * 0.14, type: 'spawn', node: home, link, depth: 1 });
+      events.push({ at: state.time + 0.35 + k * 0.14, type: 'spawn', node: home, link, depth: 1 });
     });
+  }
+
+  // A clicked city fires down every one of its links at once.
+  function burst(i) {
+    fireNode(i);
+    net.adjacency[i].forEach((link, k) => {
+      events.push({ at: state.time + 0.05 + k * 0.07, type: 'spawn', node: i, link, depth: 1 });
+    });
+  }
+
+  function addRipple(p) {
+    const b = rippleCursor * 4;
+    ripples[b] = p.x;
+    ripples[b + 1] = p.y;
+    ripples[b + 2] = p.z;
+    ripples[b + 3] = state.time;
+    rippleCursor = (rippleCursor + 1) % RIPPLES;
+  }
+
+  // Berlin's idle heartbeat: a single soft ring.
+  function beacon() {
+    ringFire[net.home * RINGS_PER_NODE] = state.time;
+    ringFireAttr.needsUpdate = true;
+  }
+
+  // --- Screen-space helpers ------------------------------------------------
+  const centre = new Vector3();
+  const spinInverse = new Matrix4();
+  const scratch = new Vector3();
+  const rayDir = new Vector3();
+  const world = new Vector3();
+
+  function nodeWorld(i, out) {
+    return out.copy(nodeVec[i]).multiplyScalar(NODE_ALT).applyMatrix4(spin.matrixWorld);
+  }
+
+  function toScreen(p, out) {
+    scratch.copy(p).project(camera);
+    out.x = (scratch.x * 0.5 + 0.5) * width;
+    out.y = (-scratch.y * 0.5 + 0.5) * height;
+    return out;
+  }
+
+  // Where a canvas pixel lands on the planet, as a unit vector in the
+  // spinning frame; false when it misses.
+  function pickSurface(px, py, out) {
+    rayDir
+      .set((px / width) * 2 - 1, -(py / height) * 2 + 1, 0.5)
+      .unproject(camera)
+      .sub(camera.position)
+      .normalize();
+    scratch.copy(camera.position).sub(centre);
+    const b = scratch.dot(rayDir);
+    const h = b * b - (scratch.lengthSq() - 1);
+    if (h < 0) return false;
+    out
+      .copy(camera.position)
+      .addScaledVector(rayDir, -b - Math.sqrt(h))
+      .applyMatrix4(spinInverse)
+      .normalize();
+    return true;
+  }
+
+  function screenToWorld(fx, fy, z, out) {
+    const half = (camera.position.z - z) * Math.tan((FOV / 2) * DEG);
+    return out.set((fx * 2 - 1) * half * camera.aspect + camera.position.x, (1 - fy * 2) * half + camera.position.y, z);
+  }
+
+  // --- Satellites, beams, meteors -------------------------------------------
+  const nodeTilt = new Vector3();
+  const sky = createSky({
+    parent: tilt,
+    scene,
+    uPixelRatio,
+    colors: C,
+    track,
+    ctx: {
+      spriteScale: () => (layout.mobile ? 0.75 : 1),
+      screenToWorld,
+      nodeWorld,
+      // The brightest visible city under a satellite (dir: unit, tilted frame)
+      findNodeBelow(dir) {
+        const reach = Math.cos(0.17);
+        let best = -1;
+        let bestWeight = 0;
+        for (let i = 0; i < nodeCount; i++) {
+          if (nodeFacing[i] < 0.3) continue;
+          nodeTilt.copy(nodeVec[i]).applyMatrix4(spin.matrix);
+          if (nodeTilt.dot(dir) > reach && net.nodes[i].weight > bestWeight) {
+            best = i;
+            bestWeight = net.nodes[i].weight;
+          }
+        }
+        return best;
+      },
+      onDownlink(i) {
+        fireNode(i);
+        const link = pickLink(i, -1);
+        if (link >= 0) events.push({ at: state.time + 0.12, type: 'spawn', node: i, link, depth: 1 });
+      },
+    },
+  });
+
+  // --- Pointer: spotlight, hover labels, clicks ------------------------------
+  const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const interactive = !reducedMotion && hasFinePointer;
+  const pointer = { x: 0, y: 0, inside: false };
+  const hover = { node: -1, last: -1, alpha: 0, firedAt: new Float32Array(nodeCount).fill(-10) };
+  const surfacePoint = new Vector3();
+  const screenPt = { x: 0, y: 0 };
+
+  function setHover(i) {
+    if (i === hover.node) return;
+    hover.node = i;
+    if (section) section.style.cursor = i >= 0 ? 'pointer' : '';
+    if (i >= 0 && labels.tipName) {
+      const n = net.nodes[i];
+      labels.tipName.textContent = n.name;
+      if (labels.tipMeta) labels.tipMeta.textContent = formatCoord(n.lat, n.lon);
+    }
+  }
+
+  function interact(dt) {
+    let hit = false;
+    let best = -1;
+    if (pointer.inside) {
+      hit = pickSurface(pointer.x, pointer.y, surfacePoint);
+      let bestD = HOVER_PX * HOVER_PX;
+      for (let i = 0; i < nodeCount; i++) {
+        if (nodeFacing[i] < 0.2) continue;
+        toScreen(nodeWorld(i, world), screenPt);
+        const dx = screenPt.x - pointer.x;
+        const dy = screenPt.y - pointer.y;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+    }
+    const cur = uCursor.value;
+    if (hit) cur.set(surfacePoint.x, surfacePoint.y, surfacePoint.z, cur.w);
+    cur.w += ((hit ? 1 : 0) - cur.w) * Math.min(1, dt * 5);
+    setHover(best);
+    if (best >= 0 && state.time - hover.firedAt[best] > HOVER_COOLDOWN) {
+      hover.firedAt[best] = state.time;
+      fireNode(best);
+      const link = pickLink(best, -1);
+      if (link >= 0) spawnSignal(best, link, 1);
+    }
+  }
+
+  const labelPt = { x: 0, y: 0 };
+  function placeLabel(el, i, alpha) {
+    if (alpha < 0.002) {
+      if (el.dataset.hidden !== '1') {
+        el.style.opacity = '0';
+        el.dataset.hidden = '1';
+      }
+      return;
+    }
+    el.dataset.hidden = '0';
+    toScreen(nodeWorld(i, world), labelPt);
+    const side = labelPt.x > width - 250 ? 'left' : 'right';
+    if (el.dataset.side !== side) el.dataset.side = side;
+    el.style.transform = `translate3d(${labelPt.x.toFixed(1)}px, ${labelPt.y.toFixed(1)}px, 0)`;
+    el.style.opacity = alpha.toFixed(3);
+  }
+
+  function updateLabels(dt) {
+    const tipOn = hover.node >= 0 && hover.node !== net.home;
+    if (labels.hq) {
+      const since = state.revealAt < 0 ? 0 : state.time - state.revealAt;
+      const a = layout.mobile
+        ? 0
+        : smoothstep(0.25, 0.5, nodeFacing[net.home]) * smoothstep(0.8, 1.6, since) * (tipOn ? 0.45 : 1);
+      placeLabel(labels.hq, net.home, a);
+    }
+    if (labels.tip) {
+      hover.alpha += ((tipOn ? 1 : 0) - hover.alpha) * Math.min(1, dt * 10);
+      if (tipOn) hover.last = hover.node;
+      if (hover.last >= 0) placeLabel(labels.tip, hover.last, hover.alpha);
+    }
   }
 
   // --- Frame loop ----------------------------------------------------------
   function render() {
     uTime.value = state.time;
     renderer.render(scene, camera);
+  }
+
+  // If the first seconds run slow, drop the resolution once rather than stutter.
+  function watchPerformance(dt) {
+    if (state.perfFrames >= 150) return;
+    state.perfFrames++;
+    if (state.perfFrames > 30) state.perfSum += dt;
+    if (state.perfFrames === 150 && state.perfSum / 120 > 1 / 42 && renderer.getPixelRatio() > 1) {
+      state.dprCap = Math.max(1, renderer.getPixelRatio() * 0.7);
+      resize();
+    }
   }
 
   function frame(nowMs) {
@@ -720,16 +1013,34 @@ export function createGlobeScene(canvas, options = {}) {
     state.lastMs = nowMs;
     state.time += dt;
 
-    spin.rotation.y += SPIN_RATE * dt;
+    // Scrolling the page gives the planet a nudge that eases off.
+    const sy = window.scrollY;
+    state.spinVel = Math.max(-1, Math.min(1, state.spinVel + (sy - state.scrollY) * 0.0025));
+    state.scrollY = sy;
+    state.spinVel *= Math.exp(-2 * dt);
+    spin.rotation.y += (SPIN_RATE + state.spinVel) * dt;
+
     parallax.x += (parallax.tx - parallax.x) * Math.min(1, dt * 2.5);
     parallax.y += (parallax.ty - parallax.y) * Math.min(1, dt * 2.5);
     camera.position.x = parallax.x * 0.16;
     camera.position.y = parallax.y * 0.1;
     camera.lookAt(0, 0, 0);
 
+    const front = (state.time - state.revealAt) * REVEAL_SPEED;
+    uFront.value = front > 3.4 ? 10 : front;
+    uSweep.value = state.time * SWEEP_RATE;
+    if (state.time >= state.nextBeacon) {
+      beacon();
+      state.nextBeacon = state.time + BEACON_EVERY;
+    }
+
     updateFacing();
+    if (interactive) interact(dt);
     choreograph(dt);
+    sky.update(state.time);
+    updateLabels(dt);
     render();
+    watchPerformance(dt);
   }
 
   function start() {
@@ -746,6 +1057,7 @@ export function createGlobeScene(canvas, options = {}) {
   function renderStill() {
     // A composed still for reduced motion: a few neurons mid-fire.
     state.time = 10;
+    state.revealAt = 0;
     updateFacing();
     const lit = [net.home];
     for (let i = 0; i < nodeCount && lit.length < 7; i++) {
@@ -762,6 +1074,8 @@ export function createGlobeScene(canvas, options = {}) {
     });
     state.time = 10;
     choreograph(0);
+    sky.update(state.time, { motion: false });
+    updateLabels(1);
     render();
   }
 
@@ -769,6 +1083,32 @@ export function createGlobeScene(canvas, options = {}) {
   const onPointer = (e) => {
     parallax.tx = (e.clientX / window.innerWidth - 0.5) * 2;
     parallax.ty = -(e.clientY / window.innerHeight - 0.5) * 2;
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = e.clientX - rect.left;
+    pointer.y = e.clientY - rect.top;
+    pointer.inside = pointer.x >= 0 && pointer.y >= 0 && pointer.x <= rect.width && pointer.y <= rect.height;
+  };
+  const onPointerOut = (e) => {
+    if (!e.relatedTarget) pointer.inside = false;
+  };
+  // Clicking (or tapping) the planet sends a ripple out from that spot and
+  // sets off the nearest city. Text and controls keep their own clicks.
+  const onClick = (e) => {
+    if (!state.built || reducedMotion || !section || !section.contains(e.target)) return;
+    if (e.target.closest('a, button, input, textarea, select, label, h1, p, [role="button"]')) return;
+    const rect = canvas.getBoundingClientRect();
+    if (!pickSurface(e.clientX - rect.left, e.clientY - rect.top, surfacePoint)) return;
+    addRipple(surfacePoint);
+    let best = -1;
+    let bestDot = Math.cos(0.3);
+    for (let i = 0; i < nodeCount; i++) {
+      const d = nodeVec[i].dot(surfacePoint);
+      if (nodeFacing[i] > 0.1 && d > bestDot) {
+        bestDot = d;
+        best = i;
+      }
+    }
+    if (best >= 0) burst(best);
   };
   const onContextLost = (e) => {
     e.preventDefault();
@@ -787,8 +1127,11 @@ export function createGlobeScene(canvas, options = {}) {
   ro.observe(canvas);
   resize();
 
-  const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (!reducedMotion && hasFinePointer) window.addEventListener('pointermove', onPointer, { passive: true });
+  if (interactive) {
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    document.addEventListener('pointerout', onPointerOut, { passive: true });
+  }
+  if (!reducedMotion) window.addEventListener('click', onClick);
 
   const ready = (async () => {
     const mask = await loadLandMask({ scale: layout.mobile ? 0.5 : 1 });
@@ -805,7 +1148,9 @@ export function createGlobeScene(canvas, options = {}) {
     if (reducedMotion) {
       renderStill();
     } else {
+      state.revealAt = state.time;
       openingBurst();
+      updateFacing();
       render();
       if (state.active) start();
     }
@@ -825,6 +1170,9 @@ export function createGlobeScene(canvas, options = {}) {
       stop();
       ro.disconnect();
       window.removeEventListener('pointermove', onPointer);
+      document.removeEventListener('pointerout', onPointerOut);
+      window.removeEventListener('click', onClick);
+      if (section) section.style.cursor = '';
       canvas.removeEventListener('webglcontextlost', onContextLost);
       canvas.removeEventListener('webglcontextrestored', onContextRestored);
       disposables.forEach((d) => d.dispose && d.dispose());

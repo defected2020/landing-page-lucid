@@ -6,6 +6,10 @@ import { cn } from '../../lib/utils';
 // and fades the canvas in over it.
 const NeuralGlobe = ({ className }) => {
   const canvasRef = useRef(null);
+  const hqRef = useRef(null);
+  const tipRef = useRef(null);
+  const tipNameRef = useRef(null);
+  const tipMetaRef = useRef(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -44,7 +48,15 @@ const NeuralGlobe = ({ className }) => {
       import('./globe-scene')
       .then(({ createGlobeScene }) => {
         if (cancelled) return;
-        scene = createGlobeScene(canvas, { reducedMotion });
+        scene = createGlobeScene(canvas, {
+          reducedMotion,
+          labels: {
+            hq: hqRef.current,
+            tip: tipRef.current,
+            tipName: tipNameRef.current,
+            tipMeta: tipMetaRef.current,
+          },
+        });
         syncActive();
         return scene.ready.then(() => {
           if (!cancelled) setReady(true);
@@ -75,6 +87,22 @@ const NeuralGlobe = ({ className }) => {
           ready ? 'opacity-100' : 'opacity-0'
         )}
       />
+      {/* Labels pinned to cities by the scene: home, and whichever city the
+          pointer is over. Positioned with transforms only. */}
+      <div ref={hqRef} className="globe-label" style={{ opacity: 0 }}>
+        <span className="globe-label__stem" />
+        <span className="globe-label__tag">
+          <span className="globe-label__pulse" />
+          Berlin <span className="globe-label__meta">HQ</span>
+        </span>
+      </div>
+      <div ref={tipRef} className="globe-label" style={{ opacity: 0 }}>
+        <span className="globe-label__stem" />
+        <span className="globe-label__tag">
+          <span ref={tipNameRef} />
+          <span ref={tipMetaRef} className="globe-label__meta" />
+        </span>
+      </div>
     </div>
   );
 };

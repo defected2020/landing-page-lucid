@@ -173,6 +173,84 @@
       linear-gradient(to bottom, #06070f 0%, rgba(6, 7, 15, 0.7) 9%, rgba(6, 7, 15, 0) 30%),
       linear-gradient(to right, rgba(6, 7, 15, 0.62) 0%, rgba(6, 7, 15, 0.3) 32%, rgba(6, 7, 15, 0) 58%);
   }
+  /* City labels pinned to the globe (positioned by the scene each frame).
+     The element sits at the city; the stem climbs up and to the right. */
+  .globe-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .globe-label__stem {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 38px;
+    transform: rotate(38deg);
+    transform-origin: bottom center;
+    background: linear-gradient(to top, rgba(199, 210, 254, 0.15), rgba(199, 210, 254, 0.8));
+  }
+  .globe-label::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(199, 210, 254, 0.7);
+    border-radius: 999px;
+  }
+  .globe-label__tag {
+    position: absolute;
+    left: 22px;
+    bottom: 26px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    padding: 6px 11px;
+    border: 1px solid rgba(165, 180, 252, 0.28);
+    border-radius: 999px;
+    background: rgba(8, 10, 30, 0.72);
+    box-shadow: 0 0 24px rgba(99, 102, 241, 0.25);
+    color: #e0e7ff;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .globe-label[data-side='left'] .globe-label__stem {
+    transform: rotate(-38deg);
+  }
+  .globe-label[data-side='left'] .globe-label__tag {
+    left: auto;
+    right: 22px;
+  }
+  .globe-label__meta {
+    color: rgba(165, 180, 252, 0.75);
+    font-family: var(--font-body);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+  }
+  .globe-label__pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #a5f3fc;
+    box-shadow: 0 0 0 0 rgba(165, 243, 252, 0.6);
+    animation: globe-label-pulse 2.4s ease-out infinite;
+  }
+  @keyframes globe-label-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(165, 243, 252, 0.55); }
+    70%, 100% { box-shadow: 0 0 0 8px rgba(165, 243, 252, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .globe-label__pulse { animation: none; }
+  }
   @media (max-width: 767px) {
     .globe-poster::before {
       background:
