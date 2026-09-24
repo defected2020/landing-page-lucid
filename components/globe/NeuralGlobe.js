@@ -7,8 +7,6 @@ import { cn } from '../../lib/utils';
 const NeuralGlobe = ({ className }) => {
   const canvasRef = useRef(null);
   const hqRef = useRef(null);
-  const hqMetaRef = useRef(null);
-  const youRef = useRef(null);
   const tipRef = useRef(null);
   const tipNameRef = useRef(null);
   const tipMetaRef = useRef(null);
@@ -54,8 +52,6 @@ const NeuralGlobe = ({ className }) => {
           reducedMotion,
           labels: {
             hq: hqRef.current,
-            hqMeta: hqMetaRef.current,
-            you: youRef.current,
             tip: tipRef.current,
             tipName: tipNameRef.current,
             tipMeta: tipMetaRef.current,
@@ -91,23 +87,13 @@ const NeuralGlobe = ({ className }) => {
           ready ? 'opacity-100' : 'opacity-0'
         )}
       />
-      {/* Labels pinned to cities by the scene: the visitor, home, and
-          whichever city the pointer is over. Positioned with transforms only. */}
-      <div ref={youRef} className="globe-label globe-label--you" style={{ opacity: 0 }}>
-        <span className="globe-label__stem" />
-        <span className="globe-label__tag">
-          <span className="globe-label__pulse" />
-          You are here
-        </span>
-      </div>
+      {/* Labels pinned to cities by the scene: home, and whichever city the
+          pointer is over. Positioned with transforms only. */}
       <div ref={hqRef} className="globe-label" style={{ opacity: 0 }}>
         <span className="globe-label__stem" />
         <span className="globe-label__tag">
           <span className="globe-label__pulse" />
-          Berlin{' '}
-          <span ref={hqMetaRef} className="globe-label__meta">
-            HQ
-          </span>
+          Berlin <span className="globe-label__meta">HQ</span>
         </span>
       </div>
       <div ref={tipRef} className="globe-label" style={{ opacity: 0 }}>

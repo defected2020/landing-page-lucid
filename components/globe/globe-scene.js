@@ -1019,13 +1019,8 @@ export function createGlobeScene(canvas, options = {}) {
   }
 
   const labelPt = { x: 0, y: 0 };
-  const hqPt = { x: 0, y: 0 };
-  const youPt = { x: 0, y: 0 };
-  const youVisible = net.user >= 0 && net.user !== net.home;
-  if (labels.hqMeta && net.user === net.home) labels.hqMeta.textContent = 'HQ · You are here';
 
-  // side: which way the label leans; by default away from the right edge.
-  function placeLabel(el, i, alpha, side) {
+  function placeLabel(el, i, alpha) {
     if (alpha < 0.002) {
       if (el.dataset.hidden !== '1') {
         el.style.opacity = '0';
@@ -1035,38 +1030,22 @@ export function createGlobeScene(canvas, options = {}) {
     }
     el.dataset.hidden = '0';
     toScreen(nodeWorld(i, world), labelPt);
-    const lean = side || (labelPt.x > width - 250 ? 'left' : 'right');
+    const lean = labelPt.x > width - 250 ? 'left' : 'right';
     if (el.dataset.side !== lean) el.dataset.side = lean;
     el.style.transform = `translate3d(${labelPt.x.toFixed(1)}px, ${labelPt.y.toFixed(1)}px, 0)`;
     el.style.opacity = alpha.toFixed(3);
   }
 
   function updateLabels(dt) {
-    const tipOn = hover.node >= 0 && hover.node !== net.home && hover.node !== net.user;
+    // No tip for home (it has its own label) or for a visitor who is not in a
+    // listed city: their node is only an approximation.
+    const tipOn = hover.node >= 0 && hover.node !== net.home && net.nodes[hover.node].name !== 'You';
     const since = state.revealAt < 0 ? 0 : state.time - state.revealAt;
-    const dim = tipOn ? 0.45 : 1;
-    // When the visitor is close to Berlin the two labels lean apart.
-    let hqSide;
-    let youSide;
-    if (youVisible) {
-      toScreen(nodeWorld(net.home, world), hqPt);
-      toScreen(nodeWorld(net.user, world), youPt);
-      if (Math.abs(hqPt.x - youPt.x) < 260 && Math.abs(hqPt.y - youPt.y) < 70) {
-        youSide = youPt.x < hqPt.x ? 'left' : 'right';
-        hqSide = youSide === 'left' ? 'right' : 'left';
-      }
-    }
     if (labels.hq) {
-      // On phones only the visitor's label shows, unless they are in Berlin.
-      const a =
-        layout.mobile && youVisible
-          ? 0
-          : smoothstep(0.25, 0.5, nodeFacing[net.home]) * smoothstep(0.8, 1.6, since) * dim;
-      placeLabel(labels.hq, net.home, a, hqSide);
-    }
-    if (labels.you && youVisible) {
-      const a = smoothstep(0.25, 0.5, nodeFacing[net.user]) * smoothstep(0.3, 1.0, since) * dim;
-      placeLabel(labels.you, net.user, a, youSide);
+      const a = layout.mobile
+        ? 0
+        : smoothstep(0.25, 0.5, nodeFacing[net.home]) * smoothstep(0.8, 1.6, since) * (tipOn ? 0.45 : 1);
+      placeLabel(labels.hq, net.home, a);
     }
     if (labels.tip) {
       hover.alpha += ((tipOn ? 1 : 0) - hover.alpha) * Math.min(1, dt * 10);

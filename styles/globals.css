@@ -230,11 +230,6 @@
     left: auto;
     right: 22px;
   }
-  .globe-label--you .globe-label__tag {
-    border-color: rgba(165, 243, 252, 0.45);
-    box-shadow: 0 0 28px rgba(34, 211, 238, 0.28);
-    color: #ecfeff;
-  }
   .globe-label__meta {
     color: rgba(165, 180, 252, 0.75);
     font-family: var(--font-body);
