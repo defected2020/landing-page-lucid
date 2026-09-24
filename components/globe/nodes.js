@@ -112,6 +112,7 @@ const BACKBONE = [
 const DEG = Math.PI / 180;
 const NEAREST = 3; // regional links per node
 const REGIONAL_MAX = 0.62; // radians, roughly 4000 km
+const SAME_PLACE = 0.04; // radians, roughly 250 km: a visitor this close to a city is in it
 
 export function latLonToVector(lat, lon) {
   const phi = lat * DEG;
@@ -125,7 +126,9 @@ const angleBetween = (a, b) => {
   return Math.acos(Math.min(1, Math.max(-1, d)));
 };
 
-export function buildNetwork() {
+// visitor: { lat, lon } or null. The visitor becomes a node of their own
+// (or takes over the city they are in), linked straight to Berlin.
+export function buildNetwork(visitor = null) {
   const nodes = CITIES.map(([name, lat, lon, weight]) => ({
     name,
     lat,
@@ -135,14 +138,35 @@ export function buildNetwork() {
   }));
   const index = new Map(nodes.map((n, i) => [n.name, i]));
 
+  let user = -1;
+  if (visitor) {
+    const pos = latLonToVector(visitor.lat, visitor.lon);
+    let nearest = SAME_PLACE;
+    nodes.forEach((n, i) => {
+      const d = angleBetween(n.pos, pos);
+      if (d < nearest) {
+        nearest = d;
+        user = i;
+      }
+    });
+    if (user < 0) {
+      nodes.push({ name: 'You', lat: visitor.lat, lon: visitor.lon, weight: 1.4, pos });
+      user = nodes.length - 1;
+    }
+  }
+  const home = index.get('Berlin');
+
   const linkKeys = new Set();
   const links = [];
-  const addLink = (a, b, backbone = false) => {
+  const addLink = (a, b, backbone = false, featured = false) => {
     if (a === b) return;
     const key = a < b ? `${a}-${b}` : `${b}-${a}`;
-    if (linkKeys.has(key)) return;
+    if (linkKeys.has(key)) {
+      if (featured) links.find((l) => (l.a === a && l.b === b) || (l.a === b && l.b === a)).featured = true;
+      return;
+    }
     linkKeys.add(key);
-    links.push({ a, b, backbone, dist: angleBetween(nodes[a].pos, nodes[b].pos) });
+    links.push({ a, b, backbone, featured, dist: angleBetween(nodes[a].pos, nodes[b].pos) });
   };
 
   nodes.forEach((node, i) => {
@@ -154,6 +178,8 @@ export function buildNetwork() {
     near.forEach(({ j }) => addLink(i, j));
   });
   BACKBONE.forEach(([a, b]) => addLink(index.get(a), index.get(b), true));
+  // The visitor's own line to the studio: always drawn.
+  if (user >= 0 && user !== home) addLink(user, home, true, true);
 
   const adjacency = nodes.map(() => []);
   links.forEach((link, li) => {
@@ -161,5 +187,5 @@ export function buildNetwork() {
     adjacency[link.b].push(li);
   });
 
-  return { nodes, links, adjacency, home: index.get('Berlin') };
+  return { nodes, links, adjacency, home, user };
 }

@@ -90,7 +90,7 @@ export const atmosphereFrag = /* glsl */ `
   }
 `;
 
-// Aurora: a thin shell over the northern latitudes. A wavy lower edge,
+// Aurora: thin shells over both polar ovals. A wavy lower edge,
 // vertical curtain rays drifting along it, and brighter toward the limb
 // where the curtains are seen side-on.
 export const auroraFrag = /* glsl */ `
@@ -103,7 +103,7 @@ export const auroraFrag = /* glsl */ `
   varying vec3 vObj;
   void main() {
     vec3 p = normalize(vObj);
-    float lat = asin(clamp(p.y, -1.0, 1.0));
+    float lat = abs(asin(clamp(p.y, -1.0, 1.0))); // both hemispheres
     float lon = atan(p.x, p.z);
     float edge = 1.2 + 0.05 * sin(lon * 3.0 + uTime * 0.11) + 0.025 * sin(lon * 7.0 - uTime * 0.17 + 1.3);
     float h = lat - edge;

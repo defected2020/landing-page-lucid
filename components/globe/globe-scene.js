@@ -28,15 +28,18 @@ import * as GLSL from './shaders';
 import { buildNetwork } from './nodes';
 import { loadLandMask } from './land-mask';
 import { createSky } from './sky';
+import { locateVisitor } from './locate';
 
 // ---------------------------------------------------------------------------
 // Tuning
 // ---------------------------------------------------------------------------
 const DEG = Math.PI / 180;
 const FOV = 12; // narrow lens from far away: a mild, even perspective
-const SPIN_RATE = (2 * Math.PI) / 360; // one revolution every six minutes
-const TILT = 12 * DEG; // pole tipped toward us: the Arctic is the quiet rim, the busy mid-latitudes sit mid-frame
-const START_LON = 4; // Europe centre-right at load, the Atlantic and US coast under the headline
+// The planet does not spin. It is turned so the visitor's location (from
+// their time zone; Berlin when unknown) sits at the layout's focal point with
+// north up, and sways gently about that point: the world revolves around them.
+const SWAY = 5 * DEG; // how far it turns either way about the visitor
+const SWAY_PERIOD = 48; // seconds per full sway
 
 const BASE_R = 0.994;
 const ATMO_R = 1.16;
@@ -59,7 +62,8 @@ const REVEAL_SPEED = 0.9; // rad/s: the opening wave from Berlin
 const SWEEP_RATE = 0.22; // rad/s: the scan across the meridians
 const HOVER_PX = 22; // how close the pointer has to be to wake a city
 const HOVER_COOLDOWN = 1.6;
-const BEACON_EVERY = 3.2; // Berlin's idle heartbeat
+const BEACON_EVERY = 3.2; // the visitor's idle heartbeat
+const DIALOGUE_EVERY = 6.5; // a signal along the visitor's line to Berlin, alternating direction
 const CITY_SIGMA = 0.045; // radians: how far a city's lights spread
 
 const SUN = new Vector3(0.5, 0.75, 0.45).normalize();
@@ -104,9 +108,10 @@ const C = {
 function layoutFor(width, height) {
   const aspect = width / height;
   if (aspect < 0.95) {
-    return { cx: 0.5, cy: 1.42, r: 0.92, mobile: true, dots: 2.3, nodePx: 9, headPx: 18, ring: 0.03 };
+    return { cx: 0.5, cy: 1.42, r: 0.92, fx: 0.5, fy: 0.85, mobile: true, dots: 2.3, nodePx: 9, headPx: 18, ring: 0.03 };
   }
-  return { cx: 0.68, cy: 1.34, r: 1.15, mobile: false, dots: 2.8, nodePx: 10, headPx: 26, ring: 0.04 };
+  // fx / fy: where on screen the visitor's location is placed
+  return { cx: 0.68, cy: 1.34, r: 1.15, fx: 0.74, fy: 0.54, mobile: false, dots: 2.8, nodePx: 10, headPx: 26, ring: 0.04 };
 }
 
 const smoothstep = (a, b, x) => {
@@ -183,8 +188,8 @@ export function createGlobeScene(canvas, options = {}) {
     built: false,
     revealAt: -1,
     nextBeacon: 2,
-    spinVel: 0,
-    scrollY: window.scrollY,
+    nextDialogue: 3.5,
+    dialogueOut: true,
     dprCap: Infinity, // lowered if the first frames run slow
     perfFrames: 0,
     perfSum: 0,
@@ -193,10 +198,10 @@ export function createGlobeScene(canvas, options = {}) {
   const scene = new Scene();
   const camera = new PerspectiveCamera(FOV, 1, 1, 40);
   const tilt = new Group();
-  tilt.rotation.x = TILT;
-  const spin = new Group();
-  spin.rotation.y = -START_LON * DEG;
+  const spin = new Group(); // the planet's own frame; oriented by orient()
   tilt.add(spin);
+  const baseQuat = new Quaternion();
+  const swayQuat = new Quaternion();
   scene.add(tilt);
 
   // Shared uniforms
@@ -265,9 +270,11 @@ export function createGlobeScene(canvas, options = {}) {
   atmosphere.renderOrder = 6;
   spin.add(atmosphere);
 
-  // Aurora over the northern latitudes. It hangs in the tilted frame rather
-  // than the spinning one, so the planet turns beneath it.
+  // Aurora over both polar ovals, so it shows whichever hemisphere faces us.
   const auroraGeo = track(new SphereGeometry(AURORA_R, 192, 12, 0, Math.PI * 2, 5 * DEG, 32 * DEG));
+  const auroraSouthGeo = track(
+    new SphereGeometry(AURORA_R, 192, 12, 0, Math.PI * 2, 143 * DEG, 32 * DEG)
+  );
   const auroraMat = track(
     new ShaderMaterial({
       vertexShader: GLSL.surfaceVert,
@@ -284,9 +291,11 @@ export function createGlobeScene(canvas, options = {}) {
       depthWrite: false,
     })
   );
-  const aurora = new Mesh(auroraGeo, auroraMat);
-  aurora.renderOrder = 5;
-  tilt.add(aurora);
+  [auroraGeo, auroraSouthGeo].forEach((geo) => {
+    const aurora = new Mesh(geo, auroraMat);
+    aurora.renderOrder = 5;
+    spin.add(aurora);
+  });
 
   // --- Stars ---------------------------------------------------------------
   const starCount = 2400;
@@ -332,11 +341,13 @@ export function createGlobeScene(canvas, options = {}) {
   scene.add(stars);
 
   // --- Network: nodes, links, rings, signals -------------------------------
-  const net = buildNetwork();
+  const net = buildNetwork(options.visitor === undefined ? locateVisitor() : options.visitor);
+  // The node the view centres on: the visitor, or Berlin when unknown.
+  const focus = net.user >= 0 ? net.user : net.home;
   const nodeCount = net.nodes.length;
   const nodeVec = net.nodes.map((n) => new Vector3(n.pos[0], n.pos[1], n.pos[2]));
   const nodeFacing = new Float32Array(nodeCount);
-  uHome.value.copy(nodeVec[net.home]);
+  uHome.value.copy(nodeVec[focus]);
 
   // Nodes
   const nodeGeo = track(new BufferGeometry());
@@ -410,9 +421,9 @@ export function createGlobeScene(canvas, options = {}) {
   linkGeo.setAttribute('aEnergy', linkEnergyAttr);
   const linkBase = new Float32Array(linkVerts.length / 3);
   net.links.forEach((l, li) => {
-    if (l.backbone) return;
+    if (l.backbone && !l.featured) return;
     const [start, count] = linkRanges[li];
-    for (let k = 0; k < count; k++) linkBase[start + k] = 1;
+    for (let k = 0; k < count; k++) linkBase[start + k] = l.featured ? 2.6 : 1;
   });
   linkGeo.setAttribute('aBase', new Float32BufferAttribute(linkBase, 1));
   const linkMat = track(
@@ -643,6 +654,42 @@ export function createGlobeScene(canvas, options = {}) {
     camera.updateProjectionMatrix();
     uRefDepth.value = camDist - 1;
     tilt.position.set((layout.cx - 0.5) * visibleHeight * aspect, -(layout.cy - 0.5) * visibleHeight, 0);
+    orient();
+  }
+
+  // Turn the planet so the focus node lands on the layout's focal point with
+  // north pointing up the screen there: map the node's local east / north /
+  // up frame onto the same frame at the focal point.
+  const basisFrom = new Matrix4();
+  const basisTo = new Matrix4();
+  function orient() {
+    camera.position.set(0, 0, camDist);
+    camera.lookAt(0, 0, 0);
+    camera.updateMatrixWorld();
+    tilt.updateMatrixWorld(true);
+    const up = new Vector3(0, 1, 0);
+    const frame = (n, out) => {
+      const north = up.clone().addScaledVector(n, -up.dot(n)).normalize();
+      const east = new Vector3().crossVectors(north, n);
+      return out.makeBasis(east, north, n);
+    };
+    // Where the focal pixel meets the sphere, relative to the planet's centre
+    const dir = new Vector3((layout.fx * 2 - 1), -(layout.fy * 2 - 1), 0.5).unproject(camera).sub(camera.position).normalize();
+    const oc = camera.position.clone().sub(tilt.position);
+    const b = oc.dot(dir);
+    const h = b * b - (oc.lengthSq() - 1);
+    const t = h > 0 ? -b - Math.sqrt(h) : -b; // off the disc: nearest point to the ray
+    const target = camera.position.clone().addScaledVector(dir, t).sub(tilt.position).normalize();
+    frame(nodeVec[focus], basisFrom);
+    frame(target, basisTo);
+    basisTo.multiply(basisFrom.transpose());
+    baseQuat.setFromRotationMatrix(basisTo);
+    applySway(reducedMotion ? 0 : state.time);
+  }
+
+  function applySway(time) {
+    swayQuat.setFromAxisAngle(nodeVec[focus], SWAY * Math.sin((time / SWAY_PERIOD) * Math.PI * 2));
+    spin.quaternion.multiplyQuaternions(baseQuat, swayQuat);
   }
 
   // --- Signal choreography -------------------------------------------------
@@ -715,7 +762,7 @@ export function createGlobeScene(canvas, options = {}) {
     const w = new Float32Array(nodeCount);
     for (let i = 0; i < nodeCount; i++) {
       const visible = nodeFacing[i] > 0.15 ? 1 : 0.15;
-      w[i] = net.nodes[i].weight * visible * (i === net.home ? 1.6 : 1);
+      w[i] = net.nodes[i].weight * visible * (i === net.home ? 1.6 : 1) * (i === net.user ? 1.8 : 1);
     }
     return roulette(w);
   }
@@ -799,11 +846,26 @@ export function createGlobeScene(canvas, options = {}) {
     }
   }
 
+  // The link between the visitor and Berlin, if they are not in Berlin.
+  const dialogueLink = net.links.findIndex((l) => l.featured);
+
+  // The reveal spreads from the visitor; their neighbourhood lights up first,
+  // then a signal leaves for Berlin.
   function openingBurst() {
-    const home = net.home;
-    net.adjacency[home].forEach((link, k) => {
-      events.push({ at: state.time + 0.35 + k * 0.14, type: 'spawn', node: home, link, depth: 1 });
+    net.adjacency[focus].forEach((link, k) => {
+      if (link === dialogueLink) return;
+      events.push({ at: state.time + 0.35 + k * 0.14, type: 'spawn', node: focus, link, depth: 1 });
     });
+    if (dialogueLink >= 0) events.push({ at: state.time + 0.9, type: 'spawn', node: focus, link: dialogueLink, depth: 1 });
+  }
+
+  // Now and then a signal travels the visitor's line to Berlin, one way and
+  // then the other.
+  function dialogue() {
+    if (dialogueLink < 0) return;
+    const from = state.dialogueOut ? net.user : net.home;
+    state.dialogueOut = !state.dialogueOut;
+    spawnSignal(from, dialogueLink, MAX_CHAIN);
   }
 
   // A clicked city fires down every one of its links at once.
@@ -823,9 +885,9 @@ export function createGlobeScene(canvas, options = {}) {
     rippleCursor = (rippleCursor + 1) % RIPPLES;
   }
 
-  // Berlin's idle heartbeat: a single soft ring.
+  // The visitor's idle heartbeat: a single soft ring.
   function beacon() {
-    ringFire[net.home * RINGS_PER_NODE] = state.time;
+    ringFire[focus * RINGS_PER_NODE] = state.time;
     ringFireAttr.needsUpdate = true;
   }
 
@@ -957,7 +1019,13 @@ export function createGlobeScene(canvas, options = {}) {
   }
 
   const labelPt = { x: 0, y: 0 };
-  function placeLabel(el, i, alpha) {
+  const hqPt = { x: 0, y: 0 };
+  const youPt = { x: 0, y: 0 };
+  const youVisible = net.user >= 0 && net.user !== net.home;
+  if (labels.hqMeta && net.user === net.home) labels.hqMeta.textContent = 'HQ · You are here';
+
+  // side: which way the label leans; by default away from the right edge.
+  function placeLabel(el, i, alpha, side) {
     if (alpha < 0.002) {
       if (el.dataset.hidden !== '1') {
         el.style.opacity = '0';
@@ -967,20 +1035,38 @@ export function createGlobeScene(canvas, options = {}) {
     }
     el.dataset.hidden = '0';
     toScreen(nodeWorld(i, world), labelPt);
-    const side = labelPt.x > width - 250 ? 'left' : 'right';
-    if (el.dataset.side !== side) el.dataset.side = side;
+    const lean = side || (labelPt.x > width - 250 ? 'left' : 'right');
+    if (el.dataset.side !== lean) el.dataset.side = lean;
     el.style.transform = `translate3d(${labelPt.x.toFixed(1)}px, ${labelPt.y.toFixed(1)}px, 0)`;
     el.style.opacity = alpha.toFixed(3);
   }
 
   function updateLabels(dt) {
-    const tipOn = hover.node >= 0 && hover.node !== net.home;
+    const tipOn = hover.node >= 0 && hover.node !== net.home && hover.node !== net.user;
+    const since = state.revealAt < 0 ? 0 : state.time - state.revealAt;
+    const dim = tipOn ? 0.45 : 1;
+    // When the visitor is close to Berlin the two labels lean apart.
+    let hqSide;
+    let youSide;
+    if (youVisible) {
+      toScreen(nodeWorld(net.home, world), hqPt);
+      toScreen(nodeWorld(net.user, world), youPt);
+      if (Math.abs(hqPt.x - youPt.x) < 260 && Math.abs(hqPt.y - youPt.y) < 70) {
+        youSide = youPt.x < hqPt.x ? 'left' : 'right';
+        hqSide = youSide === 'left' ? 'right' : 'left';
+      }
+    }
     if (labels.hq) {
-      const since = state.revealAt < 0 ? 0 : state.time - state.revealAt;
-      const a = layout.mobile
-        ? 0
-        : smoothstep(0.25, 0.5, nodeFacing[net.home]) * smoothstep(0.8, 1.6, since) * (tipOn ? 0.45 : 1);
-      placeLabel(labels.hq, net.home, a);
+      // On phones only the visitor's label shows, unless they are in Berlin.
+      const a =
+        layout.mobile && youVisible
+          ? 0
+          : smoothstep(0.25, 0.5, nodeFacing[net.home]) * smoothstep(0.8, 1.6, since) * dim;
+      placeLabel(labels.hq, net.home, a, hqSide);
+    }
+    if (labels.you && youVisible) {
+      const a = smoothstep(0.25, 0.5, nodeFacing[net.user]) * smoothstep(0.3, 1.0, since) * dim;
+      placeLabel(labels.you, net.user, a, youSide);
     }
     if (labels.tip) {
       hover.alpha += ((tipOn ? 1 : 0) - hover.alpha) * Math.min(1, dt * 10);
@@ -1013,12 +1099,7 @@ export function createGlobeScene(canvas, options = {}) {
     state.lastMs = nowMs;
     state.time += dt;
 
-    // Scrolling the page gives the planet a nudge that eases off.
-    const sy = window.scrollY;
-    state.spinVel = Math.max(-1, Math.min(1, state.spinVel + (sy - state.scrollY) * 0.0025));
-    state.scrollY = sy;
-    state.spinVel *= Math.exp(-2 * dt);
-    spin.rotation.y += (SPIN_RATE + state.spinVel) * dt;
+    applySway(state.time);
 
     parallax.x += (parallax.tx - parallax.x) * Math.min(1, dt * 2.5);
     parallax.y += (parallax.ty - parallax.y) * Math.min(1, dt * 2.5);
@@ -1032,6 +1113,10 @@ export function createGlobeScene(canvas, options = {}) {
     if (state.time >= state.nextBeacon) {
       beacon();
       state.nextBeacon = state.time + BEACON_EVERY;
+    }
+    if (state.time >= state.nextDialogue) {
+      dialogue();
+      state.nextDialogue = state.time + DIALOGUE_EVERY;
     }
 
     updateFacing();
@@ -1059,7 +1144,7 @@ export function createGlobeScene(canvas, options = {}) {
     state.time = 10;
     state.revealAt = 0;
     updateFacing();
-    const lit = [net.home];
+    const lit = [focus];
     for (let i = 0; i < nodeCount && lit.length < 7; i++) {
       if (nodeFacing[i] > 0.35 && Math.random() < 0.25) lit.push(i);
     }
